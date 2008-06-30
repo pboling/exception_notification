@@ -37,19 +37,37 @@ class ExceptionNotifier < ActionMailer::Base
 
   def self.reloadable?() false end
 
-  def exception_notification(exception, controller, request, data={})
-    content_type "text/plain"
+  def exception_notification(exception, controller = nil, request = nil, data={})
+    data = data.merge({
+      :exception => exception,
+      :backtrace => sanitize_backtrace(exception.backtrace),
+      :rails_root => rails_root,
+      :data => data
+    })
 
-    subject    "#{email_prefix}#{controller.controller_name}##{controller.action_name} (#{exception.class}) #{exception.message.inspect}"
+    if controller and request
+      data.merge!({
+        :location => "#{controller.controller_name}##{controller.action_name}",
+        :controller => controller,
+        :request => request,
+        :host => (request.env["HTTP_X_FORWARDED_HOST"] || request.env["HTTP_HOST"]),
+        :sections => sections
+      })
+    else
+      # TODO: with refactoring, the environment section could show useful ENV data even without a request
+      data.merge!({
+        :location => sanitize_backtrace([exception.backtrace.first]).first,
+        :sections => sections - %w(request session environment)
+      })
+    end
+
+    content_type "text/plain"
 
     recipients exception_recipients
     from       sender_address
 
-    body       data.merge({ :controller => controller, :request => request,
-                  :exception => exception, :host => (request.env["HTTP_X_FORWARDED_HOST"] || request.env["HTTP_HOST"]),
-                  :backtrace => sanitize_backtrace(exception.backtrace),
-                  :rails_root => rails_root, :data => data,
-                  :sections => sections })
+    subject    "#{email_prefix}#{data[:location]} (#{exception.class}) #{exception.message.inspect}"
+    body       data
   end
 
   private
