@@ -19,11 +19,12 @@ module ExceptionNotifiable
       addresses
     end
 
-    def exception_data(deliverer=self)
-      if deliverer == self
-        read_inheritable_attribute(:exception_data)
-      else
+    # set the exception_data deliverer OR retrieve the exception_data
+    def exception_data(deliverer = nil)
+      if deliverer
         write_inheritable_attribute(:exception_data, deliverer)
+      else
+        read_inheritable_attribute(:exception_data)
       end
     end
 
