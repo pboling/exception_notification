@@ -1,8 +1,24 @@
 require 'ipaddr'
 
 module ExceptionNotifiable
-  def self.included(target)
-    target.extend(ClassMethods)
+  # exceptions of these types will not generate notification emails
+  SILENT_EXCEPTIONS = [
+    ActiveRecord::RecordNotFound,
+    ActionController::UnknownController,
+    ActionController::UnknownAction,
+    ActionController::RoutingError,
+    ActionController::MethodNotAllowed
+  ]
+
+  def self.included(base)
+    base.extend ClassMethods
+
+    base.cattr_accessor :silent_exceptions
+    base.silent_exceptions = SILENT_EXCEPTIONS
+
+    base.class_eval do
+      alias_method_chain :rescue_action_in_public, :notification
+    end
   end
 
   module ClassMethods
@@ -27,14 +43,6 @@ module ExceptionNotifiable
         read_inheritable_attribute(:exception_data)
       end
     end
-
-    def exceptions_to_treat_as_404
-      exceptions = [ActiveRecord::RecordNotFound,
-                    ActionController::UnknownController,
-                    ActionController::UnknownAction]
-      exceptions << ActionController::RoutingError if ActionController.const_defined?(:RoutingError)
-      exceptions
-    end
   end
 
   private
@@ -44,37 +52,18 @@ module ExceptionNotifiable
       !self.class.local_addresses.detect { |addr| addr.include?(remote) }.nil?
     end
 
-    def render_404
-      respond_to do |type|
-        type.html { render :file => "#{RAILS_ROOT}/public/404.html", :status => "404 Not Found" }
-        type.all  { render :nothing => true, :status => "404 Not Found" }
+    def rescue_action_in_public_with_notification(exception)
+      unless self.class.silent_exceptions.any? {|klass| klass === exception}
+        deliverer = self.class.exception_data
+        data = case deliverer
+          when nil then {}
+          when Symbol then send(deliverer)
+          when Proc then deliverer.call(self)
+        end
+
+        ExceptionNotifier.deliver_exception_notification(exception, self, request, data)
       end
-    end
 
-    def render_500
-      respond_to do |type|
-        type.html { render :file => "#{RAILS_ROOT}/public/500.html", :status => "500 Error" }
-        type.all  { render :nothing => true, :status => "500 Error" }
-      end
-    end
-
-    def rescue_action_in_public(exception)
-      case exception
-        when *self.class.exceptions_to_treat_as_404
-          render_404
-
-        else          
-          render_500
-
-          deliverer = self.class.exception_data
-          data = case deliverer
-            when nil then {}
-            when Symbol then send(deliverer)
-            when Proc then deliverer.call(self)
-          end
-
-          ExceptionNotifier.deliver_exception_notification(exception, self,
-            request, data)
-      end
+      rescue_action_in_public_without_notification(exception)
     end
 end
