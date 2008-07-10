@@ -22,6 +22,7 @@ module ExceptionNotifiable
   end
 
   module ClassMethods
+    # specifies ip addresses that should be handled as though local
     def consider_local(*args)
       local_addresses.concat(args.flatten.map { |a| IPAddr.new(a) })
     end
@@ -47,6 +48,8 @@ module ExceptionNotifiable
 
   private
 
+    # overrides Rails' local_request? method to also check any ip
+    # addresses specified through consider_local.
     def local_request?
       remote = IPAddr.new(request.remote_ip)
       !self.class.local_addresses.detect { |addr| addr.include?(remote) }.nil?
