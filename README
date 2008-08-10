@@ -109,3 +109,9 @@ in ExceptionNotifiable for an example of how to go about that.
 
 
 Copyright (c) 2005 Jamis Buck, released under the MIT license
+
+
+== jamescook changes
+
+Hooks into `git blame` output so you can get an idea of who (may) have introduced the bug :)
+-- Usage: set ExceptionNotifier.git_repo_path to the path of your git repo.

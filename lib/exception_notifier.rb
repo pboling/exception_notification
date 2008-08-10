@@ -32,12 +32,15 @@ class ExceptionNotifier < ActionMailer::Base
 
   @@sections = %w(request session environment backtrace)
   cattr_accessor :sections
-
+  
+  @@git_repo_path = '.'
+  cattr_accessor :git_repo_path
+  
   self.template_root = "#{File.dirname(__FILE__)}/../views"
 
   def self.reloadable?() false end
 
-  def exception_notification(exception, controller, request, data={})
+  def exception_notification(exception, controller, request, data={}, the_blamed=nil)
     content_type "text/plain"
 
     subject    "#{email_prefix}#{controller.controller_name}##{controller.action_name} (#{exception.class}) #{exception.message.inspect}"
@@ -49,7 +52,7 @@ class ExceptionNotifier < ActionMailer::Base
                   :exception => exception, :host => (request.env["HTTP_X_FORWARDED_HOST"] || request.env["HTTP_HOST"]),
                   :backtrace => sanitize_backtrace(exception.backtrace),
                   :rails_root => rails_root, :data => data,
-                  :sections => sections })
+                  :sections => sections, :the_blamed => the_blamed })
   end
 
   private
