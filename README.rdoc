@@ -97,6 +97,14 @@ In the above case, @document and @person would be made available to the email
 renderer, allowing your new section(s) to access and display them. See the
 existing sections defined by the plugin for examples of how to write your own.
 
+== Exceptions Without a Controller
+
+You may also use ExceptionNotifier to send information about exceptions that
+occur while running application scripts without a controller. Simply wrap the
+code you want to watch with the notifiable method:
+
+  /PATH/TO/APP/script/runner -e production "notifiable { run_billing }"
+
 == Advanced Customization
 
 By default, the email notifier will only notify on critical errors. For
