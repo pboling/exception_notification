@@ -36,10 +36,10 @@ class ExceptionNotifier < ActionMailer::Base
       "#{RAILS_ROOT}/public/#{status_cd}.html"
     elsif !view_path.nil? && File.exist?("#{RAILS_ROOT}/#{view_path}/#{status_cd}.html")
       "#{RAILS_ROOT}/#{view_path}/#{status_cd}.html"
-    elsif File.exist?("#{RAILS_ROOT}/vendor/plugins/super_exception_notifier/views/exception_notifiable/#{status_cd}.html")
-      "#{RAILS_ROOT}/vendor/plugins/super_exception_notifier/views/exception_notifiable/#{status_cd}.html"
+    elsif File.exist?("#{RAILS_ROOT}/vendor/plugins/exception_notification/views/exception_notifiable/#{status_cd}.html")
+      "#{RAILS_ROOT}/vendor/plugins/exception_notification/views/exception_notifiable/#{status_cd}.html"
     else 
-      "#{RAILS_ROOT}/vendor/plugins/super_exception_notifier/views/exception_notifiable/500.html"
+      "#{RAILS_ROOT}/vendor/plugins/exception_notification/views/exception_notifiable/500.html"
     end
   end
 

@@ -1,6 +1,8 @@
 require 'ipaddr'
 
 module ExceptionNotifiable
+ include ExceptionHandler
+
   # exceptions of these types will not generate notification emails
   SILENT_EXCEPTIONS = [
     ActiveRecord::RecordNotFound,
@@ -35,7 +37,7 @@ module ExceptionNotifiable
   end
   
   def self.included(base)
-    base.extend ClassMethods
+    base.extend(ClassMethods)
 
     # Adds the following class attributes to the classes that include ExceptionNotifiable
     #  HTTP status codes and what their 'English' status message is
@@ -46,17 +48,13 @@ module ExceptionNotifiable
     #     or set to false to render errors with no layout
     base.cattr_accessor :silent_exceptions
     base.silent_exceptions = SILENT_EXCEPTIONS
-	base.cattr_accessor :http_error_codes
-	base.http_error_codes = HTTP_ERROR_CODES
-	base.cattr_accessor :error_layout
-	base.cattr_accessor :rails_error_classes
-	base.rails_error_classes = self.codes_for_rails_error_classes
-	base.cattr_accessor :exception_notifier_verbose
-	base.exception_notifier_verbose = false
-	
-    base.class_eval do
-      alias_method_chain :rescue_action_in_public, :notification
-    end
+    base.cattr_accessor :http_error_codes
+    base.http_error_codes = HTTP_ERROR_CODES
+    base.cattr_accessor :error_layout
+    base.cattr_accessor :rails_error_classes
+    base.rails_error_classes = self.codes_for_rails_error_classes
+    base.cattr_accessor :exception_notifier_verbose
+    base.exception_notifier_verbose = false
   end
   
   module ClassMethods
@@ -75,11 +73,11 @@ module ExceptionNotifiable
     end
 
     # set the exception_data deliverer OR retrieve the exception_data
-    def exception_data(deliverer = nil)
-      if deliverer
-        write_inheritable_attribute(:exception_data, deliverer)
-      else
+    def exception_data(deliverer=self)
+      if deliverer == self
         read_inheritable_attribute(:exception_data)
+      else
+        write_inheritable_attribute(:exception_data, deliverer)
       end
     end
   end
@@ -87,7 +85,7 @@ module ExceptionNotifiable
   private
 
     # overrides Rails' local_request? method to also check any ip
-    # addresses specified through consider_local.
+    # addresses specified through consider_local
     def local_request?
       remote = IPAddr.new(request.remote_ip)
       !self.class.local_addresses.detect { |addr| addr.include?(remote) }.nil?
@@ -96,7 +94,7 @@ module ExceptionNotifiable
     def render_error(status_cd, request, exception, file_path = nil)
       status = self.class.http_error_codes[status_cd] ? status_cd + " " + self.class.http_error_codes[status_cd] : status_cd
       if self.class.exception_notifier_verbose
-        puts "[FILE PATH] #{file_path}" if !file_path.nil?
+        #puts "[FILE PATH] #{file_path}" if !file_path.nil?
         logger.error("render_error(#{status_cd}, #{self.class.http_error_codes[status_cd]}) invoked for request_uri=#{request.request_uri} and env=#{request.env.inspect}")
       end
       respond_to do |type|
@@ -131,11 +129,12 @@ module ExceptionNotifiable
       # If the error class is NOT listed in the rails_errror_class hash then we get a generic 500 error:
       if self.class.rails_error_classes[exception.class].nil?
         render_error("500", request, exception)
-      # OTW if the error class is listed, but has a blank code or the code is == '200' then we get a custom error layout rendered.
+      # OTW if the error class is listed, but has a blank code or the code is == '200' then we get a custom error layout rendered
       elsif self.class.rails_error_classes[exception.class].blank? || self.class.rails_error_classes[exception.class] == '200'
         render_error("200", request, exception, exception.to_s.delete(':').gsub( /([A-Za-z])([A-Z])/, '\1' << '_' << '\2' ).downcase)
       # OTW the error class is listed!
       else
         render_error(self.class.rails_error_classes[exception.class], request, exception)
       end
+    end
 end
