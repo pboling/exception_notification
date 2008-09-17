@@ -1,1 +1,1 @@
-require "action_mailer"
+require File.dirname(__FILE__) + "/rails/init"
