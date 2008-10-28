@@ -1,4 +1,6 @@
 require 'pathname'
+require 'net/http'
+require 'uri'
 
 # Copyright (c) 2005 Jamis Buck
 #
@@ -32,7 +34,10 @@ class ExceptionNotifier < ActionMailer::Base
 
   @@sections = %w(request session environment backtrace)
   cattr_accessor :sections
-
+  
+  @@web_hooks = []
+  cattr_accessor :web_hooks
+  
   self.template_root = "#{File.dirname(__FILE__)}/../views"
 
   def self.reloadable?() false end
@@ -51,9 +56,44 @@ class ExceptionNotifier < ActionMailer::Base
                   :rails_root => rails_root, :data => data,
                   :sections => sections })
   end
-
+  
+  # Deliver exception data hash to web hooks, if any
+  #
+  def send_exception_to_web_hooks(exception, controller, request, data={})
+    params = build_web_hook_params(exception, controller, request, data)
+    web_hooks.each do |address|
+      post_hook(params, address)
+    end
+  end
+  
   private
-
+    
+  def build_web_hook_params(exception, controller, request, data={})
+    host = (request.env["HTTP_X_FORWARDED_HOST"] || request.env["HTTP_HOST"])
+    backtrace = sanitize_backtrace(exception.backtrace)
+    {
+      'request_url'              => "#{request.protocol}#{host}#{request.request_uri}",
+      'request_controller'       => controller.class.name,
+      'request_action'           => details['params'][:action],
+      'request_params'           => request.parameters.inspect,
+      'environment'              => RAILS_ENV,
+      'exceptions'               => {
+        :class      => exception.class.to_s,
+        :backtrace  => backtrace,
+        :status     => exception.status if exception.respond_to?(:status),
+        :message    => exception.message
+        },
+        'app_name'                 => 'unknown',
+        'version'                  => 'unknown',
+      }
+    end
+    
+    def post_hook(params, address)
+      uri = URI.parse(address)
+      uri.path = '/' if uri.path=='' # set a path if one isn't provided to keep Net::HTTP happy
+      Net::HTTP.post_form( uri, params ).body
+    end
+        
     def sanitize_backtrace(trace)
       re = Regexp.new(/^#{Regexp.escape(rails_root)}/)
       trace.map { |line| Pathname.new(line.gsub(re, "[RAILS_ROOT]")).cleanpath.to_s }
