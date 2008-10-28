@@ -67,7 +67,9 @@ class ExceptionNotifier < ActionMailer::Base
   end
   
   private
-    
+  
+  # Parameters hash based on Merb Exceptions example
+  #
   def build_web_hook_params(exception, controller, request, data={})
     host = (request.env["HTTP_X_FORWARDED_HOST"] || request.env["HTTP_HOST"])
     backtrace = sanitize_backtrace(exception.backtrace)
