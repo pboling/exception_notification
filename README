@@ -37,7 +37,11 @@ just set any or all of the following values:
     %("Application Error" <app.error@myapp.com>)
   
   # add optional web hooks (based off Merb Exceptions)
-  ExceptionNotifier.web_hooks = %(http://hooks.some-service.com http://another.service.com)
+  # This will POST exception data to the specified services
+  # What can you do with that? For example, send exceptions to Switchub.com, from where you can
+  # notify your Twitter account, send emails from there, etc.
+
+  ExceptionNotifier.web_hooks = %w(http://hooks.some-service.com http://another.service.com)
 
   # defaults to "[ERROR] "
   ExceptionNotifier.email_prefix = "[APP] "
