@@ -35,6 +35,9 @@ just set any or all of the following values:
   # defaults to exception.notifier@default.com
   ExceptionNotifier.sender_address =
     %("Application Error" <app.error@myapp.com>)
+  
+  # add optional web hooks (based off Merb Exceptions)
+  ExceptionNotifier.web_hooks = %(http://hooks.some-service.com http://another.service.com)
 
   # defaults to "[ERROR] "
   ExceptionNotifier.email_prefix = "[APP] "
