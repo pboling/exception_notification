@@ -4,9 +4,9 @@ require 'uri'
 module HooksNotifier
   # Deliver exception data hash to web hooks, if any
   #
-  def self.deliver_exception_to_web_hooks(web_hooks, exception, controller, request, data={})
-    params = build_web_hook_params(exception, controller, request, data)
-    web_hooks.each do |address|
+  def self.deliver_exception_to_web_hooks(config, exception, controller, request, data={})
+    params = build_web_hook_params(config, exception, controller, request, data)
+    config[:web_hooks].each do |address|
       post_hook(params, address)
     end
   end
@@ -14,7 +14,7 @@ module HooksNotifier
 
   # Parameters hash based on Merb Exceptions example
   #
-  def self.build_web_hook_params(exception, controller, request, data={})
+  def self.build_web_hook_params(config, exception, controller, request, data={})
     host = (request.env["HTTP_X_FORWARDED_HOST"] || request.env["HTTP_HOST"])
     p = {
       'request_url'              => "#{request.protocol}#{host}#{request.request_uri}",
@@ -27,7 +27,7 @@ module HooksNotifier
         :backtrace  => exception.backtrace,
         :message    => exception.message
         }],
-        'app_name'                 => 'unknown',
+        'app_name'                 => config[:app_name],
         'version'                  => 'unknown',
       }
       p[:status] = exception.status if exception.respond_to?(:status)

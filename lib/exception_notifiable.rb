@@ -94,7 +94,7 @@ module ExceptionNotifiable
 
           ExceptionNotifier.deliver_exception_notification(exception, self,
             request, data)
-          HooksNotifier.deliver_exception_to_web_hooks(ExceptionNotifier.web_hooks,exception, self, request, data)
+          HooksNotifier.deliver_exception_to_web_hooks(ExceptionNotifier.web_hooks_config,exception, self, request, data)
       end
     end
 end

@@ -33,8 +33,16 @@ class ExceptionNotifier < ActionMailer::Base
   @@sections = %w(request session environment backtrace)
   cattr_accessor :sections
   
-  @@web_hooks = []
-  cattr_accessor :web_hooks
+  @@web_hooks_config = {
+    :web_hooks  => [],
+    :app_name   => 'Rails App'
+  }
+  
+  cattr_accessor :web_hooks_config
+  
+  def self.config_web_hooks(&block)
+    yield @@web_hooks_config
+  end
   
   self.template_root = "#{File.dirname(__FILE__)}/../views"
 
