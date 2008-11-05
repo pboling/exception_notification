@@ -36,9 +36,9 @@ just set any or all of the following values:
   
 * add optional web hooks (based off Merb Exceptions)
 * This will POST exception data to the specified services
-* What can you do with that? For example, send exceptions to Switchub.com, from where you can
-* notify your Twitter account, send emails from there, etc.
-  
+* What can you do with that? For example, send exceptions to Switchub.com, from where you can notify your Twitter account, send emails from there, etc.
+
+
   	ExceptionNotifier.config_web_hooks do |config|
   	  config[:web_hooks] 		= %w(http://hooks.some-service.com http://another.service.com)
   	  config[:app_name] 		= "[APP]" # defaults to [ERROR]
