@@ -16,10 +16,10 @@ environment, and also gives a backtrace of the exception.
 First, include the ExceptionNotifiable mixin in whichever controller you want
 to generate error emails (typically ApplicationController):
 
-  class ApplicationController < ActionController::Base
-    include ExceptionNotifiable
-    ...
-  end
+    class ApplicationController < ActionController::Base
+      include ExceptionNotifiable
+      ...
+    end
 
 Then, specify the email recipients in your environment:
 
@@ -39,12 +39,12 @@ just set any or all of the following values:
 * What can you do with that? For example, send exceptions to Switchub.com, from where you can
 * notify your Twitter account, send emails from there, etc.
   
-    ExceptionNotifier.config_web_hooks do |config|
-      config[:web_hooks] 			= %w(http://hooks.some-service.com http://another.service.com)
-      config[:app_name] 			= "[APP]" # defaults to [ERROR]
-      config[:email_recipients] 	= %w(my@email.com another@email.com)
-      config[:sender_email] 		= %("Application Error" <app.error@myapp.com>) # defaults to exception.notifier@default.com
-	end
+  	ExceptionNotifier.config_web_hooks do |config|
+  	  config[:web_hooks] 		= %w(http://hooks.some-service.com http://another.service.com)
+  	  config[:app_name] 		= "[APP]" # defaults to [ERROR]
+  	  config[:email_recipients] 	= %w(my@email.com another@email.com)
+  	  config[:sender_email] 	= %("Application Error" <app.error@myapp.com>) # defaults to exception.notifier@default.com
+  	end
 
 
 Email notifications will only occur when the IP address is determined not to
