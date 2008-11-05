@@ -91,10 +91,12 @@ module ExceptionNotifiable
             when Symbol then send(deliverer)
             when Proc then deliverer.call(self)
           end
-
-          ExceptionNotifier.deliver_exception_notification(exception, self,
-            request, data)
-          HooksNotifier.deliver_exception_to_web_hooks(ExceptionNotifier.web_hooks_config,exception, self, request, data)
+          # Send email
+          if !ExceptionNotifier.config[:email_recipients].blank?
+            ExceptionNotifier.deliver_exception_notification(exception, self,request, data)
+          end
+          # Send web hooks
+          HooksNotifier.deliver_exception_to_web_hooks(ExceptionNotifier.config, exception, self, request, data)
       end
     end
 end

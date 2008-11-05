@@ -6,6 +6,7 @@ module HooksNotifier
   #
   def self.deliver_exception_to_web_hooks(config, exception, controller, request, data={})
     params = build_web_hook_params(config, exception, controller, request, data)
+    # TODO: use threads here
     config[:web_hooks].each do |address|
       post_hook(params, address)
     end
@@ -37,7 +38,13 @@ module HooksNotifier
   def self.post_hook(params, address)
     uri = URI.parse(address)
     uri.path = '/' if uri.path=='' # set a path if one isn't provided to keep Net::HTTP happy
-    Net::HTTP.post_form( uri, params ).body
+    
+    headers = { 'Content-Type' => 'text/x-json' }
+    data = params.to_json
+    Net::HTTP.start(uri.host, uri.port) do |http|
+      http.request_post(uri.path, data, headers)
+    end
+    data
   end
 
 end
