@@ -40,10 +40,10 @@ just set any or all of the following values:
 * notify your Twitter account, send emails from there, etc.
   
     ExceptionNotifier.config_web_hooks do |config|
-	 config[:web_hooks] 		= %w(http://hooks.some-service.com http://another.service.com)
-	 config[:app_name] 			= "[APP]" # defaults to [ERROR]
-	 config[:email_recipients] 	= %w(my@email.com another@email.com)
-	 config[:sender_email] 		= %("Application Error" <app.error@myapp.com>) # defaults to exception.notifier@default.com
+      config[:web_hooks] 			= %w(http://hooks.some-service.com http://another.service.com)
+      config[:app_name] 			= "[APP]" # defaults to [ERROR]
+      config[:email_recipients] 	= %w(my@email.com another@email.com)
+      config[:sender_email] 		= %("Application Error" <app.error@myapp.com>) # defaults to exception.notifier@default.com
 	end
 
 
