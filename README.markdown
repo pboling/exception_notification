@@ -33,18 +33,20 @@ And that's it! The defaults take care of the rest.
 
 You can tweak other values to your liking, as well. In your environment file,
 just set any or all of the following values:
-  
-* add optional web hooks (based off Merb Exceptions)
-* This will POST exception data to the specified services
-* What can you do with that? For example, send exceptions to Switchub.com, from where you can
-* notify your Twitter account, send emails from there, etc.
-  
+
+
+add optional web hooks (based off Merb Exceptions)
+This will POST exception data to the specified services
+What can you do with that? For example, send exceptions to Switchub.com, from where you can notify your Twitter account, send emails from there, etc.
+
+<pre><code>
     ExceptionNotifier.config_web_hooks do |config|
       config[:web_hooks] 			= %w(http://hooks.some-service.com http://another.service.com)
       config[:app_name] 			= "[APP]" # defaults to [ERROR]
       config[:email_recipients] 	= %w(my@email.com another@email.com)
       config[:sender_email] 		= %("Application Error" <app.error@myapp.com>) # defaults to exception.notifier@default.com
 	end
+</code></pre>
 
 
 Email notifications will only occur when the IP address is determined not to
