@@ -16,10 +16,10 @@ environment, and also gives a backtrace of the exception.
 First, include the ExceptionNotifiable mixin in whichever controller you want
 to generate error emails (typically ApplicationController):
 
-  class ApplicationController < ActionController::Base
-    include ExceptionNotifiable
-    ...
-  end
+    class ApplicationController < ActionController::Base
+      include ExceptionNotifiable
+      ...
+    end
 
 Then, specify the email recipients in your environment:
 
@@ -33,7 +33,6 @@ And that's it! The defaults take care of the rest.
 
 You can tweak other values to your liking, as well. In your environment file,
 just set any or all of the following values:
-
 
 add optional web hooks (based off Merb Exceptions)
 This will POST exception data to the specified services
