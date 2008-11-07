@@ -92,20 +92,33 @@ module ExceptionNotifiable
       !self.class.local_addresses.detect { |addr| addr.include?(remote) }.nil?
     end
 
-    def render_error(status_cd, request, exception, file_path = nil)
+    def render_error_template(status_cd, request, exception, file_path = nil)
+      puts "render_error_template #{self.class.exception_notifier_verbose}"
       status = self.class.http_error_codes[status_cd] ? status_cd + " " + self.class.http_error_codes[status_cd] : status_cd
-      #send the email before rendering to avert possible errors on render preventing the email from being sent.
-      send_exception_email(exception) if ExceptionNotifier.should_send_email?(status_cd, exception)
 
+      file = file_path ? ExceptionNotifier.get_view_path(file_path) : ExceptionNotifier.get_view_path(status_cd)
+      send_email = ExceptionNotifier.should_send_email?(status_cd, exception)
       if self.class.exception_notifier_verbose
-        #puts "[FILE PATH] #{file_path}" if !file_path.nil?
+        puts "[EXCEPTION] #{exception}"
+        puts "[EXCEPTION CLASS] #{exception.class}"
+        puts "[EXCEPTION STATUS_CD] #{status_cd}"
+        puts "[ERROR LAYOUT] #{self.class.error_layout}"
+        puts "[ERROR VIEW PATH] #{ExceptionNotifier.view_path}" if !ExceptionNotifier.nil?
+        puts "[ERROR RENDER] #{file}"
+        puts "[ERROR EMAIL] #{send_email ? "YES" : "NO"}"
         logger.error("render_error(#{status_cd}, #{self.class.http_error_codes[status_cd]}) invoked for request_uri=#{request.request_uri} and env=#{request.env.inspect}")
       end
+      
+      #send the email before rendering to avert possible errors on render preventing the email from being sent.
+      send_exception_email(exception) if send_email
+      
       respond_to do |type|
-        type.html { render :file => file_path ? ExceptionNotifier.get_view_path(file_path) : ExceptionNotifier.get_view_path(status_cd), 
+        type.html { puts "WHAT THE CRAP";
+                    render :file => file,
                             :layout => self.class.error_layout, 
                             :status => status }
-        type.all  { render :nothing => true, 
+        type.all  { puts "WHAT THE POOP";
+                    render :nothing => true, 
                             :status => status}
       end
     end
@@ -118,32 +131,23 @@ module ExceptionNotifiable
           when Symbol then send(deliverer)
           when Proc then deliverer.call(self)
         end
-
         the_blamed = lay_blame(exception)
 
         ExceptionNotifier.deliver_exception_notification(exception, self,
           request, data, the_blamed)
+        puts "EMAIL SENT"
       end
     end
 
     def rescue_action_in_public(exception)
-      if self.class.exception_notifier_verbose
-        puts self.class.rails_error_classes.inspect
-        puts self.class.http_error_codes.inspect
-        puts "[EXCEPTION] #{exception}"
-        puts "[EXCEPTION CLASS] #{exception.class}"
-        puts "[EXCEPTION STATUS_CD] #{self.class.rails_error_classes[exception.class]}" unless self.class.rails_error_classes[exception.class].nil?
-      end
-      
+      status_code = self.class.rails_error_classes[exception.class].nil? ? '500' : self.class.rails_error_classes[exception.class].blank? ? '200' : self.class.rails_error_classes[exception.class]
       # If the error class is NOT listed in the rails_errror_class hash then we get a generic 500 error:
-      if self.class.rails_error_classes[exception.class].nil?
-        render_error("500", request, exception)
       # OTW if the error class is listed, but has a blank code or the code is == '200' then we get a custom error layout rendered
-      elsif self.class.rails_error_classes[exception.class].blank? || self.class.rails_error_classes[exception.class] == '200'
-        render_error("200", request, exception, exception.to_s.delete(':').gsub( /([A-Za-z])([A-Z])/, '\1' << '_' << '\2' ).downcase)
       # OTW the error class is listed!
+      if status_code == '200'
+        render_error_template(status_code, request, exception, exception.to_s.delete(':').gsub( /([A-Za-z])([A-Z])/, '\1' << '_' << '\2' ).downcase)
       else
-        render_error(self.class.rails_error_classes[exception.class], request, exception)
+        render_error_template(status_code, request, exception)
       end
     end
     

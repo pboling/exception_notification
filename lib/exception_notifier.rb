@@ -27,7 +27,7 @@ class ExceptionNotifier < ActionMailer::Base
   @@send_email_error_classes = %W( )
   cattr_accessor :send_email_error_classes
 
-  @@git_repo_path = '.'
+  @@git_repo_path = nil
   cattr_accessor :git_repo_path
 
   self.template_root = "#{File.dirname(__FILE__)}/../views"
@@ -75,13 +75,12 @@ class ExceptionNotifier < ActionMailer::Base
       })
     end
 
-    content_type "text/plain"
-
-    recipients exception_recipients
-    from       sender_address
-
-    subject    "#{email_prefix}#{data[:location]} (#{exception.class}) #{exception.message.inspect}"
-    body       data
+    @content_type = "text/plain"
+    @recipients   = exception_recipients
+    @from         = sender_address
+    @subject      = "#{email_prefix}#{data[:location]} (#{exception.class}) #{exception.message.inspect}"
+    @body         = data
+    puts "EMAIL CREATED"
   end
 
   private
