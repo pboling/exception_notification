@@ -1,11 +1,8 @@
 require 'ipaddr'
 
 module ExceptionNotifiable
-<<<<<<< HEAD:lib/exception_notifiable.rb
  include ExceptionHandler
 
-=======
->>>>>>> ab01831a296cae5a7c270c215de8ebfa20d4d7bf:lib/exception_notifiable.rb
   # exceptions of these types will not generate notification emails
   SILENT_EXCEPTIONS = [
     ActiveRecord::RecordNotFound,
@@ -15,7 +12,6 @@ module ExceptionNotifiable
     ActionController::MethodNotAllowed
   ]
 
-<<<<<<< HEAD:lib/exception_notifiable.rb
   HTTP_ERROR_CODES = { 
     "400" => "Bad Request",
     "403" => "Forbidden",
@@ -38,21 +34,10 @@ module ExceptionNotifiable
     classes.merge!({ ActionController::MethodNotAllowed => "405" }) if ActionController.const_defined?(:MethodNotAllowed)
     classes.merge!({ ActionController::UnknownAction => "501" }) if ActionController.const_defined?(:UnknownAction)
     classes.merge!({ ActionController::RoutingError => "404" }) if ActionController.const_defined?(:RoutingError)
-=======
-  def self.included(base)
-    base.extend ClassMethods
-
-    base.cattr_accessor :silent_exceptions
-    base.silent_exceptions = SILENT_EXCEPTIONS
-
-    base.class_eval do
-      alias_method_chain :rescue_action_in_public, :notification
-    end
->>>>>>> ab01831a296cae5a7c270c215de8ebfa20d4d7bf:lib/exception_notifiable.rb
   end
   
   def self.included(base)
-    base.extend(ClassMethods)
+    base.extend ClassMethods
 
     # Adds the following class attributes to the classes that include ExceptionNotifiable
     #  HTTP status codes and what their 'English' status message is
@@ -66,6 +51,7 @@ module ExceptionNotifiable
     base.cattr_accessor :http_error_codes
     base.http_error_codes = HTTP_ERROR_CODES
     base.cattr_accessor :error_layout
+    base.error_layout = nil
     base.cattr_accessor :rails_error_classes
     base.rails_error_classes = self.codes_for_rails_error_classes
     base.cattr_accessor :exception_notifier_verbose
@@ -88,15 +74,8 @@ module ExceptionNotifiable
     end
 
     # set the exception_data deliverer OR retrieve the exception_data
-<<<<<<< HEAD:lib/exception_notifiable.rb
-    def exception_data(deliverer=self)
-      if deliverer == self
-        read_inheritable_attribute(:exception_data)
-      else
-=======
     def exception_data(deliverer = nil)
       if deliverer
->>>>>>> ab01831a296cae5a7c270c215de8ebfa20d4d7bf:lib/exception_notifiable.rb
         write_inheritable_attribute(:exception_data, deliverer)
       else
         read_inheritable_attribute(:exception_data)
@@ -107,19 +86,17 @@ module ExceptionNotifiable
   private
 
     # overrides Rails' local_request? method to also check any ip
-<<<<<<< HEAD:lib/exception_notifiable.rb
-    # addresses specified through consider_local
-=======
     # addresses specified through consider_local.
->>>>>>> ab01831a296cae5a7c270c215de8ebfa20d4d7bf:lib/exception_notifiable.rb
     def local_request?
       remote = IPAddr.new(request.remote_ip)
       !self.class.local_addresses.detect { |addr| addr.include?(remote) }.nil?
     end
 
-<<<<<<< HEAD:lib/exception_notifiable.rb
     def render_error(status_cd, request, exception, file_path = nil)
       status = self.class.http_error_codes[status_cd] ? status_cd + " " + self.class.http_error_codes[status_cd] : status_cd
+      #send the email before rendering to avert possible errors on render preventing the email from being sent.
+      send_exception_email(exception) if ExceptionNotifier.should_send_email?(status_cd, exception)
+
       if self.class.exception_notifier_verbose
         #puts "[FILE PATH] #{file_path}" if !file_path.nil?
         logger.error("render_error(#{status_cd}, #{self.class.http_error_codes[status_cd]}) invoked for request_uri=#{request.request_uri} and env=#{request.env.inspect}")
@@ -131,17 +108,22 @@ module ExceptionNotifiable
         type.all  { render :nothing => true, 
                             :status => status}
       end
-      send_exception_email(exception) if ExceptionNotifier.should_send_email?(status_cd, exception)
     end
 
     def send_exception_email(exception)
-      deliverer = self.class.exception_data
-      data = case deliverer
-        when nil then {}
-        when Symbol then send(deliverer)
-        when Proc then deliverer.call(self)
+      unless self.class.silent_exceptions.any? {|klass| klass === exception}
+        deliverer = self.class.exception_data
+        data = case deliverer
+          when nil then {}
+          when Symbol then send(deliverer)
+          when Proc then deliverer.call(self)
+        end
+
+        the_blamed = lay_blame(exception)
+
+        ExceptionNotifier.deliver_exception_notification(exception, self,
+          request, data, the_blamed)
       end
-      ExceptionNotifier.deliver_exception_notification(exception, self, request, data)
     end
 
     def rescue_action_in_public(exception)
@@ -162,7 +144,9 @@ module ExceptionNotifiable
       # OTW the error class is listed!
       else
         render_error(self.class.rails_error_classes[exception.class], request, exception)
-=======
+      end
+    end
+    
     def lay_blame(exception)
       error = {}
       unless(ExceptionNotifier.git_repo_path.nil?)
@@ -207,22 +191,4 @@ module ExceptionNotifiable
       end
     end
 
-    def rescue_action_in_public_with_notification(exception)
-      unless self.class.silent_exceptions.any? {|klass| klass === exception}
-        deliverer = self.class.exception_data
-        data = case deliverer
-          when nil then {}
-          when Symbol then send(deliverer)
-          when Proc then deliverer.call(self)
-        end
-
-        the_blamed = lay_blame(exception)
-
-        ExceptionNotifier.deliver_exception_notification(exception, self,
-          request, data, the_blamed)
->>>>>>> ab01831a296cae5a7c270c215de8ebfa20d4d7bf:lib/exception_notifiable.rb
-      end
-
-      rescue_action_in_public_without_notification(exception)
-    end
 end
