@@ -1,7 +1,7 @@
 require 'pathname'
 
 class ExceptionNotifier < ActionMailer::Base
-  @@sender_address = %("#{RAILS_ENV.capitalize} Error" <errors@default.com>)
+  @@sender_address = %("#{RAILS_ENV.capitalize} Error" <errors@example.com>)
   cattr_accessor :sender_address
 
   @@exception_recipients = []
