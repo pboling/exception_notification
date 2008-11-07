@@ -93,7 +93,6 @@ module ExceptionNotifiable
     end
 
     def render_error_template(status_cd, request, exception, file_path = nil)
-      puts "render_error_template #{self.class.exception_notifier_verbose}"
       status = self.class.http_error_codes[status_cd] ? status_cd + " " + self.class.http_error_codes[status_cd] : status_cd
 
       file = file_path ? ExceptionNotifier.get_view_path(file_path) : ExceptionNotifier.get_view_path(status_cd)
@@ -113,12 +112,10 @@ module ExceptionNotifiable
       send_exception_email(exception) if send_email
       
       respond_to do |type|
-        type.html { puts "WHAT THE CRAP";
-                    render :file => file,
+        type.html { render :file => file,
                             :layout => self.class.error_layout, 
                             :status => status }
-        type.all  { puts "WHAT THE POOP";
-                    render :nothing => true, 
+        type.all  { render :nothing => true, 
                             :status => status}
       end
     end
