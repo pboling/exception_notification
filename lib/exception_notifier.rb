@@ -13,6 +13,7 @@ class ExceptionNotifier < ActionMailer::Base
   @@sections = %w(request session environment backtrace)
   cattr_accessor :sections
 
+<<<<<<< HEAD:lib/exception_notifier.rb
   @@render_only = false
   cattr_accessor :render_only
 
@@ -26,11 +27,16 @@ class ExceptionNotifier < ActionMailer::Base
   #Emailed Error Notification will be sent if the error class matches one of the following error error classes
   @@send_email_error_classes = %W( )
   cattr_accessor :send_email_error_classes
+=======
+  @@git_repo_path = '.'
+  cattr_accessor :git_repo_path
+>>>>>>> ab01831a296cae5a7c270c215de8ebfa20d4d7bf:lib/exception_notifier.rb
 
   self.template_root = "#{File.dirname(__FILE__)}/../views"
 
   def self.reloadable?() false end
 
+<<<<<<< HEAD:lib/exception_notifier.rb
   def self.get_view_path(status_cd)
     if File.exist?("#{RAILS_ROOT}/public/#{status_cd}.html")
       "#{RAILS_ROOT}/public/#{status_cd}.html"
@@ -55,6 +61,16 @@ class ExceptionNotifier < ActionMailer::Base
       :data => data
     })
 
+=======
+  def exception_notification(exception, controller = nil, request = nil, data={}, the_blamed=nil)
+    data = data.merge({
+      :exception => exception,
+      :backtrace => sanitize_backtrace(exception.backtrace),
+      :rails_root => rails_root,
+      :data => data
+    })
+
+>>>>>>> ab01831a296cae5a7c270c215de8ebfa20d4d7bf:lib/exception_notifier.rb
     if controller and request
       data.merge!({
         :location => "#{controller.controller_name}##{controller.action_name}",
@@ -77,7 +93,15 @@ class ExceptionNotifier < ActionMailer::Base
     from       sender_address
 
     subject    "#{email_prefix}#{data[:location]} (#{exception.class}) #{exception.message.inspect}"
+<<<<<<< HEAD:lib/exception_notifier.rb
     body       data
+=======
+    body       data.merge({ :controller => controller, :request => request,
+                  :exception => exception, :host => (request.env["HTTP_X_FORWARDED_HOST"] || request.env["HTTP_HOST"]),
+                  :backtrace => sanitize_backtrace(exception.backtrace),
+                  :rails_root => rails_root, :data => data,
+                  :sections => sections, :the_blamed => the_blamed })
+>>>>>>> ab01831a296cae5a7c270c215de8ebfa20d4d7bf:lib/exception_notifier.rb
   end
 
   private
