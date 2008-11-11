@@ -80,7 +80,6 @@ class ExceptionNotifier < ActionMailer::Base
     @from         = sender_address
     @subject      = "#{email_prefix}#{data[:location]} (#{exception.class}) #{exception.message.inspect}"
     @body         = data
-    puts "EMAIL CREATED"
   end
 
   private

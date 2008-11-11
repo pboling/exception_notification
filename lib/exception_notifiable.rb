@@ -132,7 +132,6 @@ module ExceptionNotifiable
 
         ExceptionNotifier.deliver_exception_notification(exception, self,
           request, data, the_blamed)
-        puts "EMAIL SENT"
       end
     end
 
