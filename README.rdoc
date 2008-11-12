@@ -16,8 +16,7 @@ allowing programmers to specify (all on a per environment basis!):
 * the HTTP status and status code that gets rendered with specific errors
 * the view path to the error page templates
 * custom errors, with custom error templates
-* define error layouts at application or controller level, or use the 
-    controller's own default layout, or no layout at all
+* define error layouts at application or controller level, or use the controller's own default layout, or no layout at all
 
 The email includes information about the current request, session, and
 environment, and also gives a backtrace of the exception.
@@ -25,7 +24,8 @@ environment, and also gives a backtrace of the exception.
 This plugin was originally called Super Exception Notifier and was based on 
 svn v8821 of the wonderful exception_notification plugin, and remains for 
 the most part a drop in replacement with greatly extended functionality and 
-customization options.  The original is here: 
+customization options.  The original is here:
+ 
   http://github.com/rails/exception_notification/tree/master
 
 The current version of this plugin is a git fork of the original and 
@@ -110,8 +110,7 @@ NOT be considered local), you can simply do, somewhere in your controller:
   local_addresses.clear
 
 SuperExceptionNotifier allows you to specify the layout for errors ocurring in a site-wide, or just in a particular controller, or to use the same layout as the controller, or to not use a loyout at all:
-By default it will render the error with the latout the controller is using. You just need to set:
-	in application.rb (or per-controller):
+By default it will render the error with the latout the controller is using. You just need to set in application.rb (or per-controller):
 	
 	self.error_layout = 'my_error_layout' #or = true for the same layout as the controller, or = false for no layout
 
