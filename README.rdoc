@@ -11,6 +11,7 @@ allowing programmers to specify (all on a per environment basis!):
 * the text used to prefix the subject line
 * the HTTP status codes to send emails for
 * the error classes to send emails for
+* alternatively, the error classes to not send emails for
 * whether to send error emails or just render without sending anything
 * the HTTP status and status code that gets rendered with specific errors
 * the view path to the error page templates
@@ -27,9 +28,11 @@ the most part a drop in replacement with greatly extended functionality and
 customization options.  The original is here: 
   http://github.com/rails/exception_notification/tree/master
 
-The current version of this plugin is now a git fork of the original and 
+The current version of this plugin is a git fork of the original and 
 has been updated to include the latest improvements from the original, 
-including compatability with Rails 2.1
+including compatability with Rails 2.1, as well as many improvements from 
+the other forks on github.  I merge them in when I have time, and when the 
+changes fit nicely with the enhancements I have already made.
 
 This fork of Exception Notifier is in production use on at least four large 
 websites that I know of totaling hundreds of thousands of users and hits. 
@@ -41,12 +44,16 @@ license.
 == Installation
 
 Using Git:
-./script/plugin install http://github.com/pboling/exception_notification.git
+
+  ./script/plugin install http://github.com/pboling/exception_notification.git
 
 SVN (deprecated, install Git!):
 
-svn checkout http://super-exception-notifier.googlecode.com/svn/trunk/super_exception_notifier/
-./script/plugin install http://super-exception-notifier.googlecode.com/svn/trunk/super_exception_notifier
+  svn checkout http://super-exception-notifier.googlecode.com/svn/trunk/super_exception_notifier/
+  
+or
+  
+  ./script/plugin install http://super-exception-notifier.googlecode.com/svn/trunk/super_exception_notifier
 
 == Usage
 
@@ -112,7 +119,7 @@ SuperExceptionNotifier allows customization of the error classes that will be ha
 Example in application.rb or on a per-controller basis:
 
   self.http_error_codes = { "200" => "OK"
-					"400" => "Bad Request",
+          "400" => "Bad Request",
           "403" => "Forbidden",
           "404" => "Not Found",
           "405" => "Method Not Allowed",
@@ -297,15 +304,10 @@ For reference these are the error codes that Exception Notifier can inherently h
 
 400 Bad Request    * The request could not be understood by the server due to malformed syntax.     * The client SHOULD NOT repeat the request without modifications.403 Forbidden    * The server understood the request, but is refusing to fulfill it404 Not Found    * The server has not found anything matching the Request-URI405 Method Not Allowed    * The method specified in the Request-Line is not allowed for the resource identified by the Request-URI    * This is not implemented entirely as the response is supposed to contain a list of accepted methods.410 Gone    * The requested resource is no longer available at the server and no forwarding address is known. This condition is expected to be considered permanent500 Internal Server Error    * The server encountered an unexpected condition which prevented it from fulfilling the request.501 Not Implemented    * The server does not support the functionality required to fulfill the request.503 Service Unavailable    * The server is currently unable to handle the request due to a temporary overloading or maintenance of the server.
 
-<<<<<<< HEAD:README
-Copyright �2008 Peter H. Boling, released under the MIT license
+Copyright (c) 2008 Peter H. Boling, released under the MIT license
 Portions Copyright (c) 2005 Jamis Buck, released under the MIT license
-=======
-Copyright (c) 2005 Jamis Buck, released under the MIT license
-
 
 == jamescook changes
 
 Hooks into `git blame` output so you can get an idea of who (may) have introduced the bug :)
 -- Usage: set ExceptionNotifier.git_repo_path to the path of your git repo.
->>>>>>> ab01831a296cae5a7c270c215de8ebfa20d4d7bf:README.rdoc
