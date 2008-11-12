@@ -212,17 +212,13 @@ You can render CUSTOM error pages! Here's how:
 
   self.http_error_codes = { "200" => "OK" }
 
-2. Setup your custom error class: e.g.
+2. Setup your custom error class, e.g. in config/environment.rb:
 
-    in config/environment.rb:
+  class InsufficientFundsForWithdrawal < StandardError; end
 
-      class InsufficientFundsForWithdrawal < StandardError; end
+3. Setup SuperExceptionNotifier to handle the error, in app/controllers/application.rb:
 
-3. Setup SuperExceptionNotifier to handle the error:
-
-    in app/controllers/application.rb:
-
-      self.rails_error_classes = { InsufficientFundsForWithdrawal => "200" }
+  self.rails_error_classes = { InsufficientFundsForWithdrawal => "200" }
 
 4. Set your custom error's view path:
 
@@ -232,15 +228,13 @@ You can render CUSTOM error pages! Here's how:
 
   touch app/views/error/insufficient_funds_for_withdrawal.html
 
-6. If you want a custom layout (by default it will render the error with the latout the controller is using) you just need to set:
-
-	in application.rb (or per-controller):
+6. If you want a custom layout (by default it will render the error with the latout the controller is using) you just need to set, in application.rb (or per-controller):
 	
-	self.error_layout = 'my_error_layout' #or = true for the same layout as the controller, or = false for no layout
+  self.error_layout = 'my_error_layout' #or = true for the same layout as the controller, or = false for no layout
 
 7. That's it! All errors that are set to be handled with a status of "200" will render a custom page.
 
-8. If you want to have errors that render custom pages also send emails then you'll need to
+8. If you want to have errors that render custom pages also send emails then you'll need to:
 
   ExceptionNotifier.send_email_error_classes = [ InsufficientFundsForWithdrawal ]
 
