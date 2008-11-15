@@ -46,7 +46,7 @@ license.
 
 Using Git:
 
-  ./script/plugin install http://github.com/pboling/exception_notification.git
+  ./script/plugin install git://github.com/pboling/exception_notification.git
 
 SVN (deprecated, no longer updated, install Git!):
 
