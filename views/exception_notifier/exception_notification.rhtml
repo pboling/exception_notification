@@ -1,4 +1,4 @@
-A <%= @exception.class %> occurred <%= "in #{@controller.controller_name}##{@controller.action_name}" if @controller %>:
+A <%= @exception.class %> occurred<%= " in #{@controller.controller_name}##{@controller.action_name}" if @controller %>:
 
   <%= @exception.message %>
   <%= @backtrace.first %>
