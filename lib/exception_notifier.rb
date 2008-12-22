@@ -39,14 +39,18 @@ class ExceptionNotifier < ActionMailer::Base
 
   def exception_notification(exception, controller = nil, request = nil, data={})
     content_type "text/plain"
-
-    subject    "#{email_prefix}#{controller.controller_name}##{controller.action_name} (#{exception.class}) #{exception.message.inspect}"
+  
+    if controller
+      subject    "#{email_prefix}#{controller.controller_name}##{controller.action_name} (#{exception.class}) #{exception.message.inspect}"
+    else
+      subject    "#{email_prefix} (#{exception.class}) #{exception.message.inspect}"
+    end
 
     recipients exception_recipients
     from       sender_address
 
     body       data.merge({ :controller => controller, :request => request,
-                  :exception => exception, :host => (request.env["HTTP_X_FORWARDED_HOST"] || request.env["HTTP_HOST"]),
+                  :exception => exception, :host => request ? (request.env["HTTP_X_FORWARDED_HOST"] || request.env["HTTP_HOST"]) : '',
                   :backtrace => sanitize_backtrace(exception.backtrace),
                   :rails_root => rails_root, :data => data,
                   :sections => sections })
