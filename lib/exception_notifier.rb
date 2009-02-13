@@ -1,25 +1,5 @@
 require 'pathname'
 
-# Copyright (c) 2005 Jamis Buck
-#
-# Permission is hereby granted, free of charge, to any person obtaining
-# a copy of this software and associated documentation files (the
-# "Software"), to deal in the Software without restriction, including
-# without limitation the rights to use, copy, modify, merge, publish,
-# distribute, sublicense, and/or sell copies of the Software, and to
-# permit persons to whom the Software is furnished to do so, subject to
-# the following conditions:
-#
-# The above copyright notice and this permission notice shall be
-# included in all copies or substantial portions of the Software.
-#
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-# EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-# MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-# NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
-# LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
-# OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-# WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 class ExceptionNotifier < ActionMailer::Base
   @@sender_address = %("Exception Notifier" <exception.notifier@default.com>)
   cattr_accessor :sender_address
@@ -37,19 +17,37 @@ class ExceptionNotifier < ActionMailer::Base
 
   def self.reloadable?() false end
 
-  def exception_notification(exception, controller, request, data={})
-    content_type "text/plain"
+  def exception_notification(exception, controller = nil, request = nil, data={})
+    data = data.merge({
+      :exception => exception,
+      :backtrace => sanitize_backtrace(exception.backtrace),
+      :rails_root => rails_root,
+      :data => data
+    })
 
-    subject    "#{email_prefix}#{controller.controller_name}##{controller.action_name} (#{exception.class}) #{exception.message.inspect}"
+    if controller and request
+      data.merge!({
+        :location => "#{controller.controller_name}##{controller.action_name}",
+        :controller => controller,
+        :request => request,
+        :host => (request.env["HTTP_X_FORWARDED_HOST"] || request.env["HTTP_HOST"]),
+        :sections => sections
+      })
+    else
+      # TODO: with refactoring, the environment section could show useful ENV data even without a request
+      data.merge!({
+        :location => sanitize_backtrace([exception.backtrace.first]).first,
+        :sections => sections - %w(request session environment)
+      })
+    end
+
+    content_type "text/plain"
 
     recipients exception_recipients
     from       sender_address
 
-    body       data.merge({ :controller => controller, :request => request,
-                  :exception => exception, :host => (request.env["HTTP_X_FORWARDED_HOST"] || request.env["HTTP_HOST"]),
-                  :backtrace => sanitize_backtrace(exception.backtrace),
-                  :rails_root => rails_root, :data => data,
-                  :sections => sections })
+    subject    "#{email_prefix}#{data[:location]} (#{exception.class}) #{exception.message.inspect}"
+    body       data
   end
 
   private
