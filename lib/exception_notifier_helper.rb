@@ -1,9 +1,9 @@
 require 'pp'
 
 module ExceptionNotifierHelper
-  VIEW_PATH = "views/exception_notifier"
-  APP_PATH = "#{RAILS_ROOT}/app/#{VIEW_PATH}"
-  PARAM_FILTER_REPLACEMENT = "[FILTERED]"
+  VIEW_PATH = "views/exception_notifier" unless defined?(VIEW_PATH)
+  APP_PATH = "#{RAILS_ROOT}/app/#{VIEW_PATH}" unless defined?(APP_PATH)
+  PARAM_FILTER_REPLACEMENT = "[FILTERED]" unless defined?(PARAM_FILTER_REPLACEMENT)
 
   def render_section(section)
     RAILS_DEFAULT_LOGGER.info("rendering section #{section.inspect}")
