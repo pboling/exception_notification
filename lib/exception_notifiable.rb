@@ -52,6 +52,7 @@ module ExceptionNotifiable
                     ActionController::UnknownController,
                     ActionController::UnknownAction]
       exceptions << ActionController::RoutingError if ActionController.const_defined?(:RoutingError)
+      exceptions << ActionController::InvalidAuthenticityToken if ActionController.const_defined?(:InvalidAuthenticityToken)
       exceptions
     end
   end
