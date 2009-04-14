@@ -51,6 +51,7 @@ module ExceptionNotifiable
       exceptions = [ActionController::UnknownController,
                     ActionController::UnknownAction]
       exceptions << ActiveRecord::RecordNotFound if defined?(ActiveRecord)
+      exceptions << ActiveResource::ResourceNotFound if defined?(ActiveResource)
       exceptions << ActionController::RoutingError if ActionController.const_defined?(:RoutingError)
       exceptions
     end
