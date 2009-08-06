@@ -64,7 +64,7 @@ class ExceptionNotifier < ActionMailer::Base
         :location => "#{controller.controller_name}##{controller.action_name}",
         :controller => controller,
         :request => request,
-        :host => (request.env["HTTP_X_FORWARDED_HOST"] || request.env["HTTP_HOST"]),
+        :host => (request.env['HTTP_X_REAL_IP'] || request.env["HTTP_X_FORWARDED_HOST"] || request.env["HTTP_HOST"]),
         :sections => sections
       })
     else
