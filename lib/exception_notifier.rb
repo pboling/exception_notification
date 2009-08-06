@@ -7,7 +7,7 @@ class ExceptionNotifier < ActionMailer::Base
   @@exception_recipients = []
   cattr_accessor :exception_recipients
 
-  @@email_prefix = "[#{RAILS_ENV.capitalize} ERROR] "
+  @@email_prefix = "[#{(defined?(Rails) ? Rails.env : RAILS_ENV).capitalize} ERROR] "
   cattr_accessor :email_prefix
 
   @@sections = %w(request session environment backtrace)
@@ -51,50 +51,47 @@ class ExceptionNotifier < ActionMailer::Base
   end
 
   def exception_notification(exception, controller = nil, request = nil, data={}, the_blamed=nil)
-    data = data.merge({
-      :exception => exception,
-      :backtrace => sanitize_backtrace(exception.backtrace),
-      :rails_root => rails_root,
-      :data => data,
-      :the_blamed => the_blamed
-    })
-
-    if controller and request
-      data.merge!({
-        :location => "#{controller.controller_name}##{controller.action_name}",
-        :controller => controller,
-        :request => request,
-        :host => (request.env['HTTP_X_REAL_IP'] || request.env["HTTP_X_FORWARDED_HOST"] || request.env["HTTP_HOST"]),
-        :sections => sections
-      })
-    else
-      # TODO: with refactoring, the environment section could show useful ENV data even without a request
-      data.merge!({
-        :location => sanitize_backtrace([exception.backtrace.first]).first,
-        :sections => sections - %w(request session environment)
-      })
-    end
-
-    @content_type = "text/plain"
-    @recipients   = exception_recipients
-    @from         = sender_address
-    @subject      = "#{email_prefix}#{data[:location]} (#{exception.class}) #{exception.message.inspect}"
-    @body         = data
+    data = error_environment_data_hash(exception, controller, request, data, the_blamed)
+    #Prefer to have custom, potentially HTML email templates available
+    #content_type  "text/plain"
+    recipients    exception_recipients
+    from          sender_address
+    subject       "#{email_prefix}#{data[:location]} (#{exception.class}) #{exception.message.inspect}"
+    body          data
   end
   
-  def background_exception_notification(exception, data = {})
-    subject    "#{email_prefix} (#{exception.class}) #{exception.message.inspect}"
-    recipients exception_recipients
-    from       sender_address
-
-    body       data.merge({:exception => exception, 
-                  :backtrace => sanitize_backtrace(exception.backtrace),
-                  :rails_root => rails_root,
-                  :sections => %w(backtrace) })
+  def background_exception_notification(exception, data = {}, the_blamed = nil)
+    exception_notification(exception, nil, nil, data, the_blamed)
   end
-  
 
   private
+
+    def error_environment_data_hash(exception, controller = nil, request = nil, data={}, the_blamed=nil)
+      data.merge!({
+        :exception => exception,
+        :backtrace => sanitize_backtrace(exception.backtrace),
+        :rails_root => rails_root,
+        :data => data,
+        :the_blamed => the_blamed
+      })
+
+      if controller && request
+        data.merge!({
+          :location => "#{controller.controller_name}##{controller.action_name}",
+          :controller => controller,
+          :request => request,
+          :host => (request.env['HTTP_X_REAL_IP'] || request.env["HTTP_X_FORWARDED_HOST"] || request.env["HTTP_HOST"]),
+          :sections => sections
+        })
+      else
+        # TODO: with refactoring, the environment section could show useful ENV data even without a request
+        data.merge!({
+          :location => sanitize_backtrace([exception.backtrace.first]).first,
+          :sections => sections - %w(request session environment)
+        })
+      end
+      return data
+    end
 
     def sanitize_backtrace(trace)
       re = Regexp.new(/^#{Regexp.escape(rails_root)}/)
