@@ -81,6 +81,18 @@ class ExceptionNotifier < ActionMailer::Base
     @subject      = "#{email_prefix}#{data[:location]} (#{exception.class}) #{exception.message.inspect}"
     @body         = data
   end
+  
+  def background_exception_notification(exception, data = {})
+    subject    "#{email_prefix} (#{exception.class}) #{exception.message.inspect}"
+    recipients exception_recipients
+    from       sender_address
+
+    body       data.merge({:exception => exception, 
+                  :backtrace => sanitize_backtrace(exception.backtrace),
+                  :rails_root => rails_root,
+                  :sections => %w(backtrace) })
+  end
+  
 
   private
 
