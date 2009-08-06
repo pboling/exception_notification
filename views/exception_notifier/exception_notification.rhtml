@@ -1,4 +1,7 @@
-A <%= @exception.class %> occurred in <%= @location %>:
+<% unless @request.nil? -%>
+  <%= @request.protocol %><%= @host %><%= @request.request_uri %>
+<% end -%>
+  A <%= @exception.class %> occurred in <%= @location %>:
 
   <%= @exception.message %>
   <%= @backtrace.first %>
