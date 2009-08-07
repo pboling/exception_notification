@@ -277,9 +277,28 @@ in ExceptionNotifiable for an example of how to go about that.
 
 == HTTP Error Codes Used by Exception Notifier by default
 
-  For reference these are the error codes that Exception Notifier can inherently handle.  Official w3.org HTTP 1.1 Error Codes:  http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html
+  For reference these are the error codes that Exception Notifier can inherently handle.
+  Official w3.org HTTP 1.1 Error Codes:
+  http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html
 
-  400 Bad Request    * The request could not be understood by the server due to malformed syntax.     * The client SHOULD NOT repeat the request without modifications.  403 Forbidden    * The server understood the request, but is refusing to fulfill it  404 Not Found    * The server has not found anything matching the Request-URI  405 Method Not Allowed    * The method specified in the Request-Line is not allowed for the resource identified by the Request-URI    * This is not implemented entirely as the response is supposed to contain a list of accepted methods.  410 Gone    * The requested resource is no longer available at the server and no forwarding address is known. This condition is expected to be considered permanent  500 Internal Server Error    * The server encountered an unexpected condition which prevented it from fulfilling the request.  501 Not Implemented    * The server does not support the functionality required to fulfill the request.  503 Service Unavailable    * The server is currently unable to handle the request due to a temporary overloading or maintenance of the server.
+  400 Bad Request
+    * The request could not be understood by the server due to malformed syntax. 
+    * The client SHOULD NOT repeat the request without modifications.
+  403 Forbidden
+    * The server understood the request, but is refusing to fulfill it
+  404 Not Found
+    * The server has not found anything matching the Request-URI
+  405 Method Not Allowed
+    * The method specified in the Request-Line is not allowed for the resource identified by the Request-URI
+    * This is not implemented entirely as the response is supposed to contain a list of accepted methods.
+  410 Gone
+    * The requested resource is no longer available at the server and no forwarding address is known. This condition is expected to be considered permanent
+  500 Internal Server Error
+    * The server encountered an unexpected condition which prevented it from fulfilling the request.
+  501 Not Implemented
+    * The server does not support the functionality required to fulfill the request.
+  503 Service Unavailable
+    * The server is currently unable to handle the request due to a temporary overloading or maintenance of the server.
     
   Copyright (c) 2008 Peter H. Boling, released under the MIT license
   Portions Copyright (c) 2005 Jamis Buck, released under the MIT license

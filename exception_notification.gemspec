@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name = 'exception_notification'
-  s.version = '1.4'
+  s.version = '1.5'
   s.date = '2008-07-28'
    
   s.summary = "Allows unhandled exceptions to be captured and sent via email"
