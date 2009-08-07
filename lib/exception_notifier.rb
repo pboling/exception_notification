@@ -58,7 +58,7 @@ class ExceptionNotifier < ActionMailer::Base
 
     request.session.inspect # Ensure session data is loaded (Rails 2.3 lazy-loading)
     
-    subject       "#{ExceptionNotifier.email_prefix}#{data[:location]} (#{exception.class}) #{exception.message.inspect}"
+    subject       "#{ExceptionNotifier.email_prefix}#{body_hash[:location]} (#{exception.class}) #{exception.message.inspect}"
     body          body_hash
   end
   

@@ -51,9 +51,9 @@ class ExceptionNotifierHelperTest < Test::Unit::TestCase
 
   def test_should_filter_env_values_for_raw_post_data_keys_if_controller_can_filter_parameters
     stub_controller(ControllerWithFilterParameters.new)
-    
-    assert_equal("[FILTERED]", @helper.filter_sensitive_post_data_from_env("RAW_POST_DATA", "secret"))
-    assert_equal(:filtered, @helper.filter_sensitive_post_data_from_env("SOME_OTHER_KEY", "secret"))
+
+    assert_equal(@helper.filter_sensitive_post_data_from_env("RAW_POST_DATA", "secret"), ExceptionNotifierHelper::PARAM_FILTER_REPLACEMENT)
+    assert_equal(@helper.filter_sensitive_post_data_from_env("ANOTHER_KEY", "secret"), :filtered)
   end
   def test_should_exclude_raw_post_parameters_if_controller_can_filter_parameters
     stub_controller(ControllerWithFilterParametersThatDoesntFilter.new)
@@ -61,7 +61,7 @@ class ExceptionNotifierHelperTest < Test::Unit::TestCase
   end
   def test_should_delegate_param_filtering_to_controller_if_controller_can_filter_parameters
     stub_controller(ControllerWithFilterParameters.new)
-    assert_equal({:param => :filtered}, @helper.filter_sensitive_post_data_parameters({:param => :value}))
+    assert_equal Hash[:params, :filtered], @helper.filter_sensitive_post_data_parameters(:params)
   end
 
   private
