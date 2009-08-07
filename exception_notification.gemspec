@@ -11,8 +11,6 @@ Gem::Specification.new do |s|
   s.homepage = 'http://github.com/pboling/exception_notification'
   
   s.has_rdoc = true
-  s.rdoc_options = ["--main", "README"]
-  s.extra_rdoc_files = ["README"]
 
   s.add_dependency 'rails', ['>= 2.1']
   
