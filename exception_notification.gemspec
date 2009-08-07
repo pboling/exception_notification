@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name = 'exception_notification'
-  s.version = '1.5.1'
+  s.version = '1.5.3'
   s.date = '2009-08-07'
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
 
@@ -37,13 +37,13 @@ Gem::Specification.new do |s|
              "lib/exception_notifier_helper.rb",
              "lib/notifiable.rb",
              "rails/init.rb",
-             "views/exception_notifiable/400.html",
-             "views/exception_notifiable/403.html",
-             "views/exception_notifiable/404.html",
-             "views/exception_notifiable/405.html",
-             "views/exception_notifiable/410.html",
-             "views/exception_notifiable/501.html",
-             "views/exception_notifiable/503.html",
+             "rails/app/views/exception_notifiable/400.html",
+             "rails/app/views/exception_notifiable/403.html",
+             "rails/app/views/exception_notifiable/404.html",
+             "rails/app/views/exception_notifiable/405.html",
+             "rails/app/views/exception_notifiable/410.html",
+             "rails/app/views/exception_notifiable/501.html",
+             "rails/app/views/exception_notifiable/503.html",
              "views/exception_notifier/_backtrace.rhtml",
              "views/exception_notifier/_environment.rhtml",
              "views/exception_notifier/_inspect_model.rhtml",

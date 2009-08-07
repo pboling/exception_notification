@@ -42,24 +42,24 @@ class ExceptionNotifier < ActionMailer::Base
       "#{RAILS_ROOT}/public/#{status_cd}.html"
     elsif !view_path.nil? && File.exist?("#{RAILS_ROOT}/#{view_path}/#{status_cd}.html")
       "#{RAILS_ROOT}/#{view_path}/#{status_cd}.html"
-    elsif File.exist?("#{RAILS_ROOT}/vendor/plugins/exception_notification/views/exception_notifiable/#{status_cd}.html")
-      "#{RAILS_ROOT}/vendor/plugins/exception_notification/views/exception_notifiable/#{status_cd}.html"
+    elsif File.exist?("#{File.dirname(__FILE__)}/../rails/app/views/exception_notifiable/#{status_cd}.html")
+      "#{File.dirname(__FILE__)}/../rails/app/views/exception_notifiable/#{status_cd}.html"
     else 
-      "#{RAILS_ROOT}/vendor/plugins/exception_notification/views/exception_notifiable/500.html"
+      "#{File.dirname(__FILE__)}/../rails/app/views/exception_notifiable/500.html"
     end
   end
 
   def exception_notification(exception, controller = nil, request = nil, data={}, the_blamed=nil)
-    data = error_environment_data_hash(exception, controller, request, data, the_blamed)
+    body_hash = error_environment_data_hash(exception, controller, request, data, the_blamed)
     #Prefer to have custom, potentially HTML email templates available
     #content_type  "text/plain"
-    recipients    exception_recipients
-    from          sender_address
+    recipients    ExceptionNotifier.exception_recipients
+    from          ExceptionNotifier.sender_address
 
     request.session.inspect # Ensure session data is loaded (Rails 2.3 lazy-loading)
     
-    subject       "#{email_prefix}#{data[:location]} (#{exception.class}) #{exception.message.inspect}"
-    body          data
+    subject       "#{ExceptionNotifier.email_prefix}#{data[:location]} (#{exception.class}) #{exception.message.inspect}"
+    body          body_hash
   end
   
   def background_exception_notification(exception, data = {}, the_blamed = nil)
