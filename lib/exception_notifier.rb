@@ -1,7 +1,7 @@
 require 'pathname'
 
 class ExceptionNotifier < ActionMailer::Base
-  @@sender_address = %("#{RAILS_ENV.capitalize} Error" <errors@example.com>)
+  @@sender_address = %("#{(defined?(Rails) ? Rails.env : RAILS_ENV).capitalize} Error" <errors@example.com>)
   cattr_accessor :sender_address
 
   @@exception_recipients = []
@@ -15,6 +15,9 @@ class ExceptionNotifier < ActionMailer::Base
 
   @@render_only = false
   cattr_accessor :render_only
+
+  @@skip_local_notification = true
+  cattr_accessor :skip_local_notification
 
   @@view_path = nil
   cattr_accessor :view_path
@@ -44,10 +47,6 @@ class ExceptionNotifier < ActionMailer::Base
     else 
       "#{RAILS_ROOT}/vendor/plugins/exception_notification/views/exception_notifiable/500.html"
     end
-  end
-
-  def self.should_send_email?(status_cd, exception)
-    !self.render_only && (self.send_email_error_codes.include?(status_cd) || self.send_email_error_classes.include?(exception))
   end
 
   def exception_notification(exception, controller = nil, request = nil, data={}, the_blamed=nil)

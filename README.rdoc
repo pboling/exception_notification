@@ -80,10 +80,10 @@ You can tweak other values to your liking, as well. In your environment file,
 just set any or all of the following values:
 
   # defaults to errors@example.com
-  ExceptionNotifier.sender_address = %(MYRAILSAPP #{RAILS_ENV.capitalize} Error <errors@example.com>)
+  ExceptionNotifier.sender_address = %(MYRAILSAPP #{(defined?(Rails) ? Rails.env : RAILS_ENV).capitalize} Error <errors@example.com>)
 
   # defaults to "[ERROR] "
-  ExceptionNotifier.email_prefix = "[APP-#{RAILS_ENV.capitalize} ERROR] "
+  ExceptionNotifier.email_prefix = "[APP-#{(defined?(Rails) ? Rails.env : RAILS_ENV).capitalize} ERROR] "
 
   #defaults to false - meaning by default it sends email.  Setting true will cause it to only render the error pages, and NOT email.
   ExceptionNotifier.render_only = true

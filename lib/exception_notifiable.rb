@@ -140,12 +140,18 @@ module ExceptionNotifiable
     end
 
     def should_notify_on_exception?(status_cd, exception)
+      #First honor the custom settings from environment
+      return false if ExceptionNotifier.render_only
       #don't mail exceptions raised locally
-      return false if (consider_all_requests_local || local_request?)
+      return false if ExceptionNotifier.skip_local_notification && is_local?
       #don't mail exceptions raised that match ExceptionNotifiable.silent_exceptions
       return false if self.class.silent_exceptions.any? {|klass| klass === exception}
-      return false unless ExceptionNotifier.should_send_email?(status_cd, exception)
+      return true if (ExceptionNotifier.send_email_error_codes.include?(status_cd) || ExceptionNotifier.send_email_error_classes.include?(exception))
       return true
+    end
+
+    def is_local?
+      (consider_all_requests_local || local_request?)
     end
 
     def rescue_action_in_public(exception)

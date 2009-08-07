@@ -4,7 +4,7 @@ module ExceptionNotifierHelper
   VIEW_PATH = "views/exception_notifier" unless defined?(VIEW_PATH)
   APP_PATH = "#{RAILS_ROOT}/app/#{VIEW_PATH}" unless defined?(APP_PATH)
   PARAM_FILTER_REPLACEMENT = "[FILTERED]" unless defined?(PARAM_FILTER_REPLACEMENT)
-  COMPAT_MODE = RAILS_GEM_VERSION ? RAILS_GEM_VERSION < '2' : false 
+  COMPAT_MODE = defined?(RAILS_GEM_VERSION) ? RAILS_GEM_VERSION < '2' : false 
 
   def render_section(section)
     RAILS_DEFAULT_LOGGER.info("rendering section #{section.inspect}")
