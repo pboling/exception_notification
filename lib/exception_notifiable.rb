@@ -148,9 +148,9 @@ module ExceptionNotifiable
       #don't mail exceptions raised locally
       return false if ExceptionNotifier.skip_local_notification && is_local?
       #don't mail exceptions raised that match ExceptionNotifiable.silent_exceptions
-      return false if self.class.silent_exceptions.any? {|klass| klass === exception}
+      return false if self.class.silent_exceptions.any? {|klass| klass === exception }
       return true if (ExceptionNotifier.send_email_error_codes.include?(status_cd) || ExceptionNotifier.send_email_error_classes.include?(exception))
-      return true
+      return ExceptionNotifier.send_email_other_errors
     end
 
     def is_local?

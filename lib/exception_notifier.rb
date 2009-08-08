@@ -30,6 +30,9 @@ class ExceptionNotifier < ActionMailer::Base
   @@send_email_error_classes = %W( )
   cattr_accessor :send_email_error_classes
 
+  @@send_email_other_errors = true
+  cattr_accessor :send_email_other_errors
+
   @@git_repo_path = nil
   cattr_accessor :git_repo_path
 
