@@ -29,13 +29,14 @@ module ExceptionNotifiable
     classes = {
       NameError => "503",
       TypeError => "503",
-      ActiveRecord::RecordNotFound => "400" 
+      RuntimeError => "500"
     }
-    classes.merge!({ ActionController::UnknownController => "404" }) if ActionController.const_defined?(:UnknownController)
-    classes.merge!({ ActionController::MissingTemplate => "404" }) if ActionController.const_defined?(:MissingTemplate)
-    classes.merge!({ ActionController::MethodNotAllowed => "405" }) if ActionController.const_defined?(:MethodNotAllowed)
-    classes.merge!({ ActionController::UnknownAction => "501" }) if ActionController.const_defined?(:UnknownAction)
-    classes.merge!({ ActionController::RoutingError => "404" }) if ActionController.const_defined?(:RoutingError)
+    classes.merge!({ ActiveRecord::RecordNotFound => "400" })         if defined?(ActiveRecord)     && ActiveRecord.const_defined?(:RecordNotFound)
+    classes.merge!({ ActionController::UnknownController => "404" })  if defined?(ActionController) && ActionController.const_defined?(:UnknownController)
+    classes.merge!({ ActionController::MissingTemplate => "404" })    if defined?(ActionController) && ActionController.const_defined?(:MissingTemplate)
+    classes.merge!({ ActionController::MethodNotAllowed => "405" })   if defined?(ActionController) && ActionController.const_defined?(:MethodNotAllowed)
+    classes.merge!({ ActionController::UnknownAction => "501" })      if defined?(ActionController) && ActionController.const_defined?(:UnknownAction)
+    classes.merge!({ ActionController::RoutingError => "404" })       if defined?(ActionController) && ActionController.const_defined?(:RoutingError)
   end
   
   def self.included(base)
@@ -58,6 +59,9 @@ module ExceptionNotifiable
     base.exception_notifier_verbose = false
     base.cattr_accessor :silent_exceptions
     base.silent_exceptions = SILENT_EXCEPTIONS
+    base.class_eval do
+      alias_method_chain :rescue_action_in_public, :notification
+    end
   end
   
   module ClassMethods
@@ -94,15 +98,25 @@ module ExceptionNotifiable
       !self.class.local_addresses.detect { |addr| addr.include?(remote) }.nil?
     end
 
+    def rescue_with_handler(exception)
+      to_return = super
+      if to_return
+        send_email = should_notify_on_exception?(exception)
+        verbose_output(exception, "N/A", "rescued by handler", send_email, nil) if self.class.exception_notifier_verbose
+        perform_exception_notify_mailing(exception) if send_email
+      end
+      to_return
+    end
+
     def notify_and_render_error_template(status_cd, request, exception, file_path = nil)
       status = self.class.http_error_codes[status_cd] ? status_cd + " " + self.class.http_error_codes[status_cd] : status_cd
       file = file_path ? ExceptionNotifier.get_view_path(file_path) : ExceptionNotifier.get_view_path(status_cd)
-      send_email = should_notify_on_exception?(status_cd, exception)
+      send_email = should_notify_on_exception?(exception, status_cd)
 
       # Debugging output
       verbose_output(exception, status_cd, file, send_email, request) if self.class.exception_notifier_verbose
       # Send the email before rendering to avert possible errors on render preventing the email from being sent.
-      send_exception_email(exception) if send_email
+      perform_exception_notify_mailing(exception) if send_email
       # Render the error page to the end user
       render_error_template(file, status)
     end
@@ -121,15 +135,15 @@ module ExceptionNotifiable
       puts "[EXCEPTION] #{exception}"
       puts "[EXCEPTION CLASS] #{exception.class}"
       puts "[EXCEPTION STATUS_CD] #{status_cd}"
-      puts "[ERROR LAYOUT] #{self.class.error_layout}"
-      puts "[ERROR VIEW PATH] #{ExceptionNotifier.view_path}" if !ExceptionNotifier.nil?
+      puts "[ERROR LAYOUT] #{self.class.error_layout}" if self.class.error_layout
+      puts "[ERROR VIEW PATH] #{ExceptionNotifier.view_path}" if !ExceptionNotifier.nil? && !ExceptionNotifier.view_path.nil?
       puts "[ERROR RENDER] #{file}"
       puts "[ERROR EMAIL] #{send_email ? "YES" : "NO"}"
       req = request ? " for request_uri=#{request.request_uri} and env=#{request.env.inspect}" : ""
-      logger.error("render_error(#{status_cd}, #{self.class.http_error_codes[status_cd]}) invoked#{req}")
+      logger.error("render_error(#{status_cd}, #{self.class.http_error_codes[status_cd]}) invoked#{req}") if !logger.nil?
     end
 
-    def send_exception_email(exception)
+    def perform_exception_notify_mailing(exception)
       deliverer = self.class.exception_data
       data = case deliverer
         when nil then {}
@@ -142,14 +156,15 @@ module ExceptionNotifiable
         request, data, the_blamed)
     end
 
-    def should_notify_on_exception?(status_cd, exception)
+    def should_notify_on_exception?(exception, status_cd = nil)
       #First honor the custom settings from environment
       return false if ExceptionNotifier.render_only
       #don't mail exceptions raised locally
       return false if ExceptionNotifier.skip_local_notification && is_local?
       #don't mail exceptions raised that match ExceptionNotifiable.silent_exceptions
       return false if self.class.silent_exceptions.any? {|klass| klass === exception }
-      return true if (ExceptionNotifier.send_email_error_codes.include?(status_cd) || ExceptionNotifier.send_email_error_classes.include?(exception))
+      return true if ExceptionNotifier.send_email_error_classes.include?(exception)
+      return true if !status_cd.nil? && ExceptionNotifier.send_email_error_codes.include?(status_cd)
       return ExceptionNotifier.send_email_other_errors
     end
 
@@ -157,7 +172,7 @@ module ExceptionNotifiable
       (consider_all_requests_local || local_request?)
     end
 
-    def rescue_action_in_public(exception)
+    def rescue_action_in_public_with_notification(exception)
       # If the error class is NOT listed in the rails_errror_class hash then we get a generic 500 error:
       # OTW if the error class is listed, but has a blank code or the code is == '200' then we get a custom error layout rendered
       # OTW the error class is listed!

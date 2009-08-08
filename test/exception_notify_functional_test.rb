@@ -13,7 +13,7 @@ class ExceptionNotifyFunctionalTest < ActionController::TestCase
   def setup
     @request    = ActionController::TestRequest.new
     @response   = ActionController::TestResponse.new    
-    ActionController::Base.consider_all_requests_local = false    
+    ActionController::Base.consider_all_requests_local = false
     @@delivered_mail = []
     ActionMailer::Base.class_eval do
       def deliver!(mail = @mail)
@@ -23,7 +23,7 @@ class ExceptionNotifyFunctionalTest < ActionController::TestCase
   end
   
   def test_old_style_where_requests_are_local
-    ActionController::Base.consider_all_requests_local = true    
+    ActionController::Base.consider_all_requests_local = true
     @controller = OldStyle.new
     get "runtime_error"    
     
@@ -31,7 +31,7 @@ class ExceptionNotifyFunctionalTest < ActionController::TestCase
   end
 
   def test_new_style_where_requests_are_local
-    ActionController::Base.consider_all_requests_local = true    
+    ActionController::Base.consider_all_requests_local = true
     @controller = NewStyle.new
     get "runtime_error"    
     

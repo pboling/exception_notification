@@ -5,7 +5,7 @@ module Rails
 end
 
 class Application < ActionController::Base
-  
+
   def runtime_error
     raise "This is a runtime error that we should be emailed about"
   end
@@ -22,7 +22,7 @@ end
 
 class OldStyle < Application
   include ExceptionNotifiable
-    
+  self.exception_notifier_verbose = false
 end
 
 class SpecialErrorThing < RuntimeError
@@ -30,6 +30,7 @@ end
 
 class NewStyle < Application
   include ExceptionNotifiable
+  self.exception_notifier_verbose = false
     
   rescue_from ActiveRecord::RecordNotFound do |exception|
     render :text => "404", :status => 404

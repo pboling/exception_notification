@@ -23,11 +23,7 @@ class ExceptionNotifierHelperTest < Test::Unit::TestCase
 
   def test_should_not_filter_env_values_for_raw_post_data_keys_if_controller_can_not_filter_parameters
     stub_controller(ControllerWithoutFilterParameters.new)
-    assert_equal "secret", @helper.filter_sensitive_post_data_from_env("RAW_POST_DATA", "secret")
-  end
-  def test_should_not_filter_env_values_for_any_keys_if_controller_can_not_filter_parameters
-    stub_controller(ControllerWithoutFilterParameters.new)
-    assert_equal "secret", @helper.filter_sensitive_post_data_from_env("SOME_OTHER_KEY", "secret")
+    assert @helper.filter_sensitive_post_data_from_env("RAW_POST_DATA", "secret").include?("secret")
   end
   def test_should_not_exclude_raw_post_parameters_if_controller_can_not_filter_parameters
     stub_controller(ControllerWithoutFilterParameters.new)
@@ -40,28 +36,29 @@ class ExceptionNotifierHelperTest < Test::Unit::TestCase
 
   # Controller with filter paramaters method, no params to filter
 
-  class ControllerWithFilterParameters
-    def filter_parameters(params)
-      params.keys.each do |k|
-        params[k] = :filtered
-      end
-      params
-    end
+  class ControllerWithFilterParametersThatDoesntFilter
+    def filter_parameters(params); params end
   end
 
   def test_should_filter_env_values_for_raw_post_data_keys_if_controller_can_filter_parameters
-    stub_controller(ControllerWithFilterParameters.new)
-
-    assert_equal(@helper.filter_sensitive_post_data_from_env("RAW_POST_DATA", "secret"), ExceptionNotifierHelper::PARAM_FILTER_REPLACEMENT)
-    assert_equal(@helper.filter_sensitive_post_data_from_env("ANOTHER_KEY", "secret"), :filtered)
+    stub_controller(ControllerWithFilterParametersThatDoesntFilter.new)
+    assert !@helper.filter_sensitive_post_data_from_env("RAW_POST_DATA", "secret").include?("secret")
+    assert @helper.filter_sensitive_post_data_from_env("SOME_OTHER_KEY", "secret").include?("secret")
   end
   def test_should_exclude_raw_post_parameters_if_controller_can_filter_parameters
-    stub_controller(ControllerWithFilterParameters.new)
+    stub_controller(ControllerWithFilterParametersThatDoesntFilter.new)
     assert @helper.exclude_raw_post_parameters?
   end
+
+  # Controller with filter paramaters method, filtering a secret param
+
+  class ControllerWithFilterParametersThatDoesFilter
+    def filter_parameters(params); :filtered end
+  end
+
   def test_should_delegate_param_filtering_to_controller_if_controller_can_filter_parameters
-    stub_controller(ControllerWithFilterParameters.new)
-    assert_equal({:param => :filtered}, @helper.filter_sensitive_post_data_parameters({:param => :value}))
+    stub_controller(ControllerWithFilterParametersThatDoesFilter.new)
+    assert_equal :filtered, @helper.filter_sensitive_post_data_parameters(:secret)
   end
 
   private
