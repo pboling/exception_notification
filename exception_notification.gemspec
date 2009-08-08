@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name = 'exception_notification'
-  s.version = '1.5.4'
+  s.version = '1.5.6'
   s.date = '2009-08-08'
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
 
@@ -17,7 +17,8 @@ Gem::Specification.new do |s|
 * the view path to the error page templates
 * custom errors, with custom error templates
 * define error layouts at application or controller level, or use the controller's own default layout, or no layout at all
-* get error notification for errors that occur in the console, using notifiable method}
+* get error notification for errors that occur in the console, using notifiable method
+* Override the gem's handling and rendering with explicit rescue statements inline.}
   
   s.authors = ['Peter Boling', 'Jacques Crocker', 'Jamis Buck']
   s.email = 'peter.boling@gmail.com'
@@ -31,7 +32,8 @@ Gem::Specification.new do |s|
              "README.rdoc",
              "exception_notification.gemspec",
              "init.rb",
-             "lib/exception_handler.rb",
+             "lib/super_exception_notifier/custom_exception_classes.rb",
+             "lib/super_exception_notifier/custom_exception_methods.rb",
              "lib/exception_notifiable.rb",
              "lib/exception_notifier.rb",
              "lib/exception_notifier_helper.rb",
@@ -50,13 +52,16 @@ Gem::Specification.new do |s|
              "views/exception_notifier/_request.rhtml",
              "views/exception_notifier/_session.rhtml",
              "views/exception_notifier/_title.rhtml",
-             "views/exception_notifier/exception_notification.rhtml",
              "views/exception_notifier/background_exception_notification.rhtml",
+             "views/exception_notifier/exception_notification.rhtml",
              "VERSION.yml"]
   
 
   s.test_files = ["test/exception_notifier_helper_test.rb",
                   "test/exception_notify_functional_test.rb",
-                  "test/test_helper.rb"]
+                  "test/test_helper.rb",
+                  "test/mocks/404.html",
+                  "test/mocks/500.html",
+                  "test/mocks/controllers.rb"]
 
 end

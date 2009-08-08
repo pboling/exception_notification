@@ -1,7 +1,8 @@
 require 'ipaddr'
 
 module ExceptionNotifiable
-  include ExceptionHandler
+  include SuperExceptionNotifier::CustomExceptionClasses
+  include SuperExceptionNotifier::CustomExceptionMethods
 
   unless defined?(SILENT_EXCEPTIONS)
     SILENT_EXCEPTIONS = []
@@ -27,10 +28,22 @@ module ExceptionNotifiable
   
   def self.codes_for_rails_error_classes
     classes = {
+      # These are standard errors in rails / ruby
       NameError => "503",
       TypeError => "503",
-      RuntimeError => "500"
+      RuntimeError => "500",
+      # These are custom error names defined in lib/super_exception_notifier/custom_exception_classes
+      AccessDenied => "403",
+      PageNotFound => "404",
+      InvalidMethod => "405",
+      ResourceGone => "410",
+      CorruptData => "500",
+      NoMethodError => "500",
+      NotImplemented => "501",
+      MethodDisabled => "200"
     }
+    # Highly dependent on the verison of rails, so we're very protective about these'
+    classes.merge!({ ActionView::TemplateError => "500"})             if defined?(ActionView)       && ActionView.const_defined?(:TemplateError)
     classes.merge!({ ActiveRecord::RecordNotFound => "400" })         if defined?(ActiveRecord)     && ActiveRecord.const_defined?(:RecordNotFound)
     classes.merge!({ ActionController::UnknownController => "404" })  if defined?(ActionController) && ActionController.const_defined?(:UnknownController)
     classes.merge!({ ActionController::MissingTemplate => "404" })    if defined?(ActionController) && ActionController.const_defined?(:MissingTemplate)
@@ -59,9 +72,6 @@ module ExceptionNotifiable
     base.exception_notifier_verbose = false
     base.cattr_accessor :silent_exceptions
     base.silent_exceptions = SILENT_EXCEPTIONS
-    base.class_eval do
-      alias_method_chain :rescue_action_in_public, :notification
-    end
   end
   
   module ClassMethods
@@ -172,7 +182,7 @@ module ExceptionNotifiable
       (consider_all_requests_local || local_request?)
     end
 
-    def rescue_action_in_public_with_notification(exception)
+    def rescue_action_in_public(exception)
       # If the error class is NOT listed in the rails_errror_class hash then we get a generic 500 error:
       # OTW if the error class is listed, but has a blank code or the code is == '200' then we get a custom error layout rendered
       # OTW the error class is listed!
