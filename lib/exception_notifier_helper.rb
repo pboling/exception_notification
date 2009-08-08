@@ -16,11 +16,12 @@ module ExceptionNotifierHelper
   end
 
   def render_overridable(partial, options={})
-    render(options.merge(:file => path, :use_full_path => false)) and return if File.exist?(path = "#{APP_PATH}/_#{partial}.html.erb") ||
-      File.exist?(path = "#{File.dirname(__FILE__)}/../#{VIEW_PATH}/_#{partial}.html.erb") ||
-      File.exist?(path = "#{APP_PATH}/_#{partial}.rhtml") ||
-      File.exist?(path = "#{File.dirname(__FILE__)}/../#{VIEW_PATH}/_#{partial}.rhtml")
-    return ""
+    if File.exist?(path = "#{APP_PATH}/_#{partial}.html.erb") ||
+        File.exist?(path = "#{File.dirname(__FILE__)}/../#{VIEW_PATH}/_#{partial}.html.erb") ||
+        File.exist?(path = "#{APP_PATH}/_#{partial}.rhtml") ||
+        File.exist?(path = "#{File.dirname(__FILE__)}/../#{VIEW_PATH}/_#{partial}.rhtml")
+      render(options.merge(:file => path, :use_full_path => false))
+    end
   end
 
   def inspect_model_object(model, locals={})
