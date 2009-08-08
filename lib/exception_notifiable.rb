@@ -3,13 +3,16 @@ require 'ipaddr'
 module ExceptionNotifiable
   include ExceptionHandler
 
-  SILENT_EXCEPTIONS = [
-    ActiveRecord::RecordNotFound,
-    ActionController::UnknownController,
-    ActionController::UnknownAction,
-    ActionController::RoutingError,
-    ActionController::MethodNotAllowed
-  ] unless defined?(SILENT_EXCEPTIONS)
+  unless defined?(SILENT_EXCEPTIONS)
+    SILENT_EXCEPTIONS = []
+    SILENT_EXCEPTIONS << ActiveRecord::RecordNotFound if defined?(ActiveRecord)
+    SILENT_EXCEPTIONS << [
+      ActionController::UnknownController,
+      ActionController::UnknownAction,
+      ActionController::RoutingError,
+      ActionController::MethodNotAllowed
+    ] if defined?(ActionController)
+  end
 
   HTTP_ERROR_CODES = { 
     "400" => "Bad Request",
