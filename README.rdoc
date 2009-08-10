@@ -1,6 +1,6 @@
 = Super Exception Notifier
 
-The Exception Notifier gem provides a mailer object and a default set of
+The Super Exception Notifier gem provides a mailer object and a default set of
 templates for sending email notifications when errors occur in a Rails
 application, as well as a default set of error page templates to render 
 based on the status code assigned to an error. The gem is configurable,
@@ -26,10 +26,11 @@ New features:
 The email includes information about the current request, session, and
 environment, and also gives a backtrace of the exception.
 
-This gem was originally called Super Exception Notifier and was (initially) based on
-svn v8821 of the wonderful exception_notification gem, and remains for
-the most part a drop in replacement with greatly extended functionality and 
-customization options.  Since then it has kept up with the work on the core team's branch.
+This gem, Super Exception Notifier, is based on the wonderful exception_notification plugin
+created by Jamis Buck. I have modified it extensively and merged many of the improvements from
+a dozen or so other forks.  It remains a (mostly) drop in replacement with greatly extended
+functionality and customization options.  I keep it up to date with the work on the core team's
+branch.
 
 The original is here:
  
@@ -112,8 +113,13 @@ NOT be considered local), you can simply do, somewhere in your controller:
 
   local_addresses.clear
 
-SuperExceptionNotifier allows you to specify the layout for errors ocurring in a site-wide, or just in a particular controller, or to use the same layout as the controller, or to not use a loyout at all:
-By default it will render the error with the latout the controller is using. You just need to set in application.rb (or per-controller):
+Super Exception Notifier allows you to specify the layout for errors at several levels:
+  * all errors use same layout site-wide
+  * customize just in a particular controller
+  * can use the same layout as the controller
+  * no layout at all
+
+By default it will render the error with the layout the controller is using. You just need to set in application.rb (or per-controller):
 
   self.error_layout = 'my_error_layout' #or = true for the same layout as the controller, or = false for no layout
 

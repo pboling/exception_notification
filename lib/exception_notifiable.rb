@@ -45,13 +45,15 @@ module ExceptionNotifiable
     # Highly dependent on the verison of rails, so we're very protective about these'
     classes.merge!({ ActionView::TemplateError => "500"})             if defined?(ActionView)       && ActionView.const_defined?(:TemplateError)
     classes.merge!({ ActiveRecord::RecordNotFound => "400" })         if defined?(ActiveRecord)     && ActiveRecord.const_defined?(:RecordNotFound)
+    classes.merge!({ ActiveResource::ResourceNotFound => "404" })     if defined?(ActiveResource)   && ActiveResource.const_defined?(:ResourceNotFound)
+
     if defined?(ActionController)
-      classes.merge!({ ActionController::UnknownController => "404" })  if ActionController.const_defined?(:UnknownController)
-      classes.merge!({ ActionController::MissingTemplate => "404" })    if ActionController.const_defined?(:MissingTemplate)
-      classes.merge!({ ActionController::MethodNotAllowed => "405" })   if ActionController.const_defined?(:MethodNotAllowed)
-      classes.merge!({ ActionController::UnknownAction => "501" })      if ActionController.const_defined?(:UnknownAction)
-      classes.merge!({ ActionController::RoutingError => "404" })       if ActionController.const_defined?(:RoutingError)
-      classes.merge!({ ActionController::InvalidAuthenticityToken => "405" })    if ActionController.const_defined?(:InvalidAuthenticityToken)
+      classes.merge!({ ActionController::UnknownController => "404" })          if ActionController.const_defined?(:UnknownController)
+      classes.merge!({ ActionController::MissingTemplate => "404" })            if ActionController.const_defined?(:MissingTemplate)
+      classes.merge!({ ActionController::MethodNotAllowed => "405" })           if ActionController.const_defined?(:MethodNotAllowed)
+      classes.merge!({ ActionController::UnknownAction => "501" })              if ActionController.const_defined?(:UnknownAction)
+      classes.merge!({ ActionController::RoutingError => "404" })               if ActionController.const_defined?(:RoutingError)
+      classes.merge!({ ActionController::InvalidAuthenticityToken => "405" })   if ActionController.const_defined?(:InvalidAuthenticityToken)
     end
   end
   
