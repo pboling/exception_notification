@@ -21,6 +21,9 @@ module ExceptionNotifiable
     "404" => "Not Found",
     "405" => "Method Not Allowed",
     "410" => "Gone",
+    "418" => "IÕm a teapot",
+    "422" => "Unprocessable Entity",
+    "423" => "Locked",
     "500" => "Internal Server Error",
     "501" => "Not Implemented",
     "503" => "Service Unavailable"
@@ -37,7 +40,7 @@ module ExceptionNotifiable
       PageNotFound => "404",
       InvalidMethod => "405",
       ResourceGone => "410",
-      CorruptData => "500",
+      CorruptData => "422",
       NoMethodError => "500",
       NotImplemented => "501",
       MethodDisabled => "200"

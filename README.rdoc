@@ -313,6 +313,24 @@ in ExceptionNotifiable for an example of how to go about that.
     * The server does not support the functionality required to fulfill the request.
   503 Service Unavailable
     * The server is currently unable to handle the request due to a temporary overloading or maintenance of the server.
+
+== CSS
+
+All the standard error pages that come in the gem render a div with a class of "dialog",
+so put this in a stylesheet you are including in your app to get you started (like stardard rails error style):
+
+<style type="text/css">
+  div.dialog {
+    width: 25em;
+    padding: 0 4em;
+    margin: 4em auto 0 auto;
+    border: 1px solid #ccc;
+    border-right-color: #999;
+    border-bottom-color: #999;
+  }
+  h1 { font-size: 100%; color: #f00; line-height: 1.5em; }
+</style>
+
     
   Copyright (c) 2008 Peter H. Boling, released under the MIT license
   Portions Copyright (c) 2005 Jamis Buck, released under the MIT license
