@@ -1,7 +1,7 @@
 Gem::Specification.new do |s|
   s.name = 'exception_notification'
-  s.version = '1.5.6'
-  s.date = '2009-08-08'
+  s.version = '1.5.7'
+  s.date = '2009-08-09'
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
 
   s.summary = %q{Allows unhandled exceptions to be captured and sent via email}

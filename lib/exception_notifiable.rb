@@ -149,6 +149,7 @@ module ExceptionNotifiable
       puts "[ERROR VIEW PATH] #{ExceptionNotifier.view_path}" if !ExceptionNotifier.nil? && !ExceptionNotifier.view_path.nil?
       puts "[ERROR RENDER] #{file}"
       puts "[ERROR EMAIL] #{send_email ? "YES" : "NO"}"
+      puts "[COMPAT MODE] #{ExceptionNotifierHelper::COMPAT_MODE ? "Yes" : "No"}"
       req = request ? " for request_uri=#{request.request_uri} and env=#{request.env.inspect}" : ""
       logger.error("render_error(#{status_cd}, #{self.class.http_error_codes[status_cd]}) invoked#{req}") if !logger.nil?
     end
