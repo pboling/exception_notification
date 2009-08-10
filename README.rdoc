@@ -1,9 +1,9 @@
 = Super Exception Notifier
 
-The Exception Notifier plugin provides a mailer object and a default set of
+The Exception Notifier gem provides a mailer object and a default set of
 templates for sending email notifications when errors occur in a Rails
 application, as well as a default set of error page templates to render 
-based on the status code assigned to an error. The plugin is configurable, 
+based on the status code assigned to an error. The gem is configurable,
 allowing programmers to customize (all on a per environment basis!):
 
 * the sender address of the email
@@ -26,8 +26,8 @@ New features:
 The email includes information about the current request, session, and
 environment, and also gives a backtrace of the exception.
 
-This plugin was originally called Super Exception Notifier and was (initially) based on
-svn v8821 of the wonderful exception_notification plugin, and remains for 
+This gem was originally called Super Exception Notifier and was (initially) based on
+svn v8821 of the wonderful exception_notification gem, and remains for
 the most part a drop in replacement with greatly extended functionality and 
 customization options.  Since then it has kept up with the work on the core team's branch.
 
@@ -35,7 +35,7 @@ The original is here:
  
   http://github.com/rails/exception_notification/tree/master
 
-The current version of this plugin is a git fork of the original and 
+The current version of this gem is a git fork of the original and
 has been updated to include the latest improvements from the original, 
 including compatability with Rails 2.1, as well as many improvements from 
 the other forks on github.  I merge them in when I have time, and when the 
@@ -134,7 +134,9 @@ Q: Why is "200" listed as an error code?
 
 A: You may want to have multiple custom errors that the standard HTTP status codes weren't designed to accommodate, and for which you need to render customized pages. Explanation and examples are a little further down...
 
-Then you can specify which of those should send out emails! By default, the email notifier will only notify on critical errors (405 500 503 statuses). For example, ActiveRecord::RecordNotFound and ActionController::UnknownAction errors will simply render the contents of /vendor/plugins/exception_notifier/views/exception_notifiable/###.html file, where ### is 400 and 501 respectively.
+Then you can specify which of those should send out emails!
+By default, the email notifier will only notify on critical errors (405 500 503 statuses).
+For example, ActiveRecord::RecordNotFound and ActionController::UnknownAction errors will simply render the contents of #{this gem's root}/rails/app/views/exception_notifiable/###.html file, where ### is 400 and 501 respectively.
 
   ExceptionNotifier.send_email_error_codes = %w( 400 405 500 503 )
 
@@ -142,20 +144,9 @@ You can also configure the text of the HTTP request's response status code: (by 
 Example in application.rb or on a per-controller basis:
 
   self.rails_error_classes = { 
-    AccessDenied => "403",
-    PageNotFound => "404",
-    InvalidMethod => "405",
-    ResourceGone => "410",
-    CorruptData => "500",
-    NotImplemented => "501",
     NameError => "503",
     TypeError => "503",
     ActiveRecord::RecordNotFound => "400",
-    ::ActionController::UnknownController => "404",
-    ::ActionController::UnknownAction => "501",
-    ::ActionController::RoutingError => "404",
-    ::ActionController::MissingTemplate => "404",
-    ::ActionView::TemplateError => "500"
 	}
 
 To make up your own error classes, you can define them in environment.rb, or in application.rb:
@@ -193,19 +184,19 @@ Email will be sent if the error matches one of the error classes to send email f
 
 You can also customize what is rendered. SuperExceptionNotifier will render the first file it finds in this order:
 
-  RAILS_ROOT/public/###.html
-  RAILS_ROOT/ExceptionNotifier.view_path/###.html
-  RAILS_ROOT/vendor/plugins/super_exception_notifier/views/exception_notifiable/###.html"
+  #{RAILS_ROOT}/public/###.html
+  #{RAILS_ROOT}/#ExceptionNotifier.view_path}/###.html
+  #{this gem's root}/rails/app/views/exception_notifiable/#{status_cd}.html
 
 And if none of those paths has a valid file to render, this one wins:
 
-  RAILS_ROOT/vendor/plugins/super_exception_notifier/views/exception_notifiable/500.html"
+  #{RAILS_ROOT}/rails/app/views/exception_notifiable/500.html
 
 You can configure ExceptionNotifier.view_path in your environment file like this:
 
   ExceptionNotifier.view_path = 'app/views/error'
 
-So public trumps your custom path which trumps the plugin's default path.
+So public trumps your custom path which trumps the gem's default path.
 
 == Custom Error Pages
 
@@ -265,7 +256,7 @@ it is made available to the email using the exception_data macro:
 
 In the above case, @document and @person would be made available to the email
 renderer, allowing your new section(s) to access and display them. See the
-existing sections defined by the plugin for examples of how to write your own.
+existing sections defined by the gem for examples of how to write your own.
 
 == Exceptions Without a Controller
 
@@ -286,6 +277,8 @@ in ExceptionNotifiable for an example of how to go about that.
   For reference these are the error codes that Exception Notifier can inherently handle.
   Official w3.org HTTP 1.1 Error Codes:
   http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html
+  Not all the error codes in use today are on that list, so here's Apache's list:
+  http://www.askapache.com/htaccess/apache-status-code-headers-errordocument.html#apache-response-codes-57
 
   400 Bad Request
     * The request could not be understood by the server due to malformed syntax. 
@@ -299,6 +292,15 @@ in ExceptionNotifiable for an example of how to go about that.
     * This is not implemented entirely as the response is supposed to contain a list of accepted methods.
   410 Gone
     * The requested resource is no longer available at the server and no forwarding address is known. This condition is expected to be considered permanent
+  418 IÕm a teapot
+    * ErrorDocument IÕm a teapot | Sample 418 IÕm a teapot
+    * The HTCPCP server is a teapot. The responding entity MAY be short and stout. Defined by the April Fools specification RFC 2324. See Hyper Text Coffee Pot Control Protocol for more information.
+  422 Unprocessable Entity
+    * ErrorDocument Unprocessable Entity | Sample 422 Unprocessable Entity
+    * (WebDAV) (RFC 4918 ) Ð The request was well-formed but was unable to be followed due to semantic errors.
+  423 Locked
+    * ErrorDocument Locked | Sample 423 Locked
+    * (WebDAV) (RFC 4918 ) Ð The resource that is being accessed is locked
   500 Internal Server Error
     * The server encountered an unexpected condition which prevented it from fulfilling the request.
   501 Not Implemented
