@@ -22,7 +22,7 @@ end
 
 class OldStyle < Application
   include ExceptionNotifiable
-  self.exception_notifier_verbose = false
+  self.exception_notifier_verbose = true
 end
 
 class SpecialErrorThing < RuntimeError
@@ -30,7 +30,7 @@ end
 
 class NewStyle < Application
   include ExceptionNotifiable
-  self.exception_notifier_verbose = false
+  self.exception_notifier_verbose = true
     
   rescue_from ActiveRecord::RecordNotFound do |exception|
     render :text => "404", :status => 404

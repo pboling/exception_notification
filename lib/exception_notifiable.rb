@@ -3,6 +3,7 @@ require 'ipaddr'
 module ExceptionNotifiable
   include SuperExceptionNotifier::CustomExceptionClasses
   include SuperExceptionNotifier::CustomExceptionMethods
+  include HooksNotifier
 
   unless defined?(SILENT_EXCEPTIONS)
     SILENT_EXCEPTIONS = []
@@ -116,27 +117,61 @@ module ExceptionNotifiable
       !self.class.local_addresses.detect { |addr| addr.include?(remote) }.nil?
     end
 
+    # When the action being executed has its own local error handling (rescue)
     def rescue_with_handler(exception)
       to_return = super
       if to_return
+        data = get_exception_data
         send_email = should_notify_on_exception?(exception)
-        verbose_output(exception, "N/A", "rescued by handler", send_email, nil) if self.class.exception_notifier_verbose
-        perform_exception_notify_mailing(exception) if send_email
+        send_web_hooks = !ExceptionNotifier.config[:web_hooks].empty?
+        the_blamed = ExceptionNotifier.config[:git_repo_path].nil? ? nil : lay_blame(exception)
+        verbose_output(exception, "N/A", "rescued by handler", send_email, send_web_hooks, nil, the_blamed) if self.class.exception_notifier_verbose
+        # Send the exception notificaiton email
+        perform_exception_notify_mailing(exception, data, nil, the_blamed) if send_email
+        # Send Web Hook requests
+        HooksNotifier.deliver_exception_to_web_hooks(ExceptionNotifier.config, exception, self, request, data, the_blamed) if send_web_hooks
       end
       to_return
+    end
+
+    # When the action being executed is letting SEN handle the exception completely
+    def rescue_action_in_public(exception)
+      # If the error class is NOT listed in the rails_errror_class hash then we get a generic 500 error:
+      # OTW if the error class is listed, but has a blank code or the code is == '200' then we get a custom error layout rendered
+      # OTW the error class is listed!
+      status_code = status_code_for_exception(exception)
+      if status_code == '200'
+        notify_and_render_error_template(status_code, request, exception, exception_to_filename(exception))
+      else
+        notify_and_render_error_template(status_code, request, exception)
+      end
     end
 
     def notify_and_render_error_template(status_cd, request, exception, file_path = nil)
       status = self.class.http_error_codes[status_cd] ? status_cd + " " + self.class.http_error_codes[status_cd] : status_cd
       file = file_path ? ExceptionNotifier.get_view_path(file_path) : ExceptionNotifier.get_view_path(status_cd)
+      data = get_exception_data
       send_email = should_notify_on_exception?(exception, status_cd)
+      send_web_hooks = !ExceptionNotifier.config[:web_hooks].empty?
+      the_blamed = ExceptionNotifier.config[:git_repo_path].nil? ? nil : lay_blame(exception)
 
       # Debugging output
-      verbose_output(exception, status_cd, file, send_email, request) if self.class.exception_notifier_verbose
+      verbose_output(exception, status_cd, file, send_email, send_web_hooks, request, the_blamed) if self.class.exception_notifier_verbose
       # Send the email before rendering to avert possible errors on render preventing the email from being sent.
-      perform_exception_notify_mailing(exception, request) if send_email
+      perform_exception_notify_mailing(exception, data, request, the_blamed) if send_email
+      # Send Web Hook requests
+      HooksNotifier.deliver_exception_to_web_hooks(ExceptionNotifier.config, exception, self, request, data, the_blamed) if send_web_hooks
       # Render the error page to the end user
       render_error_template(file, status)
+    end
+
+    def get_exception_data
+      deliverer = self.class.exception_data
+      return case deliverer
+        when nil then {}
+        when Symbol then send(deliverer)
+        when Proc then deliverer.call(self)
+      end
     end
 
     def render_error_template(file, status)
@@ -149,7 +184,7 @@ module ExceptionNotifiable
       end
     end
 
-    def verbose_output(exception, status_cd, file, send_email, request = nil)
+    def verbose_output(exception, status_cd, file, send_email, send_web_hooks, request = nil, the_blamed = nil)
       puts "[EXCEPTION] #{exception}"
       puts "[EXCEPTION CLASS] #{exception.class}"
       puts "[EXCEPTION STATUS_CD] #{status_cd}"
@@ -157,34 +192,27 @@ module ExceptionNotifiable
       puts "[ERROR VIEW PATH] #{ExceptionNotifier.config[:view_path]}" if !ExceptionNotifier.nil? && !ExceptionNotifier.config[:view_path].nil?
       puts "[ERROR RENDER] #{file}"
       puts "[ERROR EMAIL] #{send_email ? "YES" : "NO"}"
+      puts "[ERROR WEB HOOKS] #{send_web_hooks ? "YES" : "NO"}"
       puts "[COMPAT MODE] #{ExceptionNotifierHelper::COMPAT_MODE ? "Yes" : "No"}"
+      puts "[THE BLAMED] #{the_blamed}"
       req = request ? " for request_uri=#{request.request_uri} and env=#{request.env.inspect}" : ""
       logger.error("render_error(#{status_cd}, #{self.class.http_error_codes[status_cd]}) invoked#{req}") if !logger.nil?
     end
 
-    def perform_exception_notify_mailing(exception, request)
-      deliverer = self.class.exception_data
-      data = case deliverer
-        when nil then {}
-        when Symbol then send(deliverer)
-        when Proc then deliverer.call(self)
-      end
-      the_blamed = lay_blame(exception)
-      # Send email
+    def perform_exception_notify_mailing(exception, data, request = nil, the_blamed = nil)
       if !ExceptionNotifier.config[:email_recipients].blank?
+        # Send email with ActionMailer
         ExceptionNotifier.deliver_exception_notification(exception, self,
           request, data, the_blamed)
       end
-      # Send web hooks
-      HooksNotifier.deliver_exception_to_web_hooks(ExceptionNotifier.config, exception, self, request, data)
     end
 
     def should_notify_on_exception?(exception, status_cd = nil)
-      #First honor the custom settings from environment
+      # First honor the custom settings from environment
       return false if ExceptionNotifier.config[:render_only]
-      #don't mail exceptions raised locally
+      # don't mail exceptions raised locally
       return false if ExceptionNotifier.config[:skip_local_notification] && is_local?
-      #don't mail exceptions raised that match ExceptionNotifiable.silent_exceptions
+      # don't mail exceptions raised that match ExceptionNotifiable.silent_exceptions
       return false if self.class.silent_exceptions.any? {|klass| klass === exception }
       return true if ExceptionNotifier.config[:send_email_error_classes].include?(exception)
       return true if !status_cd.nil? && ExceptionNotifier.config[:send_email_error_codes].include?(status_cd)
@@ -193,18 +221,6 @@ module ExceptionNotifiable
 
     def is_local?
       (consider_all_requests_local || local_request?)
-    end
-
-    def rescue_action_in_public(exception)
-      # If the error class is NOT listed in the rails_errror_class hash then we get a generic 500 error:
-      # OTW if the error class is listed, but has a blank code or the code is == '200' then we get a custom error layout rendered
-      # OTW the error class is listed!
-      status_code = status_code_for_exception(exception)
-      if status_code == '200'
-        notify_and_render_error_template(status_code, request, exception, exception_to_filename(exception))
-      else
-        notify_and_render_error_template(status_code, request, exception)
-      end
     end
 
     def status_code_for_exception(exception)

@@ -6,6 +6,7 @@ class ExceptionNotifier < ActionMailer::Base
     # If left empty web hooks will not be engaged
     :web_hooks                => [],
     :app_name                 => "[MYAPP]",
+    :version                  => "0.0.0",
     :sender_address           => %("#{(defined?(Rails) ? Rails.env : RAILS_ENV).capitalize} Error" <super.exception.notifier@example.com>),
     :exception_recipients     => [],
     # Customize the subject line
@@ -39,7 +40,7 @@ class ExceptionNotifier < ActionMailer::Base
   def self.get_view_path(status_cd)
     if File.exist?("#{RAILS_ROOT}/public/#{status_cd}.html")
       "#{RAILS_ROOT}/public/#{status_cd}.html"
-    elsif !view_path.nil? && File.exist?("#{RAILS_ROOT}/#{config[:view_path]}/#{status_cd}.html")
+    elsif !config[:view_path].nil? && File.exist?("#{RAILS_ROOT}/#{config[:view_path]}/#{status_cd}.html")
       "#{RAILS_ROOT}/#{view_path}/#{status_cd}.html"
     elsif File.exist?("#{File.dirname(__FILE__)}/../rails/app/views/exception_notifiable/#{status_cd}.html")
       "#{File.dirname(__FILE__)}/../rails/app/views/exception_notifiable/#{status_cd}.html"
