@@ -1,49 +1,45 @@
 require 'pathname'
 
 class ExceptionNotifier < ActionMailer::Base
-  @@sender_address = %("#{(defined?(Rails) ? Rails.env : RAILS_ENV).capitalize} Error" <errors@example.com>)
-  cattr_accessor :sender_address
 
-  @@exception_recipients = []
-  cattr_accessor :exception_recipients
+  @@config = {
+    # If left empty web hooks will not be engaged
+    :web_hooks                => [],
+    :app_name                 => "[MYAPP]",
+    :sender_address           => %("#{(defined?(Rails) ? Rails.env : RAILS_ENV).capitalize} Error" <super.exception.notifier@example.com>),
+    :exception_recipients     => [],
+    # Customize the subject line
+    :subject_prepend          => "[#{(defined?(Rails) ? Rails.env : RAILS_ENV).capitalize} ERROR] ",
+    :subject_append           => nil,
+    # Include which sections of the exception email? 
+    :sections                 => %w(request session environment backtrace),
+    # Only use this gem to render, never email
+    :render_only              => false,
+    :skip_local_notification  => true,
+    :view_path                => nil,
+    #Error Notification will be sent if the HTTP response code for the error matches one of the following error codes
+    :send_email_error_codes   => %W( 405 500 503 ),
+    #Error Notification will be sent if the error class matches one of the following error error classes
+    :send_email_error_classes => %W( ),
+    :send_email_other_errors  => true,
+    :git_repo_path            => nil,
+    :template_root            => "#{File.dirname(__FILE__)}/../views"
+  }
 
-  @@email_prefix = "[#{(defined?(Rails) ? Rails.env : RAILS_ENV).capitalize} ERROR] "
-  cattr_accessor :email_prefix
+  cattr_accessor :config
 
-  @@sections = %w(request session environment backtrace)
-  cattr_accessor :sections
-
-  @@render_only = false
-  cattr_accessor :render_only
-
-  @@skip_local_notification = true
-  cattr_accessor :skip_local_notification
-
-  @@view_path = nil
-  cattr_accessor :view_path
-
-  #Emailed Error Notification will be sent if the error code matches one of the following error codes
-  @@send_email_error_codes = %W( 405 500 503 )
-  cattr_accessor :send_email_error_codes
-
-  #Emailed Error Notification will be sent if the error class matches one of the following error error classes
-  @@send_email_error_classes = %W( )
-  cattr_accessor :send_email_error_classes
-
-  @@send_email_other_errors = true
-  cattr_accessor :send_email_other_errors
-
-  @@git_repo_path = nil
-  cattr_accessor :git_repo_path
-
-  self.template_root = "#{File.dirname(__FILE__)}/../views"
+  def self.config_web_hooks(&block)
+    yield @@config
+  end
+  
+  self.template_root = config[:template_root]
 
   def self.reloadable?() false end
 
   def self.get_view_path(status_cd)
     if File.exist?("#{RAILS_ROOT}/public/#{status_cd}.html")
       "#{RAILS_ROOT}/public/#{status_cd}.html"
-    elsif !view_path.nil? && File.exist?("#{RAILS_ROOT}/#{view_path}/#{status_cd}.html")
+    elsif !view_path.nil? && File.exist?("#{RAILS_ROOT}/#{config[:view_path]}/#{status_cd}.html")
       "#{RAILS_ROOT}/#{view_path}/#{status_cd}.html"
     elsif File.exist?("#{File.dirname(__FILE__)}/../rails/app/views/exception_notifiable/#{status_cd}.html")
       "#{File.dirname(__FILE__)}/../rails/app/views/exception_notifiable/#{status_cd}.html"
@@ -56,12 +52,12 @@ class ExceptionNotifier < ActionMailer::Base
     body_hash = error_environment_data_hash(exception, controller, request, data, the_blamed)
     #Prefer to have custom, potentially HTML email templates available
     #content_type  "text/plain"
-    recipients    ExceptionNotifier.exception_recipients
-    from          ExceptionNotifier.sender_address
+    recipients    config[:exception_recipients]
+    from          config[:sender_address]
 
     request.session.inspect # Ensure session data is loaded (Rails 2.3 lazy-loading)
     
-    subject       "#{ExceptionNotifier.email_prefix}#{body_hash[:location]} (#{exception.class}) #{exception.message.inspect}"
+    subject       "#{config[:subject_prepend]}#{body_hash[:location]} (#{exception.class}) #{exception.message.inspect}#{config[:subject_append]}"
     body          body_hash
   end
   

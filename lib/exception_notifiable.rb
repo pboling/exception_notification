@@ -134,7 +134,7 @@ module ExceptionNotifiable
       # Debugging output
       verbose_output(exception, status_cd, file, send_email, request) if self.class.exception_notifier_verbose
       # Send the email before rendering to avert possible errors on render preventing the email from being sent.
-      perform_exception_notify_mailing(exception) if send_email
+      perform_exception_notify_mailing(exception, request) if send_email
       # Render the error page to the end user
       render_error_template(file, status)
     end
@@ -154,7 +154,7 @@ module ExceptionNotifiable
       puts "[EXCEPTION CLASS] #{exception.class}"
       puts "[EXCEPTION STATUS_CD] #{status_cd}"
       puts "[ERROR LAYOUT] #{self.class.error_layout}" if self.class.error_layout
-      puts "[ERROR VIEW PATH] #{ExceptionNotifier.view_path}" if !ExceptionNotifier.nil? && !ExceptionNotifier.view_path.nil?
+      puts "[ERROR VIEW PATH] #{ExceptionNotifier.config[:view_path]}" if !ExceptionNotifier.nil? && !ExceptionNotifier.config[:view_path].nil?
       puts "[ERROR RENDER] #{file}"
       puts "[ERROR EMAIL] #{send_email ? "YES" : "NO"}"
       puts "[COMPAT MODE] #{ExceptionNotifierHelper::COMPAT_MODE ? "Yes" : "No"}"
@@ -162,7 +162,7 @@ module ExceptionNotifiable
       logger.error("render_error(#{status_cd}, #{self.class.http_error_codes[status_cd]}) invoked#{req}") if !logger.nil?
     end
 
-    def perform_exception_notify_mailing(exception)
+    def perform_exception_notify_mailing(exception, request)
       deliverer = self.class.exception_data
       data = case deliverer
         when nil then {}
@@ -170,21 +170,25 @@ module ExceptionNotifiable
         when Proc then deliverer.call(self)
       end
       the_blamed = lay_blame(exception)
-
-      ExceptionNotifier.deliver_exception_notification(exception, self,
-        request, data, the_blamed)
+      # Send email
+      if !ExceptionNotifier.config[:email_recipients].blank?
+        ExceptionNotifier.deliver_exception_notification(exception, self,
+          request, data, the_blamed)
+      end
+      # Send web hooks
+      HooksNotifier.deliver_exception_to_web_hooks(ExceptionNotifier.config, exception, self, request, data)
     end
 
     def should_notify_on_exception?(exception, status_cd = nil)
       #First honor the custom settings from environment
-      return false if ExceptionNotifier.render_only
+      return false if ExceptionNotifier.config[:render_only]
       #don't mail exceptions raised locally
-      return false if ExceptionNotifier.skip_local_notification && is_local?
+      return false if ExceptionNotifier.config[:skip_local_notification] && is_local?
       #don't mail exceptions raised that match ExceptionNotifiable.silent_exceptions
       return false if self.class.silent_exceptions.any? {|klass| klass === exception }
-      return true if ExceptionNotifier.send_email_error_classes.include?(exception)
-      return true if !status_cd.nil? && ExceptionNotifier.send_email_error_codes.include?(status_cd)
-      return ExceptionNotifier.send_email_other_errors
+      return true if ExceptionNotifier.config[:send_email_error_classes].include?(exception)
+      return true if !status_cd.nil? && ExceptionNotifier.config[:send_email_error_codes].include?(status_cd)
+      return ExceptionNotifier.config[:send_email_other_errors]
     end
 
     def is_local?
@@ -213,7 +217,7 @@ module ExceptionNotifiable
 
     def lay_blame(exception)
       error = {}
-      unless(ExceptionNotifier.git_repo_path.nil?)
+      unless(ExceptionNotifier.config[:git_repo_path].nil?)
         if(exception.class == ActionView::TemplateError)
             blame = blame_output(exception.line_number, "app/views/#{exception.file_name}")
             error[:author] = blame[/^author\s.+$/].gsub(/author\s/,'')
@@ -239,7 +243,7 @@ module ExceptionNotifiable
   
     def blame_output(line_number, path)
       app_directory = Dir.pwd
-      Dir.chdir ExceptionNotifier.git_repo_path
+      Dir.chdir ExceptionNotifier.config[:git_repo_path]
       blame = `git blame -p -L #{line_number},#{line_number} #{path}`
       Dir.chdir app_directory
   
