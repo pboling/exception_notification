@@ -200,7 +200,7 @@ module ExceptionNotifiable
     end
 
     def perform_exception_notify_mailing(exception, data, request = nil, the_blamed = nil)
-      if !ExceptionNotifier.config[:email_recipients].blank?
+      if !ExceptionNotifier.config[:exception_recipients].blank?
         # Send email with ActionMailer
         ExceptionNotifier.deliver_exception_notification(exception, self,
           request, data, the_blamed)

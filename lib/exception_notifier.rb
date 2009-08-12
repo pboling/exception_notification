@@ -29,7 +29,7 @@ class ExceptionNotifier < ActionMailer::Base
 
   cattr_accessor :config
 
-  def self.config_web_hooks(&block)
+  def self.configure_exception_notifier(&block)
     yield @@config
   end
   
@@ -56,7 +56,7 @@ class ExceptionNotifier < ActionMailer::Base
     recipients    config[:exception_recipients]
     from          config[:sender_address]
 
-    request.session.inspect # Ensure session data is loaded (Rails 2.3 lazy-loading)
+    request.session.inspect unless request.nil? # Ensure session data is loaded (Rails 2.3 lazy-loading)
     
     subject       "#{config[:subject_prepend]}#{body_hash[:location]} (#{exception.class}) #{exception.message.inspect}#{config[:subject_append]}"
     body          body_hash
@@ -83,13 +83,13 @@ class ExceptionNotifier < ActionMailer::Base
           :controller => controller,
           :request => request,
           :host => (request.env['HTTP_X_REAL_IP'] || request.env["HTTP_X_FORWARDED_HOST"] || request.env["HTTP_HOST"]),
-          :sections => sections
+          :sections => config[:sections]
         })
       else
         # TODO: with refactoring, the environment section could show useful ENV data even without a request
         data.merge!({
           :location => sanitize_backtrace([exception.backtrace.first]).first,
-          :sections => sections - %w(request session environment)
+          :sections => config[:sections] - %w(request session environment)
         })
       end
       return data
