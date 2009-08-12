@@ -44,8 +44,10 @@ class ExceptionNotifier < ActionMailer::Base
     elsif !config[:view_path].nil? && File.exist?("#{RAILS_ROOT}/#{config[:view_path]}/#{status_cd}.html")
       "#{RAILS_ROOT}/#{config[:view_path]}/#{status_cd}.html"
     elsif File.exist?("#{File.dirname(__FILE__)}/../rails/app/views/exception_notifiable/#{status_cd}.html")
+      #ExceptionNotifierHelper::COMPAT_MODE ? "#{File.dirname(__FILE__)}/../rails/app/views/exception_notifiable/#{status_cd}.html" : "#{status_cd}.html"
       "#{File.dirname(__FILE__)}/../rails/app/views/exception_notifiable/#{status_cd}.html"
-    else 
+    else
+      #ExceptionNotifierHelper::COMPAT_MODE ? "#{File.dirname(__FILE__)}/../rails/app/views/exception_notifiable/500.html" : "500.html"
       "#{File.dirname(__FILE__)}/../rails/app/views/exception_notifiable/500.html"
     end
   end

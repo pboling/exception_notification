@@ -13,6 +13,9 @@ require "notifiable"
 
 Object.class_eval do include Notifiable end
 
-if ActionController::Base.respond_to?(:append_view_path)
-  ActionController::Base.append_view_path(File.join(File.dirname(__FILE__), 'app', 'views'))
-end
+#It appears that hte view path is auto-added by rails... hmmm.
+#if ActionController::Base.respond_to?(:append_view_path)
+#  puts "view path before: #{ActionController::Base.view_paths}"
+#  ActionController::Base.append_view_path(File.join(File.dirname(__FILE__), 'app', 'views','exception_notifiable'))
+#  puts "view path After: #{ActionController::Base.view_paths}"
+#end
