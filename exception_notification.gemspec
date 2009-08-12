@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name = 'super_exception_notifier'
-  s.version = '1.6.3'
+  s.version = '1.6.4'
   s.date = '2009-08-12'
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
 
@@ -50,14 +50,14 @@ Gem::Specification.new do |s|
              "rails/app/views/exception_notifiable/423.html",
              "rails/app/views/exception_notifiable/501.html",
              "rails/app/views/exception_notifiable/503.html",
-             "views/exception_notifier/_backtrace.rhtml",
-             "views/exception_notifier/_environment.rhtml",
-             "views/exception_notifier/_inspect_model.rhtml",
-             "views/exception_notifier/_request.rhtml",
-             "views/exception_notifier/_session.rhtml",
-             "views/exception_notifier/_title.rhtml",
-             "views/exception_notifier/background_exception_notification.rhtml",
-             "views/exception_notifier/exception_notification.rhtml",
+             "views/exception_notifier/_backtrace.html.erb",
+             "views/exception_notifier/_environment.html.erb",
+             "views/exception_notifier/_inspect_model.html.erb",
+             "views/exception_notifier/_request.html.erb",
+             "views/exception_notifier/_session.html.erb",
+             "views/exception_notifier/_title.html.erb",
+             "views/exception_notifier/background_exception_notification.text.plain.erb",
+             "views/exception_notifier/exception_notification.text.plain.erb",
              "VERSION.yml"]
   
 

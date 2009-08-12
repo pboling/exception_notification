@@ -39,7 +39,7 @@ The original is here:
 
 The current version of this gem is a git fork of the original and
 has been updated to include the latest improvements from the original, 
-including compatability with Rails 2.1, as well as many improvements from 
+including compatability with Rails 2.1, 2.2, 2.3, as well as many improvements from 
 the other forks on github.  I merge them in when I have time, and when the 
 changes fit nicely with the enhancements I have already made.
 
@@ -47,20 +47,38 @@ This fork of Exception Notifier is in production use on several large websites (
 
 == Installation
 
-Gem Using Git:
+Gem Using Git building from source:
 
   mkdir -p ~/src
   cd ~/src
   git clone git://github.com/pboling/exception_notification.git
   cd exception_notification
   gem build exception_notification.gemspec
-  sudo gem install super_exception_notification-1.6.3.gem # (Or whatever version gets built)
+  sudo gem install super_exception_notification-1.6.4.gem # (Or whatever version gets built)
+
+Then cd to your rails app to optionally freeze the gem into your app:
+
+  rake gems:freeze GEM=super_exception_notifier
 
 Then in your environment.rb:
 
   config.gem 'super_exception_notifier',
-      :version => '~> 1.6.3',
+      :version => '~> 1.6.4',
       :lib => "exception_notifier"
+
+
+Installing Gem from Github's Gem Server:
+
+  gem sources -a http://gems.github.com
+  sudo gem install pboling-super_exception_notifier
+
+Then in your environment.rb:
+
+  config.gem 'pboling-super_exception_notifier',
+      :version => '~> 1.6.4',
+      :lib => "exception_notifier",
+      :source => 'http://gems.github.com'
+
 
 Plugin using Git:
 
