@@ -24,4 +24,5 @@ ExceptionNotifier.configure_exception_notifier do |config|
   # If left empty web hooks will not be engaged
   config[:web_hooks]                = []
   config[:exception_recipients]     = ["test.errors@example.com"]
+  config[:view_path]                = File.join(File.dirname(__FILE__), "mocks")
 end

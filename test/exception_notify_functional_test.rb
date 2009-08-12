@@ -21,7 +21,20 @@ class ExceptionNotifyFunctionalTest < ActionController::TestCase
       end
     end    
   end
-  
+
+  def test_view_path_200; assert_view_path_string("200"); end
+  def test_view_path_400; assert_view_path_string("400"); end
+  def test_view_path_403; assert_view_path_string("403"); end
+  def test_view_path_404; assert_view_path_string("404"); end
+  def test_view_path_405; assert_view_path_string("405"); end
+  def test_view_path_410; assert_view_path_string("410"); end
+  def test_view_path_418; assert_view_path_string("422"); end
+  def test_view_path_422; assert_view_path_string("422"); end
+  def test_view_path_423; assert_view_path_string("423"); end
+  def test_view_path_500; assert_view_path_string("500"); end
+  def test_view_path_501; assert_view_path_string("501"); end
+  def test_view_path_503; assert_view_path_string("503"); end
+
   def test_old_style_where_requests_are_local
     ActionController::Base.consider_all_requests_local = true
     @controller = OldStyle.new
@@ -64,7 +77,11 @@ class ExceptionNotifyFunctionalTest < ActionController::TestCase
   end
     
   private
-  
+
+  def assert_view_path_string(status)
+    assert(ExceptionNotifier.get_view_path(status).is_a?(String), "View Path is not a string for status code '#{status}'")
+  end
+
   def assert_error_mail_contains(text)
     assert(mailed_error.index(text), 
       "Expected mailed error body to contain '#{text}', but not found. \n actual contents: \n#{mailed_error}")    
