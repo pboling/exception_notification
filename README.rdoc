@@ -62,7 +62,6 @@ Then in your environment.rb:
       :version => '~> 1.6.3',
       :lib => "exception_notifier"
 
-
 Plugin using Git:
 
   # Installation as plugin might work... I haven't tried it.
