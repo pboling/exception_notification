@@ -12,3 +12,7 @@ require "exception_notifier_helper"
 require "notifiable"
 
 Object.class_eval do include Notifiable end
+
+if ActionController::Base.respond_to?(:append_view_path)
+  ActionController::Base.append_view_path(File.join(File.dirname(__FILE__), 'app', 'views'))
+end
