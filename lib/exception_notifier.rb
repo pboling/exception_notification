@@ -37,7 +37,7 @@ class ExceptionNotifier < ActionMailer::Base
 
   def self.reloadable?() false end
 
-  # TODO: write tests that test the view paths
+  # What is the path of the file we will render to the user?
   def self.get_view_path(status_cd)
     if File.exist?("#{RAILS_ROOT}/public/#{status_cd}.html")
       "#{RAILS_ROOT}/public/#{status_cd}.html"
