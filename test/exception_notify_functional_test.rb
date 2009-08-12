@@ -34,6 +34,9 @@ class ExceptionNotifyFunctionalTest < ActionController::TestCase
   def test_view_path_500; assert_view_path_string("500"); end
   def test_view_path_501; assert_view_path_string("501"); end
   def test_view_path_503; assert_view_path_string("503"); end
+  def test_view_path_nil; assert_view_path_string(nil); end
+  def test_view_path_empty; assert_view_path_string(""); end
+  def test_view_path_nonsense; assert_view_path_string("slartibartfarst"); end
 
   def test_old_style_where_requests_are_local
     ActionController::Base.consider_all_requests_local = true
