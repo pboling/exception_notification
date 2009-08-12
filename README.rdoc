@@ -54,7 +54,7 @@ Gem Using Git:
   git clone git://github.com/pboling/exception_notification.git
   cd exception_notification
   gem build exception_notification.gemspec
-  sudo gem install exception_notification-1.6.0.gem # Or whatever version gets built)
+  sudo gem install exception_notification-1.6.0.gem # (Or whatever version gets built)
 
 Plugin using Git:
 
@@ -340,15 +340,15 @@ in ExceptionNotifiable for an example of how to go about that.
     * This is not implemented entirely as the response is supposed to contain a list of accepted methods.
   410 Gone
     * The requested resource is no longer available at the server and no forwarding address is known. This condition is expected to be considered permanent
-  418 IÕm a teapot
-    * ErrorDocument IÕm a teapot | Sample 418 IÕm a teapot
+  418 I'm a teapot
+    * ErrorDocument I'm a teapot | Sample 418 I'm a teapot
     * The HTCPCP server is a teapot. The responding entity MAY be short and stout. Defined by the April Fools specification RFC 2324. See Hyper Text Coffee Pot Control Protocol for more information.
   422 Unprocessable Entity
     * ErrorDocument Unprocessable Entity | Sample 422 Unprocessable Entity
-    * (WebDAV) (RFC 4918 ) Ð The request was well-formed but was unable to be followed due to semantic errors.
+    * (WebDAV) (RFC 4918 ) - The request was well-formed but was unable to be followed due to semantic errors.
   423 Locked
     * ErrorDocument Locked | Sample 423 Locked
-    * (WebDAV) (RFC 4918 ) Ð The resource that is being accessed is locked
+    * (WebDAV) (RFC 4918 ) - The resource that is being accessed is locked
   500 Internal Server Error
     * The server encountered an unexpected condition which prevented it from fulfilling the request.
   501 Not Implemented
