@@ -5,8 +5,8 @@ require File.join(File.dirname(__FILE__), '..', 'lib', "super_exception_notifier
 
 $:.unshift "#{File.dirname(__FILE__)}/lib"
 
-require "exception_notifier"
 require "hooks_notifier"
+require "exception_notifier"
 require "exception_notifiable"
 require "exception_notifier_helper"
 require "notifiable"
