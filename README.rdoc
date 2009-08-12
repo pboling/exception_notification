@@ -58,7 +58,7 @@ Gem Using Git:
 
 Then in your environment.rb:
 
-  config.gem 'super_exception_notification',
+  config.gem 'super_exception_notifier',
       :version => '~> 1.6.3',
       :lib => "exception_notifier"
 
