@@ -51,6 +51,7 @@ Gem::Specification.new do |s|
              "rails/app/views/exception_notifiable/423.html",
              "rails/app/views/exception_notifiable/501.html",
              "rails/app/views/exception_notifiable/503.html",
+             "rails/app/views/exception_notifiable/method_disabled.html.erb",
              "views/exception_notifier/_backtrace.html.erb",
              "views/exception_notifier/_environment.html.erb",
              "views/exception_notifier/_inspect_model.html.erb",
