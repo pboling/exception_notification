@@ -41,6 +41,8 @@ class ExceptionNotifier < ActionMailer::Base
   def self.get_view_path(status_cd)
     if File.exist?("#{RAILS_ROOT}/public/#{status_cd}.html")
       "#{RAILS_ROOT}/public/#{status_cd}.html"
+    elsif !config[:view_path].nil? && File.exist?("#{RAILS_ROOT}/#{config[:view_path]}/#{status_cd}.html.erb")
+      "#{RAILS_ROOT}/#{config[:view_path]}/#{status_cd}.html.erb"
     elsif !config[:view_path].nil? && File.exist?("#{RAILS_ROOT}/#{config[:view_path]}/#{status_cd}.html")
       "#{RAILS_ROOT}/#{config[:view_path]}/#{status_cd}.html"
     elsif File.exist?("#{File.dirname(__FILE__)}/../rails/app/views/exception_notifiable/#{status_cd}.html")

@@ -16,6 +16,7 @@ module ExceptionNotifiable
     ] if defined?(ActionController)
   end
 
+  # TODO: use ActionController::StatusCodes
   HTTP_ERROR_CODES = { 
     "400" => "Bad Request",
     "403" => "Forbidden",
