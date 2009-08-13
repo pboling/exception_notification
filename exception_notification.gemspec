@@ -23,6 +23,7 @@ Gem::Specification.new do |s|
   s.authors = ['Peter Boling', 'Jacques Crocker', 'Jamis Buck']
   s.email = 'peter.boling@gmail.com'
   s.homepage = 'http://github.com/pboling/exception_notification'
+  s.require_paths = ["lib"]
   
   s.has_rdoc = true
 
