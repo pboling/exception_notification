@@ -1,7 +1,7 @@
 Gem::Specification.new do |s|
   s.name = 'super_exception_notifier'
-  s.version = '1.6.7'
-  s.date = '2009-08-14'
+  s.version = '1.6.8'
+  s.date = '2009-08-15'
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
 
   s.summary = %q{Allows unhandled (and handled!) exceptions to be captured and sent via email}
@@ -18,7 +18,10 @@ Gem::Specification.new do |s|
 * custom errors, with custom error templates
 * define error layouts at application or controller level, or use the controller's own default layout, or no layout at all
 * get error notification for errors that occur in the console, using notifiable method
-* Override the gem's handling and rendering with explicit rescue statements inline.}
+* Override the gem's handling and rendering with explicit rescue statements inline.
+* Hooks into `git blame` output so you can get an idea of who (may) have introduced the bug
+* Hooks into other website services (e.g. you can send exceptions to to Switchub.com)
+* Specify which level of notification you would like with an array of optional styles of notification}
   
   s.authors = ['Peter Boling', 'Jacques Crocker', 'Jamis Buck']
   s.email = 'peter.boling@gmail.com'

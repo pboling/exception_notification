@@ -6,13 +6,15 @@ require File.join(File.dirname(__FILE__), '..', 'lib', "super_exception_notifier
 # Add this path to ruby load path
 $:.unshift "#{File.dirname(__FILE__)}/../lib"
 
-require "hooks_notifier"
-require "exception_notifier"
-require "exception_notifiable"
-require "exception_notifier_helper"
-require "notifiable"
+require "hooks_notifier" unless defined?(HooksNotifier)
+require "exception_notifier" unless defined?(ExceptionNotifier)
+require "exception_notifiable" unless defined?(ExceptionNotifiable)
+require "exception_notifier_helper" unless defined?(ExceptionNotifierHelper)
+require "notifiable" unless defined?(Notifiable)
 
-Object.class_eval do include Notifiable end
+Object.class_eval do
+  include Notifiable
+end
 
 #It appears that the view path is auto-added by rails... hmmm.
 #if ActionController::Base.respond_to?(:append_view_path)

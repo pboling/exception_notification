@@ -2,7 +2,8 @@ require 'pathname'
 
 class ExceptionNotifier < ActionMailer::Base
 
-  @@config = {
+    #andrewroth reported that @@config gets clobbered because rails loads this class twice when installed as a plugin, and adding the ||= fixed it.
+  @@config ||= {
     # If left empty web hooks will not be engaged
     :web_hooks                => [],
     :app_name                 => "[MYAPP]",
@@ -14,15 +15,13 @@ class ExceptionNotifier < ActionMailer::Base
     :subject_append           => nil,
     # Include which sections of the exception email? 
     :sections                 => %w(request session environment backtrace),
-    # Only use this gem to render, never email
-    :render_only              => false,
     :skip_local_notification  => true,
     :view_path                => nil,
     #Error Notification will be sent if the HTTP response code for the error matches one of the following error codes
-    :send_email_error_codes   => %W( 405 500 503 ),
+    :notify_error_codes   => %W( 405 500 503 ),
     #Error Notification will be sent if the error class matches one of the following error error classes
-    :send_email_error_classes => %W( ),
-    :send_email_other_errors  => true,
+    :notify_error_classes => %W( ),
+    :notify_other_errors  => true,
     :git_repo_path            => nil,
     :template_root            => "#{File.dirname(__FILE__)}/../views"
   }
