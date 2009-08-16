@@ -128,13 +128,11 @@ class ExceptionNotifyFunctionalTest < ActionController::TestCase
 
   def assert_error_mail_contains(text)
     assert(mailed_error.index(text), 
-          #"Expected mailed error body to contain '#{text}', but not found. \n actual contents: \n#{mailed_error}")
-          "Expected mailed error body to contain '#{text}', but not found.")
+          "Expected mailed error body to contain '#{text}', but not found. \n actual contents: \n#{mailed_error}")
   end
   
   def assert_nothing_mailed
-    #assert @@delivered_mail.empty?, "Expected to have NOT mailed out a notification about an error occuring, but mailed: \n#{@@delivered_mail}"
-    assert @@delivered_mail.empty?, "Expected to have NOT mailed out a notification about an error occuring."
+    assert @@delivered_mail.empty?, "Expected to have NOT mailed out a notification about an error occuring, but mailed: \n#{@@delivered_mail}"
   end
   
   def mailed_error
