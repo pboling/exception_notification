@@ -91,7 +91,31 @@ class ExceptionNotifyFunctionalTest < ActionController::TestCase
     get "record_not_found"    
     assert_nothing_mailed
   end
-    
+
+  def test_controller_with_custom_silent_exceptions
+    @controller = CustomSilentExceptions.new
+    get "runtime_error"
+    assert_nothing_mailed
+  end
+
+  def test_controller_with_empty_silent_exceptions
+    @controller = EmptySilentExceptions.new
+    get "record_not_found"
+    assert_error_mail_contains("ActiveRecord::RecordNotFound")
+  end
+
+  def test_controller_with_nil_silent_exceptions
+    @controller = NilSilentExceptions.new
+    get "record_not_found"
+    assert_error_mail_contains("ActiveRecord::RecordNotFound")
+  end
+
+  def test_controller_with_default_silent_exceptions
+    @controller = DefaultSilentExceptions.new
+    get "unknown_controller"
+    assert_nothing_mailed
+  end
+
   private
 
   def assert_view_path_for_status_cd_is_string(status)
@@ -104,11 +128,13 @@ class ExceptionNotifyFunctionalTest < ActionController::TestCase
 
   def assert_error_mail_contains(text)
     assert(mailed_error.index(text), 
-      "Expected mailed error body to contain '#{text}', but not found. \n actual contents: \n#{mailed_error}")    
+          #"Expected mailed error body to contain '#{text}', but not found. \n actual contents: \n#{mailed_error}")
+          "Expected mailed error body to contain '#{text}', but not found.")
   end
   
   def assert_nothing_mailed
-    assert @@delivered_mail.empty?, "Expected to have NOT mailed out a notification about an error occuring, but mailed: \n#{@@delivered_mail}"
+    #assert @@delivered_mail.empty?, "Expected to have NOT mailed out a notification about an error occuring, but mailed: \n#{@@delivered_mail}"
+    assert @@delivered_mail.empty?, "Expected to have NOT mailed out a notification about an error occuring."
   end
   
   def mailed_error

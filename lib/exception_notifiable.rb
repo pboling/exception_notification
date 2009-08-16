@@ -6,14 +6,15 @@ module ExceptionNotifiable
   include HooksNotifier
 
   unless defined?(SILENT_EXCEPTIONS)
-    SILENT_EXCEPTIONS = []
-    SILENT_EXCEPTIONS << ActiveRecord::RecordNotFound if defined?(ActiveRecord)
-    SILENT_EXCEPTIONS << [
-      ActionController::UnknownController,
-      ActionController::UnknownAction,
-      ActionController::RoutingError,
-      ActionController::MethodNotAllowed
-    ] if defined?(ActionController)
+    noiseless = []
+    noiseless << ActiveRecord::RecordNotFound if defined?(ActiveRecord)
+    if defined?(ActionController)
+      noiseless << ActionController::UnknownController
+      noiseless << ActionController::UnknownAction
+      noiseless << ActionController::RoutingError
+      noiseless << ActionController::MethodNotAllowed
+    end
+    SILENT_EXCEPTIONS = noiseless
   end
 
   # TODO: use ActionController::StatusCodes
@@ -230,26 +231,21 @@ module ExceptionNotifiable
     end
 
     def should_email_on_exception?(exception, status_cd = nil, verbose = false)
-      notification_level_sends_email? && !ExceptionNotifier.config[:exception_recipients].empty? && should_notify_on_exception?(exception, status_cd)
+      notification_level_sends_email? && !ExceptionNotifier.config[:exception_recipients].empty? && should_notify_on_exception?(exception, status_cd, verbose)
     end
 
     def should_web_hook_on_exception?(exception, status_cd = nil, verbose = false)
-      notification_level_sends_web_hooks? && !ExceptionNotifier.config[:web_hooks].empty? && should_notify_on_exception?(exception, status_cd)
+      notification_level_sends_web_hooks? && !ExceptionNotifier.config[:web_hooks].empty? && should_notify_on_exception?(exception, status_cd, verbose)
     end
 
     def should_notify_on_exception?(exception, status_cd = nil, verbose = false)
-      puts "checking if should notify on exception E:#{exception} C: #{exception} SC: #{status_cd}" if verbose
       # don't notify (email or web hooks) on exceptions raised locally
       puts "skipping local notification" if verbose && ExceptionNotifier.config[:skip_local_notification] && is_local?
       return false if ExceptionNotifier.config[:skip_local_notification] && is_local?
       # don't notify (email or web hooks) exceptions raised that match ExceptionNotifiable.silent_exceptions
-      puts "skipping silent exception notification: K:#{klass} E:#{exception} C:#{exception.class}" if verbose && self.class.silent_exceptions.any? {|klass| klass === exception }
-      return false if self.class.silent_exceptions.any? {|klass| klass === exception }
-      puts "notifying for: E:#{exception} C:#{exception.class}" if verbose && ExceptionNotifier.config[:notify_error_classes].include?(exception)
-      return true if ExceptionNotifier.config[:notify_error_classes].include?(exception)
-      puts "notifying for status code: #{status_cd}" if verbose && !status_cd.nil? && ExceptionNotifier.config[:notify_error_codes].include?(status_cd)
+      return false if self.class.silent_exceptions.respond_to?(:any?) && self.class.silent_exceptions.any? {|klass| klass === exception }
+      return true if ExceptionNotifier.config[:notify_error_classes].include?(exception.class)
       return true if !status_cd.nil? && ExceptionNotifier.config[:notify_error_codes].include?(status_cd)
-      puts "Notify [#{ExceptionNotifier.config[:notify_other_errors] ? "YES" : "NO"}] Other Error: status code: #{status_cd} E:#{exception} C:#{exception.class}" if verbose
       return ExceptionNotifier.config[:notify_other_errors]
     end
 
