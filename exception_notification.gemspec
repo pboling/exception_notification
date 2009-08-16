@@ -1,17 +1,18 @@
 Gem::Specification.new do |s|
   s.name = 'super_exception_notifier'
-  s.version = '1.6.8'
-  s.date = '2009-08-15'
+  s.version = '1.7.0'
+  s.date = '2009-08-16'
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
 
   s.summary = %q{Allows unhandled (and handled!) exceptions to be captured and sent via email}
   s.description = %q{Allows customization of:
+* Specify which level of notification you would like with an array of optional styles of notification (email, webhooks)
 * the sender address of the email
 * the recipient addresses
 * the text used to prefix the subject line
-* the HTTP status codes to send emails for
+* the HTTP status codes to notify for
 * the error classes to send emails for
-* alternatively, the error classes to not send emails for
+* alternatively, the error classes to not notify for
 * whether to send error emails or just render without sending anything
 * the HTTP status and status code that gets rendered with specific errors
 * the view path to the error page templates
@@ -21,7 +22,7 @@ Gem::Specification.new do |s|
 * Override the gem's handling and rendering with explicit rescue statements inline.
 * Hooks into `git blame` output so you can get an idea of who (may) have introduced the bug
 * Hooks into other website services (e.g. you can send exceptions to to Switchub.com)
-* Specify which level of notification you would like with an array of optional styles of notification}
+  }
   
   s.authors = ['Peter Boling', 'Jacques Crocker', 'Jamis Buck']
   s.email = 'peter.boling@gmail.com'
