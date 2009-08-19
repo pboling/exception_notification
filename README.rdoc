@@ -84,7 +84,7 @@ Then in your environment.rb:
 
 Plugin using Git:
 
-  # Installation as plugin might work... I haven't tried it.
+  # Installation as plugin might work... I haven't tried it, but others have told me it works!
   ./script/plugin install git://github.com/pboling/exception_notification.git
 
 SVN Plugin (very deprecated, no longer updated, install Git!):
@@ -393,11 +393,13 @@ ExceptionNotifier.config[:sections] variable.
 
 == Not working due to nature of gem vs plugin
 
-You can even add new sections that
-describe application-specific data--just add the section's name to the list
-(whereever you'd like), and define the corresponding partial. Then, if your
-new section requires information that isn't available by default, make sure
-it is made available to the email using the exception_data macro:
+This might work if you install the gem as a plugin.
+
+You can even add new sections that describe application-specific data --
+just add the section's name to the list (whereever you'd like), and define the
+corresponding partial. Then, if your new section requires information that isn't
+available by default, make sure it is made available to the email using the
+exception_data macro:
 
   class ApplicationController < ActionController::Base
     ...

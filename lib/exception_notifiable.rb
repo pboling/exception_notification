@@ -294,7 +294,7 @@ module ExceptionNotifiable
   
     def exception_in_project?(path) # should be a path like /path/to/broken/thingy.rb
       dir = File.split(path).first rescue ''
-      if(File.directory?(dir) and !(path =~ /vendor\/plugins/) and path.include?(RAILS_ROOT))
+      if(File.directory?(dir) and !(path =~ /vendor\/plugins/) and !(path =~ /vendor\/gems/) and path.include?(RAILS_ROOT))
         path
       else
         nil

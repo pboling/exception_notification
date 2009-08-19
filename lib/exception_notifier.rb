@@ -2,7 +2,7 @@ require 'pathname'
 
 class ExceptionNotifier < ActionMailer::Base
 
-    #andrewroth reported that @@config gets clobbered because rails loads this class twice when installed as a plugin, and adding the ||= fixed it.
+  #andrewroth reported that @@config gets clobbered because rails loads this class twice when installed as a plugin, and adding the ||= fixed it.
   @@config ||= {
     # If left empty web hooks will not be engaged
     :web_hooks                => [],
