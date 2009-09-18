@@ -23,6 +23,12 @@ require 'ipaddr'
 module ExceptionNotifiable
   def self.included(target)
     target.extend(ClassMethods)
+
+    target.class_eval do
+      if Rails.env == 'production'
+        rescue_from 'Object', :with => :exception_notifier_catch_exception
+      end
+    end
   end
 
   module ClassMethods
@@ -77,23 +83,27 @@ module ExceptionNotifiable
       end
     end
 
-    def rescue_action_in_public(exception)
-      case exception
-        when *self.class.exceptions_to_treat_as_404
-          render_404
+    def exception_notifier_catch_exception(exception)
+      # We put the render call after the deliver call to ensure that, if the
+      # deliver raises an exception, we don't call render twice.
+      if !(self.controller_name == 'application' && self.action_name == '_rescue_action')
+        case exception
+          when *self.class.exceptions_to_treat_as_404
+            render_404
+          else
+            deliverer = self.class.exception_data
+            data = case deliverer
+              when nil then {}
+              when Symbol then send(deliverer)
+              when Proc then deliverer.call(self)
+            end
 
-        else          
-          render_500
-
-          deliverer = self.class.exception_data
-          data = case deliverer
-            when nil then {}
-            when Symbol then send(deliverer)
-            when Proc then deliverer.call(self)
-          end
-
-          ExceptionNotifier.deliver_exception_notification(exception, self,
-            request, data)
+            ExceptionNotifier.deliver_exception_notification(exception, self.controller_name, self.action_name,
+              request, data)
+            render_500
+        end
+      else
+        render_500
       end
     end
 end

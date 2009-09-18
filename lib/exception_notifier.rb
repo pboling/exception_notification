@@ -21,7 +21,7 @@ require 'pathname'
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 class ExceptionNotifier < ActionMailer::Base
-  @@sender_address = %("Exception Notifier" <exception.notifier@default.com>)
+  @@sender_address = 'exception.notifier@default.com'
   cattr_accessor :sender_address
 
   @@exception_recipients = []
@@ -37,15 +37,15 @@ class ExceptionNotifier < ActionMailer::Base
 
   def self.reloadable?() false end
 
-  def exception_notification(exception, controller, request, data={})
+  def exception_notification(exception, controller_name, controller_action_name, request, data={})
     content_type "text/plain"
 
-    subject    "#{email_prefix}#{controller.controller_name}##{controller.action_name} (#{exception.class}) #{exception.message.inspect}"
+    subject    "#{email_prefix}#{controller_name}##{controller_action_name} (#{exception.class}) #{exception.message.inspect}"
 
     recipients exception_recipients
     from       sender_address
 
-    body       data.merge({ :controller => controller, :request => request,
+    body       data.merge({ :controller_name => controller_name, :controller_action_name => controller_action_name, :request => request,
                   :exception => exception, :host => (request.env["HTTP_X_FORWARDED_HOST"] || request.env["HTTP_HOST"]),
                   :backtrace => sanitize_backtrace(exception.backtrace),
                   :rails_root => rails_root, :data => data,
