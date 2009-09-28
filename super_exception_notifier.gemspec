@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name = 'super_exception_notifier'
-  s.version = '1.7.2'
+  s.version = '1.7.3'
   s.date = '2009-09-28'
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
 
