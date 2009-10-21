@@ -52,6 +52,23 @@ class ExceptionNotifier < ActionMailer::Base
                   :sections => sections })
   end
 
+  def rake_exception_notification(exception, task, data={})
+    content_type "text/plain"
+
+    subject    "#{email_prefix}#{task.name} (#{exception.class}) #{exception.message.inspect}"
+
+    recipients exception_recipients
+    from       sender_address
+
+    body       data.merge({ :task => task,
+                  :exception => exception,
+                  :backtrace => sanitize_backtrace(exception.backtrace),
+                  :rails_root => rails_root,
+                  :data => data,
+                  :sections => sections.reject{|s| %w(request session).include?(s) } 
+               })
+  end
+
   private
 
     def sanitize_backtrace(trace)

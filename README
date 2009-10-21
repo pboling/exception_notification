@@ -25,6 +25,12 @@ Then, specify the email recipients in your environment:
 
   ExceptionNotifier.exception_recipients = %w(joe@schmoe.com bill@schmoe.com)
 
+For rake tasks, use 'NotifiedTask.new' instead of 'task'
+
+  NotifiedTask.new :sometask => :environment do
+    puts "I'm a task"
+  end
+
 And that's it! The defaults take care of the rest.
 
 == Configuration
