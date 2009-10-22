@@ -1,10 +1,7 @@
 require "action_mailer"
 
-require File.join(File.dirname(__FILE__), '..', 'lib', "super_exception_notifier", "custom_exception_classes")
-require File.join(File.dirname(__FILE__), '..', 'lib', "super_exception_notifier", "custom_exception_methods")
-
-# Add this path to ruby load path
-$:.unshift "#{File.dirname(__FILE__)}/../lib"
+require "super_exception_notifier/custom_exception_classes"
+require "super_exception_notifier/custom_exception_methods"
 
 require "hooks_notifier" unless defined?(HooksNotifier)
 require "exception_notifier" unless defined?(ExceptionNotifier)

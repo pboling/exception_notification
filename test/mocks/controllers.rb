@@ -52,7 +52,7 @@ end
 class DefaultSilentExceptions < Application
   include ExceptionNotifiable
   self.exception_notifier_verbose = false
-  puts self.silent_exceptions.inspect
+  #puts self.silent_exceptions.inspect
 end
 
 class OldStyle < Application

@@ -1,8 +1,6 @@
 require File.expand_path(File.dirname(__FILE__) + '/test_helper')
 require 'test/unit'
 
-RAILS_DEFAULT_LOGGER = Logger.new(nil)
-
 require File.join(File.dirname(__FILE__), 'mocks/controllers')
 
 ActionController::Routing::Routes.clear!
@@ -62,7 +60,8 @@ class ExceptionNotifyFunctionalTest < ActionController::TestCase
   def test_new_style_where_requests_are_local
     ActionController::Base.consider_all_requests_local = true
     @controller = NewStyle.new
-    get "runtime_error"    
+    ExceptionNotifier.config[:skip_local_notification] = true
+    get "runtime_error"
     
     # puts @response.body
     assert_nothing_mailed
@@ -76,7 +75,7 @@ class ExceptionNotifyFunctionalTest < ActionController::TestCase
   
   def test_old_style_record_not_found_does_not_send_mail
     @controller = OldStyle.new
-    get "record_not_found"    
+    get "record_not_found"
     assert_nothing_mailed
   end
   

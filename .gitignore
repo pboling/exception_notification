@@ -1,4 +1,7 @@
-*.gem
 doc
 .project
 .idea
+*.gem
+.idea
+.idea/*
+.idea/**/*

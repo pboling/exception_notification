@@ -139,16 +139,18 @@ module ExceptionNotifiable
     def rescue_with_handler(exception)
       to_return = super
       if to_return
+        verbose = self.class.exception_notifier_verbose
+        puts "[RESCUE STYLE] rescue_with_handler" if verbose
         data = get_exception_data
         status_code = status_code_for_exception(exception)
         #We only send email if it has been configured in environment
-        send_email = should_email_on_exception?(exception, status_code, self.class.exception_notifier_verbose)
+        send_email = should_email_on_exception?(exception, status_code, verbose)
         #We only send web hooks if they've been configured in environment
-        send_web_hooks = should_web_hook_on_exception?(exception, status_code, self.class.exception_notifier_verbose)
+        send_web_hooks = should_web_hook_on_exception?(exception, status_code, verbose)
         the_blamed = ExceptionNotifier.config[:git_repo_path].nil? ? nil : lay_blame(exception)
-        verbose_output(exception, status_code, "rescued by handler", send_email, send_web_hooks, nil, the_blamed) if self.class.exception_notifier_verbose
+        verbose_output(exception, status_code, "rescued by handler", send_email, send_web_hooks, nil, the_blamed) if verbose
         # Send the exception notificaiton email
-        perform_exception_notify_mailing(exception, data, nil, the_blamed) if send_email
+        perform_exception_notify_mailing(exception, data, nil, the_blamed, verbose) if send_email
         # Send Web Hook requests
         HooksNotifier.deliver_exception_to_web_hooks(ExceptionNotifier.config, exception, self, request, data, the_blamed) if send_web_hooks
       end
@@ -161,6 +163,7 @@ module ExceptionNotifiable
       # OTW if the error class is listed, but has a blank code or the code is == '200' then we get a custom error layout rendered
       # OTW the error class is listed!
       verbose = self.class.exception_notifier_verbose
+      puts "[RESCUE STYLE] rescue_action_in_public" if verbose
       status_code = status_code_for_exception(exception)
       if status_code == '200'
         notify_and_render_error_template(status_code, request, exception, ExceptionNotifier.get_view_path_for_class(exception, verbose), verbose)
@@ -181,7 +184,7 @@ module ExceptionNotifiable
       # Debugging output
       verbose_output(exception, status_cd, file_path, send_email, send_web_hooks, request, the_blamed) if verbose
       # Send the email before rendering to avert possible errors on render preventing the email from being sent.
-      perform_exception_notify_mailing(exception, data, request, the_blamed) if send_email
+      perform_exception_notify_mailing(exception, data, request, the_blamed, verbose) if send_email
       # Send Web Hook requests
       HooksNotifier.deliver_exception_to_web_hooks(ExceptionNotifier.config, exception, self, request, data, the_blamed) if send_web_hooks
       # Render the error page to the end user
@@ -222,9 +225,11 @@ module ExceptionNotifiable
       logger.error("render_error(#{status_cd}, #{self.class.http_error_codes[status_cd]}) invoked#{req}") if !logger.nil?
     end
 
-    def perform_exception_notify_mailing(exception, data, request = nil, the_blamed = nil)
-      if !ExceptionNotifier.config[:exception_recipients].blank?
-        # Send email with ActionMailer
+    def perform_exception_notify_mailing(exception, data, request = nil, the_blamed = nil, verbose = false)
+      if ExceptionNotifier.config[:exception_recipients].blank?
+        puts "ExceptionNotifier.config[:exception_recipients] is blank, so no exception email sent!" if verbose
+      else
+        puts "Sending notification email with ActionMailer" if verbose
         ExceptionNotifier.deliver_exception_notification(exception, self,
           request, data, the_blamed)
       end
@@ -240,7 +245,10 @@ module ExceptionNotifiable
 
     def should_notify_on_exception?(exception, status_cd = nil, verbose = false)
       # don't notify (email or web hooks) on exceptions raised locally
-      puts "skipping local notification" if verbose && ExceptionNotifier.config[:skip_local_notification] && is_local?
+      verbose ? puts(ExceptionNotifier.config[:skip_local_notification] && is_local? ?
+          "skipping local notification" :
+          "checking for local notification") : nil
+
       return false if ExceptionNotifier.config[:skip_local_notification] && is_local?
       # don't notify (email or web hooks) exceptions raised that match ExceptionNotifiable.silent_exceptions
       return false if self.class.silent_exceptions.respond_to?(:any?) && self.class.silent_exceptions.any? {|klass| klass === exception }

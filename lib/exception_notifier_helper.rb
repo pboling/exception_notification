@@ -19,8 +19,10 @@ module ExceptionNotifierHelper
     if File.exist?(path = "#{APP_PATH}/_#{partial}.html.erb") ||
         File.exist?(path = "#{File.dirname(__FILE__)}/../#{VIEW_PATH}/_#{partial}.html.erb") ||
         File.exist?(path = "#{APP_PATH}/_#{partial}.rhtml") ||
-        File.exist?(path = "#{File.dirname(__FILE__)}/../#{VIEW_PATH}/_#{partial}.rhtml")
+        File.exist?(path = "#{APP_PATH}/_#{partial}.erb")
       render(options.merge(:file => path, :use_full_path => false))
+    else
+      ""
     end
   end
 
