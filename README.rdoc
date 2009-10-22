@@ -80,7 +80,7 @@ Gemcutter is the hot new gem host, and you can use it like this:
 
 Then in your environment.rb:
 
-  config.gem 'pboling-super_exception_notifier',
+  config.gem 'super_exception_notifier',
       :version => '~> 2.0.0',
       :lib => "exception_notifier",
 
@@ -95,7 +95,7 @@ SVN Plugin (very deprecated, no longer updated, DO NOT USE, install Git!):
 
 == Exceptions Without a Controller
 
-You may also use SEN to send information about exceptions that
+You may use SEN to send information about exceptions that
 occur while running application scripts without a controller. Simply wrap the
 code you want to watch with the notifiable method:
 
@@ -185,7 +185,7 @@ The available configuration options are shown with their default settings:
       "404" => "Not Found",
       "405" => "Method Not Allowed",
       "410" => "Gone",
-      "418" => "IÕm a teapot",
+      "418" => "I'm a teapot",
       "422" => "Unprocessable Entity",
       "423" => "Locked",
       "500" => "Internal Server Error",
