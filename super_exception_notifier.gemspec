@@ -24,7 +24,7 @@ Gem::Specification.new do |s|
 * Hooks into other website services (e.g. you can send exceptions to to Switchub.com)
   }
   
-  s.authors = ['Peter Boling', 'Jacques Crocker', 'Jamis Buck']
+  s.authors = ['Peter Boling', 'Scott Windsor', 'Ismael Celis', 'Jacques Crocker', 'Jamis Buck']
   s.email = 'peter.boling@gmail.com'
   s.homepage = 'http://github.com/pboling/exception_notification'
   s.require_paths = ["lib"]
