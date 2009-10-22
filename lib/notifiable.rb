@@ -42,11 +42,7 @@ module Notifiable
     yield
   rescue => exception
     rescue_with_hooks(exception)
-    # Not sure if it is possible to write tests for this if we go ahead and raise the original error.
-    #   tests are passing without continuing to raise it.
-    #   For now leaving it like this.  Please let me know if you use this feature and encounter problems.  I haven't used it. - pboling
-    #   TODO: Please let me know if you know of a way to get the tests to work AND still raise the error
-    #raise
+    raise
   end
 
   def be_silent_for_exception?(exception)

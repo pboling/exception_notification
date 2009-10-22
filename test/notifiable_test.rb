@@ -3,7 +3,9 @@ require File.expand_path(File.dirname(__FILE__) + '/test_helper')
 require 'test/unit'
 
 class Spaceship
-  include Notifiable
+  # It is included by the init.rb in hte Object super class,
+  #   so we don't actually need to do anything to get notifiable { method } goodness.
+  #include Notifiable
 end
 
 class SpaceCarrier < Spaceship
@@ -24,24 +26,30 @@ class NotifiableTest < Test::Unit::TestCase
     @class = Spaceship.new
     Spaceship.notifiable_noisy_environments = ['test']
     ExceptionNotifier.config[:skip_local_notification] = true
-    notifiable { @class.access_denied }
-    assert_error_mail_contains("AccessDenied")
+    assert_raises( AccessDenied ) {
+      notifiable { @class.access_denied }
+      assert_error_mail_contains("AccessDenied")
+    }
   end
 
   def test_notifiable_in_quiet_environment_not_skipping_local
     @class = Spaceship.new
     Spaceship.notifiable_noisy_environments = []
     ExceptionNotifier.config[:skip_local_notification] = false
-    notifiable { @class.access_denied }
-    assert_error_mail_contains("AccessDenied")
+    assert_raises( AccessDenied ) {
+      notifiable { @class.access_denied }
+      assert_error_mail_contains("AccessDenied")
+    }
   end
 
   def test_notifiable_in_quiet_environment_skipping_local
     @class = Spaceship.new
     Spaceship.notifiable_noisy_environments = []
     ExceptionNotifier.config[:skip_local_notification] = true
-    notifiable { @class.access_denied }
-    assert_nothing_mailed
+    assert_raises( AccessDenied ) {
+      notifiable { @class.access_denied }
+      assert_nothing_mailed
+    }
   end
 
   private

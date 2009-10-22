@@ -127,6 +127,23 @@ class ExceptionNotifier < ActionMailer::Base
     exception_notification(exception, nil, nil, data, the_blamed)
   end
 
+  def rake_exception_notification(exception, task, data={})
+    content_type "text/plain"
+
+    subject    "#{email_prefix}#{task.name} (#{exception.class}) #{exception.message.inspect}"
+
+    recipients exception_recipients
+    from       sender_address
+
+    body       data.merge({ :task => task,
+                  :exception => exception,
+                  :backtrace => sanitize_backtrace(exception.backtrace),
+                  :rails_root => rails_root,
+                  :data => data,
+                  :sections => sections.reject{|s| %w(request session).include?(s) } 
+               })
+  end
+
   private
 
     def error_environment_data_hash(exception, class_name = nil, method_name = nil, request = nil, data={}, the_blamed=nil)

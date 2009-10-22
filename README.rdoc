@@ -91,7 +91,7 @@ SVN Plugin (very deprecated, no longer updated, install Git!):
 
   ./script/plugin install http://super-exception-notifier.googlecode.com/svn/trunk/super_exception_notifier
 
-== Usage
+== Usage with Controllers
 
 1. Include the ExceptionNotifiable mixin in whichever controller you want
 to generate error emails (typically ApplicationController):
@@ -147,7 +147,7 @@ just set any or all of the following values (defaults are shown):
     config[:template_root]            = "#{File.dirname(__FILE__)}/../views"
   end
 
-== Basic Object Configuration
+== Basic Controller Configuration
 
 In any controller you do this:
     include ExceptionNotifiable
@@ -502,4 +502,13 @@ POST exception data in JSON format to the specified services for processing
       config[:app_name]             = "[APP]" # defaults to [MYAPP]
       config[:exception_recipients] = %w(my@example.com another@example.com) # defaults to []
       config[:sender_address]       = %("Application Error" <app.error@myapp.com>) # defaults to super.exception.notifier@example.com
+  end
+
+== sentientmonkey changes
+
+Now you can get notifications from rake tasks!
+Use 'NotifiedTask.new' instead of 'task':
+
+  NotifiedTask.new :sometask => :environment do
+    puts "I'm a task"
   end
