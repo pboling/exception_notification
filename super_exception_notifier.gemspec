@@ -1,7 +1,7 @@
 Gem::Specification.new do |s|
   s.name = 'super_exception_notifier'
   s.version = '1.7.3'
-  s.date = '2009-09-28'
+  s.date = '2009-10-21'
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
 
   s.summary = %q{Allows unhandled (and handled!) exceptions to be captured and sent via email}
@@ -24,9 +24,9 @@ Gem::Specification.new do |s|
 * Hooks into other website services (e.g. you can send exceptions to to Switchub.com)
   }
   
-  s.authors = ['Luis Landeiro Ribeiro','Peter Boling', 'Jacques Crocker', 'Jamis Buck']
-  s.email = 'ribeiro.luis@gmail.com'
-  s.homepage = 'http://github.com/lribeiro/exception_notification'
+  s.authors = ['Peter Boling', 'Jacques Crocker', 'Jamis Buck']
+  s.email = 'peter.boling@gmail.com'
+  s.homepage = 'http://github.com/pboling/exception_notification'
   s.require_paths = ["lib"]
   
   s.has_rdoc = true
