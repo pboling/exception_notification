@@ -4,6 +4,11 @@
 A <%= @exception.class %> occurred in <%= @location %>:
   <%= @exception.message %>
   <%= @backtrace.first %>
+
+<% if @data[:info] -%>
+  <%=@data[:info].to_yaml%>
+<% end -%>
+
 <% unless @the_blamed.nil? || @the_blamed[:author].nil? %>
 Git Blame: '<%=@the_blamed[:author]%>' last modified line #<%=@the_blamed[:line]%> in <%=@the_blamed[:file]%>
 <% end%>

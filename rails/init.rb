@@ -2,11 +2,15 @@ require "action_mailer"
 
 require "super_exception_notifier/custom_exception_classes"
 require "super_exception_notifier/custom_exception_methods"
+require "super_exception_notifier/helpful_hashes"
+require "super_exception_notifier/git_blame"
+require "super_exception_notifier/deprecated_methods"
+require "super_exception_notifier/hooks_notifier"
+require "super_exception_notifier/notifiable_helper"
 
-require "hooks_notifier" unless defined?(HooksNotifier)
+require "exception_notifier_helper" unless defined?(ExceptionNotifierHelper)
 require "exception_notifier" unless defined?(ExceptionNotifier)
 require "exception_notifiable" unless defined?(ExceptionNotifiable)
-require "exception_notifier_helper" unless defined?(ExceptionNotifierHelper)
 require "notifiable" unless defined?(Notifiable)
 
 Object.class_eval do

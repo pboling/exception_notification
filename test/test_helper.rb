@@ -21,7 +21,6 @@ RAILS_DEFAULT_LOGGER = Logger.new(StringIO.new) unless defined?(RAILS_DEFAULT_LO
 #$:.unshift File.join(File.dirname(__FILE__), '../lib')
 
 require File.join(File.dirname(__FILE__), "..", "init")
-#require 'exception_notifier'
 
 ExceptionNotifier.configure_exception_notifier do |config|
   # If left empty web hooks will not be engaged
@@ -29,4 +28,5 @@ ExceptionNotifier.configure_exception_notifier do |config|
   config[:exception_recipients]     = ["test.errors@example.com"]
   config[:view_path]                = File.join(File.dirname(__FILE__), "mocks")
   config[:skip_local_notification]  = false
+  config[:notify_other_errors]      = true
 end

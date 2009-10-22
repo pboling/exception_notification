@@ -8,7 +8,7 @@ class ExceptionNotifier < ActionMailer::Base
     :web_hooks                => [],
     :app_name                 => "[MYAPP]",
     :version                  => "0.0.0",
-    :sender_address           => %("#{(defined?(Rails) ? Rails.env : RAILS_ENV).capitalize} Error" <super.exception.notifier@example.com>),
+    :sender_address           => "super.exception.notifier@example.com",
     :exception_recipients     => [],
     # Customize the subject line
     :subject_prepend          => "[#{(defined?(Rails) ? Rails.env : RAILS_ENV).capitalize} ERROR] ",
@@ -110,8 +110,8 @@ class ExceptionNotifier < ActionMailer::Base
     end
   end
 
-  def exception_notification(exception, controller = nil, request = nil, data={}, the_blamed=nil)
-    body_hash = error_environment_data_hash(exception, controller, request, data, the_blamed)
+  def exception_notification(exception, class_name = nil, method_name = nil, request = nil, data={}, the_blamed=nil)
+    body_hash = error_environment_data_hash(exception, class_name, method_name, request, data, the_blamed)
     #Prefer to have custom, potentially HTML email templates available
     #content_type  "text/plain"
     recipients    config[:exception_recipients]
@@ -129,7 +129,7 @@ class ExceptionNotifier < ActionMailer::Base
 
   private
 
-    def error_environment_data_hash(exception, controller = nil, request = nil, data={}, the_blamed=nil)
+    def error_environment_data_hash(exception, class_name = nil, method_name = nil, request = nil, data={}, the_blamed=nil)
       data.merge!({
         :exception => exception,
         :backtrace => sanitize_backtrace(exception.backtrace),
@@ -138,20 +138,20 @@ class ExceptionNotifier < ActionMailer::Base
         :the_blamed => the_blamed
       })
 
-      if controller && request
-        data.merge!({
-          :location => "#{controller.controller_name}##{controller.action_name}",
-          :controller => controller,
-          :request => request,
-          :host => (request.env['HTTP_X_REAL_IP'] || request.env["HTTP_X_FORWARDED_HOST"] || request.env["HTTP_HOST"]),
-          :sections => config[:sections]
-        })
+      data.merge!({:class_name => class_name}) if class_name
+      data.merge!({:method_name => method_name}) if method_name
+      if class_name && method_name
+        data.merge!({:location => "#{class_name}##{method_name}"})
       else
-        # TODO: with refactoring, the environment section could show useful ENV data even without a request
-        data.merge!({
-          :location => sanitize_backtrace([exception.backtrace.first]).first,
-          :sections => config[:sections] - %w(request session environment)
-        })
+        data.merge!({:location => sanitize_backtrace([exception.backtrace.first]).first})
+      end
+      if request
+        data.merge!({:request => request})
+        data.merge!({:host => (request.env['HTTP_X_REAL_IP'] || request.env["HTTP_X_FORWARDED_HOST"] || request.env["HTTP_HOST"])})
+        data.merge!({:sections => config[:sections]})
+      else
+        # TODO: with refactoring in the view structure, the environment section could show useful ENV data even without a request?
+        data.merge!({:sections => config[:sections] - %w(request session environment)})
       end
       return data
     end

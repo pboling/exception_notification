@@ -53,7 +53,6 @@ class ExceptionNotifyFunctionalTest < ActionController::TestCase
     ActionController::Base.consider_all_requests_local = true
     @controller = OldStyle.new
     get "runtime_error"    
-    
     assert_nothing_mailed
   end
 
@@ -62,8 +61,6 @@ class ExceptionNotifyFunctionalTest < ActionController::TestCase
     @controller = NewStyle.new
     ExceptionNotifier.config[:skip_local_notification] = true
     get "runtime_error"
-    
-    # puts @response.body
     assert_nothing_mailed
   end
   
@@ -75,7 +72,7 @@ class ExceptionNotifyFunctionalTest < ActionController::TestCase
   
   def test_old_style_record_not_found_does_not_send_mail
     @controller = OldStyle.new
-    get "record_not_found"
+    get "ar_record_not_found"
     assert_nothing_mailed
   end
   
@@ -87,7 +84,7 @@ class ExceptionNotifyFunctionalTest < ActionController::TestCase
   
   def test_new_style_record_not_found_does_not_send_mail
     @controller = NewStyle.new
-    get "record_not_found"    
+    get "ar_record_not_found"    
     assert_nothing_mailed
   end
 
@@ -99,13 +96,13 @@ class ExceptionNotifyFunctionalTest < ActionController::TestCase
 
   def test_controller_with_empty_silent_exceptions
     @controller = EmptySilentExceptions.new
-    get "record_not_found"
+    get "ar_record_not_found"
     assert_error_mail_contains("ActiveRecord::RecordNotFound")
   end
 
   def test_controller_with_nil_silent_exceptions
     @controller = NilSilentExceptions.new
-    get "record_not_found"
+    get "ar_record_not_found"
     assert_error_mail_contains("ActiveRecord::RecordNotFound")
   end
 

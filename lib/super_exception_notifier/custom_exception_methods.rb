@@ -3,6 +3,8 @@
 
 module SuperExceptionNotifier
   module CustomExceptionMethods
+
+    protected
     
     #For a while after disabling a route/URL that had been functional we should set it to resource gone to inform people to remove bookmarks.
     def resource_gone
@@ -12,7 +14,7 @@ module SuperExceptionNotifier
     def not_implemented
       raise NotImplemented
     end
-    #Resources that must be requested with a specific HTTP Meethod (GET, PUT, POST, DELETE, AJAX, etc) but are requested otherwise should:
+    #Resources that must be requested with a specific HTTP Method (GET, PUT, POST, DELETE, AJAX, etc) but are requested otherwise should:
     def invalid_method
       raise InvalidMethod
     end
@@ -33,8 +35,6 @@ module SuperExceptionNotifier
     def access_denied
       raise AccessDenied
     end
-
-  protected
 
     def generic_error
       error_stickie("Sorry, an error has occurred.")

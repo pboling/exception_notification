@@ -14,8 +14,13 @@ class Application < ActionController::Base
     raise "This is a runtime error that we should be emailed about"
   end
 
-  def record_not_found
-    raise ActiveRecord::RecordNotFound
+  def ar_record_not_found
+    #From SuperExceptionNotifier::CustomExceptionMethods
+    record_not_found
+  end
+
+  def name_error
+    raise NameError
   end
 
   def unknown_controller
@@ -31,38 +36,41 @@ end
 class SpecialErrorThing < RuntimeError
 end
 
+class BasicController < Application
+  include ExceptionNotifiable
+end
+
 class CustomSilentExceptions < Application
   include ExceptionNotifiable
-  self.exception_notifier_verbose = false
-  self.silent_exceptions = [RuntimeError]
+  self.exception_notifiable_verbose = false
+  self.exception_notifiable_silent_exceptions = [RuntimeError]
 end
 
 class EmptySilentExceptions < Application
   include ExceptionNotifiable
-  self.exception_notifier_verbose = false
-  self.silent_exceptions = []
+  self.exception_notifiable_verbose = false
+  self.exception_notifiable_silent_exceptions = []
 end
 
 class NilSilentExceptions < Application
   include ExceptionNotifiable
-  self.exception_notifier_verbose = false
-  self.silent_exceptions = nil
+  self.exception_notifiable_verbose = false
+  self.exception_notifiable_silent_exceptions = nil
 end
 
 class DefaultSilentExceptions < Application
   include ExceptionNotifiable
-  self.exception_notifier_verbose = false
-  #puts self.silent_exceptions.inspect
+  self.exception_notifiable_verbose = false
 end
 
 class OldStyle < Application
   include ExceptionNotifiable
-  self.exception_notifier_verbose = false
+  self.exception_notifiable_verbose = false
 end
 
 class NewStyle < Application
   include ExceptionNotifiable
-  self.exception_notifier_verbose = false
+  self.exception_notifiable_verbose = false
     
   rescue_from ActiveRecord::RecordNotFound do |exception|
     render :text => "404", :status => 404
