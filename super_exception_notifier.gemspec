@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{super_exception_notifier}
-  s.version = "2.0.1"
+  s.version = "2.0.2"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Peter Boling", "Scott Windsor", "Ismael Celis", "Jacques Crocker", "Jamis Buck"]
-  s.date = %q{2009-10-22}
+  s.date = %q{2009-10-23}
   s.description = %q{Allows customization of:
 * Specify which level of notification you would like with an array of optional styles of notification (email, webhooks)
 * the sender address of the email
@@ -69,7 +69,8 @@ Gem::Specification.new do |s|
      "views/exception_notifier/_session.html.erb",
      "views/exception_notifier/_title.html.erb",
      "views/exception_notifier/background_exception_notification.text.plain.erb",
-     "views/exception_notifier/exception_notification.text.plain.erb"
+     "views/exception_notifier/exception_notification.text.plain.erb",
+     "views/exception_notifier/rake_exception_notification.text.plain.erb"
   ]
   s.homepage = %q{http://github.com/pboling/exception_notification}
   s.rdoc_options = ["--charset=UTF-8"]
