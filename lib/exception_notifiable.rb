@@ -102,9 +102,11 @@ module ExceptionNotifiable
         #We only send web hooks if they've been configured in environment
         send_web_hooks = should_web_hook_on_exception?(exception, status_code, verbose)
         the_blamed = ExceptionNotifier.config[:git_repo_path].nil? ? nil : lay_blame(exception)
-        verbose_output(exception, status_code, "rescued by handler", send_email, send_web_hooks, nil, the_blamed) if verbose
-        # Send the exception notificaiton email
-        perform_exception_notify_mailing(exception, data, nil, the_blamed, verbose) if send_email
+        rejected_sections = %w(request session)
+        # Debugging output
+        verbose_output(exception, status_code, "rescued by handler", send_email, send_web_hooks, nil, the_blamed, rejected_sections) if verbose
+        # Send the exception notification email
+        perform_exception_notify_mailing(exception, data, nil, the_blamed, verbose, rejected_sections) if send_email
         # Send Web Hook requests
         HooksNotifier.deliver_exception_to_web_hooks(ExceptionNotifier.config, exception, self, request, data, the_blamed) if send_web_hooks
       end
@@ -134,13 +136,13 @@ module ExceptionNotifiable
       #We only send web hooks if they've been configured in environment
       send_web_hooks = should_web_hook_on_exception?(exception, status_cd, verbose)
       the_blamed = ExceptionNotifier.config[:git_repo_path].nil? ? nil : lay_blame(exception)
-
+      rejected_sections = request.nil? ? %w(request session) : []
       # Debugging output
-      verbose_output(exception, status_cd, file_path, send_email, send_web_hooks, request, the_blamed) if verbose
-
+      verbose_output(exception, status_cd, file_path, send_email, send_web_hooks, request, the_blamed, rejected_sections) if verbose
       #TODO: is _rescue_action something from rails 3?
       #if !(self.controller_name == 'application' && self.action_name == '_rescue_action')
-      perform_exception_notify_mailing(exception, data, request, the_blamed, verbose) if send_email
+      # Send the exception notification email
+      perform_exception_notify_mailing(exception, data, request, the_blamed, verbose, rejected_sections) if send_email
       # Send Web Hook requests
       HooksNotifier.deliver_exception_to_web_hooks(ExceptionNotifier.config, exception, self, request, data, the_blamed) if send_web_hooks
 

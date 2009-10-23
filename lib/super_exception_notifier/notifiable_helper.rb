@@ -27,7 +27,7 @@ module SuperExceptionNotifier
       end
     end
 
-    def verbose_output(exception, status_cd, file_path, send_email, send_web_hooks, request = nil, the_blamed = nil)
+    def verbose_output(exception, status_cd, file_path, send_email, send_web_hooks, request = nil, the_blamed = nil, rejected_sections = nil)
       puts "[EXCEPTION] #{exception}"
       puts "[EXCEPTION CLASS] #{exception.class}"
       puts "[EXCEPTION STATUS_CD] #{status_cd}"
@@ -38,18 +38,19 @@ module SuperExceptionNotifier
       puts "[ERROR WEB HOOKS] #{send_web_hooks ? "YES" : "NO"}"
       puts "[COMPAT MODE] #{ExceptionNotifierHelper::COMPAT_MODE ? "YES" : "NO"}"
       puts "[THE BLAMED] #{the_blamed}"
+      puts "[SECTIONS] #{ExceptionNotifier.sections_for_email(rejected_sections, request)}"
       req = request ? " for request_uri=#{request.request_uri} and env=#{request.env.inspect}" : ""
       logger.error("render_error(#{status_cd}, #{self.class.http_status_codes[status_cd]}) invoked#{req}") if self.class.respond_to?(:http_status_codes) && !logger.nil?
     end
 
-    def perform_exception_notify_mailing(exception, data, request = nil, the_blamed = nil, verbose = false)
+    def perform_exception_notify_mailing(exception, data, request = nil, the_blamed = nil, verbose = false, rejected_sections = nil)
       if ExceptionNotifier.config[:exception_recipients].blank?
         puts "[EMAIL NOTIFICATION] ExceptionNotifier.config[:exception_recipients] is blank, notification cancelled!" if verbose
       else
         class_name = self.respond_to?(:controller_name) ? self.controller_name : self.to_s
         method_name = self.respond_to?(:action_name) ? self.action_name : get_method_name
         ExceptionNotifier.deliver_exception_notification(exception, class_name, method_name,
-          request, data, the_blamed)
+          request, data, the_blamed, rejected_sections)
         puts "[EMAIL NOTIFICATION] Sent" if verbose
       end
     end

@@ -53,6 +53,11 @@ class ExceptionNotifier < ActionMailer::Base
     filenames
   end
 
+  def self.sections_for_email(rejected_sections, request)
+    rejected_sections = rejected_sections.nil? ? request.nil? ? %w(request session) : [] : rejected_sections
+    rejected_sections.empty? ? config[:sections] : config[:sections].reject{|s| rejected_sections.include?(s) }
+  end
+
   # Converts Stringified Class Names to acceptable filename handles with underscores
   def self.filenamify(str)
     str.delete(':').gsub( /([A-Za-z])([A-Z])/, '\1' << '_' << '\2').downcase
@@ -110,8 +115,8 @@ class ExceptionNotifier < ActionMailer::Base
     end
   end
 
-  def exception_notification(exception, class_name = nil, method_name = nil, request = nil, data={}, the_blamed=nil)
-    body_hash = error_environment_data_hash(exception, class_name, method_name, request, data, the_blamed)
+  def exception_notification(exception, class_name = nil, method_name = nil, request = nil, data = {}, the_blamed = nil, rejected_sections = nil)
+    body_hash = error_environment_data_hash(exception, class_name, method_name, request, data, the_blamed, rejected_sections)
     #Prefer to have custom, potentially HTML email templates available
     #content_type  "text/plain"
     recipients    config[:exception_recipients]
@@ -123,30 +128,17 @@ class ExceptionNotifier < ActionMailer::Base
     body          body_hash
   end
   
-  def background_exception_notification(exception, data = {}, the_blamed = nil)
-    exception_notification(exception, nil, nil, data, the_blamed)
+  def background_exception_notification(exception, data = {}, the_blamed = nil, rejected_sections = %w(request session))
+    exception_notification(exception, nil, nil, nil, data, the_blamed, rejected_sections)
   end
 
-  def rake_exception_notification(exception, task, data={})
-    content_type "text/plain"
-
-    subject    "#{email_prefix}#{task.name} (#{exception.class}) #{exception.message.inspect}"
-
-    recipients exception_recipients
-    from       sender_address
-
-    body       data.merge({ :task => task,
-                  :exception => exception,
-                  :backtrace => sanitize_backtrace(exception.backtrace),
-                  :rails_root => rails_root,
-                  :data => data,
-                  :sections => sections.reject{|s| %w(request session).include?(s) } 
-               })
+  def rake_exception_notification(exception, task, data={}, the_blamed = nil, rejected_sections = %w(request session))
+    exception_notification(exception, "", "#{task.name}", nil, data, the_blamed, rejected_sections)
   end
 
   private
 
-    def error_environment_data_hash(exception, class_name = nil, method_name = nil, request = nil, data={}, the_blamed=nil)
+    def error_environment_data_hash(exception, class_name = nil, method_name = nil, request = nil, data = {}, the_blamed = nil, rejected_sections = nil)
       data.merge!({
         :exception => exception,
         :backtrace => sanitize_backtrace(exception.backtrace),
@@ -159,17 +151,16 @@ class ExceptionNotifier < ActionMailer::Base
       data.merge!({:method_name => method_name}) if method_name
       if class_name && method_name
         data.merge!({:location => "#{class_name}##{method_name}"})
+      elsif method_name
+        data.merge!({:location => "#{method_name}"})
       else
         data.merge!({:location => sanitize_backtrace([exception.backtrace.first]).first})
       end
       if request
         data.merge!({:request => request})
         data.merge!({:host => (request.env['HTTP_X_REAL_IP'] || request.env["HTTP_X_FORWARDED_HOST"] || request.env["HTTP_HOST"])})
-        data.merge!({:sections => config[:sections]})
-      else
-        # TODO: with refactoring in the view structure, the environment section could show useful ENV data even without a request?
-        data.merge!({:sections => config[:sections] - %w(request session environment)})
       end
+      data.merge!({:sections => ExceptionNotifier.sections_for_email(rejected_sections, request)})
       return data
     end
 
