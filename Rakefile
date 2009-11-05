@@ -48,6 +48,7 @@ begin
     gemspec.email = "peter.boling@gmail.com"
     gemspec.homepage = "http://github.com/pboling/exception_notification"
     gemspec.authors = ['Peter Boling', 'Scott Windsor', 'Ismael Celis', 'Jacques Crocker', 'Jamis Buck']
+    gemspec.add_dependency 'actionmailer'
     gemspec.files = ["MIT-LICENSE",
              "README.rdoc",
              "exception_notification.gemspec",
