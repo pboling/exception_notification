@@ -3,7 +3,7 @@ require File.expand_path(File.dirname(__FILE__) + '/test_helper')
 require 'test/unit'
 
 class Spaceship
-  # It is included by the init.rb in hte Object super class,
+  # It is included by the init.rb in the Object super class,
   #   so we don't actually need to do anything to get notifiable { method } goodness.
   #include Notifiable
 end
