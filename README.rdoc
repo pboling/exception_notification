@@ -38,13 +38,13 @@ a dozen or so other forks.  It remains a (mostly) drop in replacement with great
 functionality and customization options.  I keep it up to date with the work on the core team's
 branch.
 
-The original is here:
+The venerable original is here:
  
   http://github.com/rails/exception_notification/tree/master
 
 The current version of this gem is a git fork of the original and
 has been updated to include the latest improvements from the original, 
-including compatability with Rails 2.1, 2.2, 2.3, and perhaps 3.0, as well as many improvements from 
+including compatibility with Rails 2.1, 2.2, 2.3, and perhaps 3.0, as well as many improvements from
 the other forks on github.  I merge them in when I have time, and when the 
 changes fit nicely with the enhancements I have already made.
 
@@ -176,7 +176,7 @@ In any controller you do this:
 
 Then that controller (or all of them if you put it in the application controller) will have its errors handled by SEN.
 You can customize how each controller handles exceptions on a per controller basis, or all together in the application controller.
-The available configuration options are shown with their default settings:
+The available configuration options are shown with their default settings, pulled from the gem's source:
 
     #  HTTP status codes and what their 'English' status message is
     self.http_status_codes = {
@@ -217,7 +217,7 @@ The available configuration options are shown with their default settings:
       MethodDisabled => "200"
     }
 
-    # Highly dependent on the verison of rails, so we're very protective about these'
+    # Highly dependent on the version of rails, so we're very protective about these'
     self.error_class_status_codes.merge!({ ActionView::TemplateError => "500"})             if defined?(ActionView)       && ActionView.const_defined?(:TemplateError)
     self.error_class_status_codes.merge!({ ActiveRecord::RecordNotFound => "400" })         if defined?(ActiveRecord)     && ActiveRecord.const_defined?(:RecordNotFound)
     self.error_class_status_codes.merge!({ ActiveResource::ResourceNotFound => "404" })     if defined?(ActiveResource)   && ActiveResource.const_defined?(:ResourceNotFound)
@@ -359,12 +359,12 @@ Email will be sent if the error matches one of the error classes to send email f
 You can also customize what is rendered. SuperExceptionNotifier will render the first file it finds in this order:
 
   #{RAILS_ROOT}/public/###.html
-  #{RAILS_ROOT}/#ExceptionNotifier.config[:view_path]}/###.html
+  #{RAILS_ROOT}/#{ExceptionNotifier.config[:view_path]}/###.html
   #{this gem's root}/rails/app/views/exception_notifiable/#{status_cd}.html
 
 And if none of those paths has a valid file to render, this one wins:
 
-  #{RAILS_ROOT}/rails/app/views/exception_notifiable/500.html
+  #{this gem's root}/rails/app/views/exception_notifiable/500.html
 
 You can configure ExceptionNotifier.config[:view_path] in your environment file like this:
 
@@ -386,7 +386,7 @@ You can render CUSTOM error pages! Here's how:
     * ExceptionNotifier.config[:view_path] = 'app/views/error'
   5. Create a view for the error. SuperExceptionNotifier munges the error's class by converting to a string and then replacing consecutive ':' with '' and then downcases it:
     * touch app/views/error/insufficient_funds_for_withdrawal.html
-  6. If you want a custom layout (by default it will render the error with the latout the controller is using) you just need to set, in application.rb (or per-controller):
+  6. If you want a custom layout (by default it will render the error with the layout the controller is using) you just need to set, in application.rb (or per-controller):
     * self.error_layout = 'my_error_layout' #or = true for the same layout as the controller, or = false for no layout
   7. That's it! All errors that are set to be handled with a status of "200" will render a custom page.
   8. If you want to have errors that render custom pages also send emails then you'll need to:
@@ -446,7 +446,7 @@ in ExceptionNotifiable for an example of how to go about that.
 
 == HTTP Error Codes Used by SEN by default
 
-  For reference these are the error codes that SEN can inherently handle.
+  For reference these are the error codes that SEN can inherently handle, and they were gleaned from the following two websites.
   Official w3.org HTTP 1.1 Error Codes:
   http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html
   Not all the error codes in use today are on that list, so here's Apache's list:
@@ -483,7 +483,7 @@ in ExceptionNotifiable for an example of how to go about that.
 == CSS
 
 All the standard error pages that come in the gem render a div with a class of "dialog",
-so put this in a stylesheet you are including in your app to get you started (like stardard rails error style):
+so put this in a stylesheet you are including in your app to get you started (like standard rails error style):
 
 <style type="text/css">
   div.dialog {
@@ -497,15 +497,22 @@ so put this in a stylesheet you are including in your app to get you started (li
   h1 { font-size: 100%; color: #f00; line-height: 1.5em; }
 </style>
 
-    
-  Copyright (c) 2008 Peter H. Boling, released under the MIT license
-  Portions Copyright (c) 2005 Jamis Buck, released under the MIT license
+== Authors
 
+  Jamis Buck and Peter Boling
+
+== Contributors
+
+  I've merged many other people's forks into my fork.  Thanks to all of you who contributed good ideas that I have ripped off!
+
+  If I fail to mention you below, please let me know.
+
+  jamescook, ismasan, sentientmonkey
+    
 == jamescook changes
 
 Hooks into `git blame` output so you can get an idea of who (may) have introduced the bug :)
 -- Usage: set ExceptionNotifier.config[:git_repo_path] to the path of your git repo.
-
 
 == ismasan changes
 
@@ -520,9 +527,13 @@ POST exception data in JSON format to the specified services for processing
 
 == sentientmonkey changes
 
-Now you can get notifications from rake tasks!
-Use 'NotifiedTask.new' instead of 'task':
-
+Now you can get notifications from rake tasks!  Use 'NotifiedTask.new' instead of 'task':
+-- Usage:
   NotifiedTask.new :sometask => :environment do
     puts "I'm a task"
   end
+
+== Copyright
+
+  Copyright (c) 2008-9 Peter H. Boling, released under the MIT license
+  Portions Copyright (c) 2005 Jamis Buck, released under the MIT license
