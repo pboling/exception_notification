@@ -50,9 +50,17 @@ changes fit nicely with the enhancements I have already made.
 
 This fork of Exception Notifier is in production use on several large websites (top 5000).
 
-== Installation
+== Installation as RubyGem
 
-Gem Using Git building from source:
+Gemcutter is the hot new gem host, and you can use it like this:
+
+  [sudo] gem install gemcutter
+  [sudo] gem tumble # makes gemcutter gem source first in line
+  [sudo] gem install super_exception_notifier
+
+== Installation as RubyGem from source
+
+Use Git to build from source:
 
   mkdir -p ~/src
   cd ~/src
@@ -65,33 +73,19 @@ Then cd to your rails app to optionally freeze the gem into your app:
 
   rake gems:freeze GEM=super_exception_notifier
 
-Then in your environment.rb:
+== Installation as Plugin from source:
 
-  config.gem 'super_exception_notifier',
-      :version => '~> 2.0.0',
-      :lib => "exception_notifier"
+Plugin using Git (let me know if you find any bugs, as I don't ever run it this way.):
 
-
-Gemcutter is the hot new gem host, and you can use it like this:
-
-  [sudo] gem install gemcutter
-  [sudo] gem tumble # makes gemcutter gem source first in line
-  [sudo] gem install super_exception_notifier
-
-Then in your environment.rb:
-
-  config.gem 'super_exception_notifier',
-      :version => '~> 2.0.0',
-      :lib => "exception_notifier",
-
-Plugin using Git:
-
-  # Installation as plugin works too! (let me know if you find any bugs, as I don't ever run it this way.)
   ./script/plugin install git://github.com/pboling/exception_notification.git
 
-SVN Plugin (very deprecated, no longer updated, DO NOT USE, install Git!):
+== Configuration
 
-  ./script/plugin install http://super-exception-notifier.googlecode.com/svn/trunk/super_exception_notifier
+If installed as a gem, in your environment.rb:
+
+  config.gem 'super_exception_notifier',
+      :version => '~> 2.0.0',
+      :lib => "exception_notifier" #The :lib declaration is required!
 
 == Exceptions Without a Controller
 
@@ -145,7 +139,7 @@ just set any or all of the following values (defaults are shown):
     config[:app_name]                 = "[MYAPP]"
     # NOTE: THERE IS A BUG IN RAILS 2.3.3 which forces us to NOT use anything but a simple email address string for the sender address.
     # https://rails.lighthouseapp.com/projects/8994/tickets/2340
-    config[:sender_address]           = %("#{(defined?(Rails) ? Rails.env : RAILS_ENV).capitalize} Error" <super.exception.notifier@example.com>)
+    config[:sender_address]           = "super.exception.notifier@example.com"
     config[:exception_recipients]     = []
     # Customize the subject line
     config[:subject_prepend]          = "[#{(defined?(Rails) ? Rails.env : RAILS_ENV).capitalize} ERROR] "
@@ -532,6 +526,11 @@ Now you can get notifications from rake tasks!  Use 'NotifiedTask.new' instead o
   NotifiedTask.new :sometask => :environment do
     puts "I'm a task"
   end
+
+== History
+
+  The old, crusty , buggy, original verison of the plugin:
+  http://super-exception-notifier.googlecode.com
 
 == Copyright
 
