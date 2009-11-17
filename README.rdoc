@@ -79,13 +79,47 @@ Plugin using Git (let me know if you find any bugs, as I don't ever run it this 
 
   ./script/plugin install git://github.com/pboling/exception_notification.git
 
-== Configuration
+== Config.gem
 
 If installed as a gem, in your environment.rb:
 
   config.gem 'super_exception_notifier',
       :version => '~> 2.0.0',
       :lib => "exception_notifier" #The :lib declaration is required!
+
+== Basic Environment Configuration
+
+These are settings that are global for SEN wherever it is used in your project.
+You can tweak other values to your liking, as well. In your environment file,
+just set any or all of the following values (defaults are shown):
+
+  ExceptionNotifier.configure_exception_notifier do |config|
+    # If left empty web hooks will not be engaged
+    config[:web_hooks]                = []
+    config[:app_name]                 = "[MYAPP]"
+    config[:sender_address]           = "super.exception.notifier@example.com"
+    config[:exception_recipients]     = []
+    # Customize the subject line
+    config[:subject_prepend]          = "[#{(defined?(Rails) ? Rails.env : RAILS_ENV).capitalize} ERROR] "
+    config[:subject_append]           = nil
+    # Include which sections of the exception email?
+    config[:sections]                 = %w(request session environment backtrace)
+    # Only use this gem to render, never email
+    #defaults to false - meaning by default it sends email.  Setting true will cause it to only render the error pages, and NOT email.
+    config[:skip_local_notification]  = true
+    # Example:
+    #config[:view_path]               = 'app/views/error'
+    config[:view_path]                = nil
+    # Error Notification will be sent if the HTTP response code for the error matches one of the following error codes
+    config[:notify_error_codes]   = %W( 405 500 503 )
+    # Error Notification will be sent if the error class matches one of the following error error classes
+    config[:notify_error_classes] = %W( )
+    # What should we do for errors not listed?
+    config[:notify_other_errors]  = true
+    # If you set this SEN will
+    config[:git_repo_path]            = nil
+    config[:template_root]            = "#{File.dirname(__FILE__)}/../views"
+  end
 
 == Exceptions Without a Controller
 
@@ -126,42 +160,6 @@ to generate error emails (typically ApplicationController):
 3. Make sure you have your ActionMailer server settings correct if you are using the e-mail features.
 
 4. That's it!  The defaults take care of the rest.
-
-== Basic Environment Configuration
-
-These are settings that are global for SEN wherever it is used in your project.
-You can tweak other values to your liking, as well. In your environment file,
-just set any or all of the following values (defaults are shown):
-
-  ExceptionNotifier.configure_exception_notifier do |config|
-    # If left empty web hooks will not be engaged
-    config[:web_hooks]                = []
-    config[:app_name]                 = "[MYAPP]"
-    # NOTE: THERE IS A BUG IN RAILS 2.3.3 which forces us to NOT use anything but a simple email address string for the sender address.
-    # https://rails.lighthouseapp.com/projects/8994/tickets/2340
-    config[:sender_address]           = "super.exception.notifier@example.com"
-    config[:exception_recipients]     = []
-    # Customize the subject line
-    config[:subject_prepend]          = "[#{(defined?(Rails) ? Rails.env : RAILS_ENV).capitalize} ERROR] "
-    config[:subject_append]           = nil
-    # Include which sections of the exception email?
-    config[:sections]                 = %w(request session environment backtrace)
-    # Only use this gem to render, never email
-    #defaults to false - meaning by default it sends email.  Setting true will cause it to only render the error pages, and NOT email.
-    config[:skip_local_notification]   = true
-    # Example:
-    #config[:view_path]               = 'app/views/error'
-    config[:view_path]                = nil
-    # Error Notification will be sent if the HTTP response code for the error matches one of the following error codes
-    config[:notify_error_codes]   = %W( 405 500 503 )
-    # Error Notification will be sent if the error class matches one of the following error error classes
-    config[:notify_error_classes] = %W( )
-    # What should we do for errors not listed?
-    config[:notify_other_errors]  = true
-    # If you set this SEN will
-    config[:git_repo_path]            = nil
-    config[:template_root]            = "#{File.dirname(__FILE__)}/../views"
-  end
 
 == Basic Controller Configuration
 
@@ -526,6 +524,13 @@ Now you can get notifications from rake tasks!  Use 'NotifiedTask.new' instead o
   NotifiedTask.new :sometask => :environment do
     puts "I'm a task"
   end
+
+== Bugs
+
+  # NOTE: Some people (myself included) experience a bug in rails versions > 2.3.3
+  #   which forces us to use a simple email address string for the sender address.
+  #   https://rails.lighthouseapp.com/projects/8994/tickets/2340
+  config[:sender_address]           = "super.exception.notifier@example.com"
 
 == History
 
