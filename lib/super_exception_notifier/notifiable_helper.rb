@@ -56,11 +56,11 @@ module SuperExceptionNotifier
     end
 
     def should_email_on_exception?(exception, status_cd = nil, verbose = false)
-      notification_level_sends_email? && !ExceptionNotifier.config[:exception_recipients].empty? && should_notify_on_exception?(exception, status_cd, verbose)
+      notification_level_sends_email? && !ExceptionNotifier.config[:exception_recipients].blank? && should_notify_on_exception?(exception, status_cd, verbose)
     end
 
     def should_web_hook_on_exception?(exception, status_cd = nil, verbose = false)
-      notification_level_sends_web_hooks? && !ExceptionNotifier.config[:web_hooks].empty? && should_notify_on_exception?(exception, status_cd, verbose)
+      notification_level_sends_web_hooks? && !ExceptionNotifier.config[:web_hooks].blank? && should_notify_on_exception?(exception, status_cd, verbose)
     end
 
     # Relies on the base class to define be_silent_for_exception?
