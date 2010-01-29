@@ -4,7 +4,7 @@
 module SuperExceptionNotifier
   module DeprecatedMethods
     @@namespacing = "Better namespacing to allow for Notifiable and ExceptionNotifiable to have similar APIs"
-    @@rails2ruby = "An effort to make this a 'Ruby' Gem and not a stricly 'Rails' Gem"
+    @@rails2ruby = "An effort to make this a 'Ruby' Gem and not a strictly 'Rails' Gem"
     
     def http_error_codes
       deprecation_warning("http_error_codes", "error_class_status_codes")

@@ -90,7 +90,7 @@ If installed as a gem, in your environment.rb:
 == Basic Environment Configuration
 
 These are settings that are global for SEN wherever it is used in your project.
-You can tweak other values to your liking, as well. In your environment file,
+You can tweak other values to your liking, as well. In your environment file or initializer,
 just set any or all of the following values (defaults are shown):
 
   ExceptionNotifier.configure_exception_notifier do |config|
@@ -104,7 +104,7 @@ just set any or all of the following values (defaults are shown):
     config[:subject_append]           = nil
     # Include which sections of the exception email?
     config[:sections]                 = %w(request session environment backtrace)
-    # Only use this gem to render, never email
+    # In a local environment only use this gem to render, never email
     #defaults to false - meaning by default it sends email.  Setting true will cause it to only render the error pages, and NOT email.
     config[:skip_local_notification]  = true
     # Example:
@@ -116,9 +116,10 @@ just set any or all of the following values (defaults are shown):
     config[:notify_error_classes] = %W( )
     # What should we do for errors not listed?
     config[:notify_other_errors]  = true
-    # If you set this SEN will
-    config[:git_repo_path]            = nil
-    config[:template_root]            = "#{File.dirname(__FILE__)}/../views"
+    # If you set this SEN will attempt to use git blame to discover the person who made the last change to the problem code
+    config[:git_repo_path]            = nil # ssh://git@blah.example.com/repo/webapp.git
+    #This is the template root for the exception notification emails.  If you want to use your own set your own path.
+    #config[:template_root]            = "#{File.dirname(__FILE__)}/../views"
   end
 
 == Exceptions Without a Controller
@@ -148,6 +149,10 @@ to generate error emails (typically ApplicationController):
 
   class ApplicationController < ActionController::Base
     include ExceptionNotifiable
+    #Comment out the line below if you want to see the normal rails errors in normal development.
+    alias :rescue_action_locally :rescue_action_in_public if Rails.env == 'development'
+    #self.error_layout = 'errors'
+    #self.exception_notifiable_silent_exceptions = [MethodDisabled, ActionController::RoutingError ]
     ...
   end
 
