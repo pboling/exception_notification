@@ -61,14 +61,6 @@ class ExceptionNotifierHelperTest < Test::Unit::TestCase
     assert_equal :filtered, @helper.filter_sensitive_post_data_parameters(:secret)
   end
 
-  def test_compat_mode_constant
-    if defined?(RAILS_GEM_VERSION)
-      assert_equal(ExceptionNotifierHelper::COMPAT_MODE, RAILS_GEM_VERSION >= 2)
-    else
-      assert_equal(ExceptionNotifierHelper::COMPAT_MODE, false)
-    end
-  end
-
   private
     def stub_controller(controller)
       @helper.instance_variable_set(:@controller, controller)

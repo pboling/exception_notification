@@ -4,7 +4,6 @@ module ExceptionNotifierHelper
   VIEW_PATH = "views/exception_notifier" unless defined?(VIEW_PATH)
   APP_PATH = "#{RAILS_ROOT}/app/#{VIEW_PATH}" unless defined?(APP_PATH)
   PARAM_FILTER_REPLACEMENT = "[FILTERED]" unless defined?(PARAM_FILTER_REPLACEMENT)
-  COMPAT_MODE = defined?(RAILS_GEM_VERSION) ? RAILS_GEM_VERSION < '2' : false unless defined?(COMPAT_MODE)
 
   def render_section(section)
     RAILS_DEFAULT_LOGGER.info("rendering section #{section.inspect}")
@@ -49,12 +48,12 @@ module ExceptionNotifierHelper
   end
 
   def filter_sensitive_post_data_parameters(parameters)
-    exclude_raw_post_parameters? ? COMPAT_MODE ? @controller.filter_parameters(parameters) : @controller.__send__(:filter_parameters, parameters) : parameters
+    exclude_raw_post_parameters? ? @controller.__send__(:filter_parameters, parameters) : parameters
   end
 
   def filter_sensitive_post_data_from_env(env_key, env_value)
     return env_value unless exclude_raw_post_parameters?
     return PARAM_FILTER_REPLACEMENT if (env_key =~ /RAW_POST_DATA/i)
-    return COMPAT_MODE ? @controller.filter_parameters({env_key => env_value}).values[0] : @controller.__send__(:filter_parameters, {env_key => env_value}).values[0]
+    return @controller.__send__(:filter_parameters, {env_key => env_value}).values[0]
   end
 end

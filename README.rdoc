@@ -40,7 +40,7 @@ branch.
 
 The venerable original is here:
  
-  http://github.com/rails/exception_notification/tree/master
+  http://github.com/rails/exception_notification
 
 The current version of this gem is a git fork of the original and
 has been updated to include the latest improvements from the original, 
@@ -52,10 +52,6 @@ This fork of Exception Notifier is in production use on several large websites (
 
 == Installation as RubyGem
 
-Gemcutter is the hot new gem host, and you can use it like this:
-
-  [sudo] gem install gemcutter
-  [sudo] gem tumble # makes gemcutter gem source first in line
   [sudo] gem install super_exception_notifier
 
 == Installation as RubyGem from source

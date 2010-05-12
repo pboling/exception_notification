@@ -1,3 +1,5 @@
+require 'rake'
+require 'rake/tasklib'
 require "action_mailer"
 
 require "super_exception_notifier/custom_exception_classes"
@@ -7,6 +9,7 @@ require "super_exception_notifier/git_blame"
 require "super_exception_notifier/deprecated_methods"
 require "super_exception_notifier/hooks_notifier"
 require "super_exception_notifier/notifiable_helper"
+require "super_exception_notifier/notified_task" unless defined?(NotifiedTask)
 
 require "exception_notifier_helper" unless defined?(ExceptionNotifierHelper)
 require "exception_notifier" unless defined?(ExceptionNotifier)

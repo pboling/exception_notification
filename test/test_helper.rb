@@ -1,8 +1,9 @@
 require 'test/unit'
 require 'rubygems'
 
-require 'active_support'
-require 'actionmailer'
+require 'rake'
+require 'rake/tasklib'
+require 'action_mailer'
 require 'active_record'
 
 #just requiring active record wasn't loading classes soon enough for SILENT_EXCEPTIONS
