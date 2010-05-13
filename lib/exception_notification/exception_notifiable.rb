@@ -169,7 +169,7 @@ module ExceptionNotification::ExceptionNotifiable
         request ||= {:params => {}}
         case self.class.exception_notifiable_pass_through
           when :hoptoad then
-            HoptoadNotifier.notify(exception, {:request => request})
+            HoptoadNotifier.notify_or_ignore(exception, {:request => request})
             puts "[PASS-IT-ON] HOPTOAD NOTIFIED" if verbose
           else
             puts "[PASS-IT-ON] NO" if verbose
