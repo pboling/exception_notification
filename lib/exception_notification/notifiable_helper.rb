@@ -35,7 +35,6 @@ module ExceptionNotification::NotifiableHelper
     puts "[ERROR FILE PATH] #{file_path.inspect}"
     puts "[ERROR EMAIL] #{send_email ? "YES" : "NO"}"
     puts "[ERROR WEB HOOKS] #{send_web_hooks ? "YES" : "NO"}"
-    puts "[COMPAT MODE] #{ExceptionNotification::NotifierHelper::COMPAT_MODE ? "YES" : "NO"}"
     puts "[THE BLAMED] #{the_blamed}"
     puts "[SECTIONS] #{ExceptionNotification::Notifier.sections_for_email(rejected_sections, request)}"
     req = request ? " for request_uri=#{request.request_uri} and env=#{request.env.inspect}" : ""

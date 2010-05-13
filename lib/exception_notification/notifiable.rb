@@ -17,6 +17,9 @@ module ExceptionNotification::Notifiable
     # Since there is no concept of locality from a request here allow user to explicitly define which env's are noisy (send notifications)
     base.cattr_accessor :notifiable_noisy_environments
     base.notifiable_noisy_environments = [:production]
+
+    base.cattr_accessor :notifiable_pass_through
+    base.notifiable_pass_through = false
   end
 
   module ClassMethods
@@ -86,6 +89,23 @@ module ExceptionNotification::Notifiable
     perform_exception_notify_mailing(exception, data, nil, the_blamed, verbose, rejected_sections) if send_email
     # Send Web Hook requests
     ExceptionNotification::HooksNotifier.deliver_exception_to_web_hooks(ExceptionNotification::Notifier.config, exception, self, request, data, the_blamed) if send_web_hooks
+    pass_it_on(exception)
+  end
+
+  def pass_it_on(exception, request = nil)
+    begin
+      request ||= {:params => {}}
+      case self.class.notifiable_pass_through
+        when :hoptoad then
+          HoptoadNotifier.notify(exception, {:request => request})
+          puts "[PASS-IT-ON] HOPTOAD NOTIFIED" if verbose
+        else
+          puts "[PASS-IT-ON] NO" if verbose
+          #nothing
+      end
+    rescue
+      #nothing
+    end
   end
 
   def is_local? #like asking is_silent?

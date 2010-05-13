@@ -66,7 +66,6 @@ class ExceptionNotification::Notifier < ActionMailer::Base
   # What is the path of the file we will render to the user based on a given status code?
   def self.get_view_path_for_status_code(status_cd, verbose = false)
     file_name = ExceptionNotification::Notifier.get_view_path(status_cd, verbose)
-    #ExceptionNotifierHelper::COMPAT_MODE ? "#{File.dirname(__FILE__)}/../rails/app/views/exception_notifiable/500.html" : "500.html"
     file_name.nil? ? self.catch_all(verbose) : file_name
   end
 
@@ -107,7 +106,6 @@ class ExceptionNotification::Notifier < ActionMailer::Base
       puts "[FOUND FILE:D] #{File.dirname(__FILE__)}/../../rails/app/views/exception_notifiable/#{file_name}.html.erb" if verbose
       "#{File.dirname(__FILE__)}/../../rails/app/views/exception_notifiable/#{file_name}.html.erb"
     elsif File.exist?("#{File.dirname(__FILE__)}/../../rails/app/views/exception_notifiable/#{file_name}.html")
-      #ExceptionNotifierHelper::COMPAT_MODE ? "#{File.dirname(__FILE__)}/../rails/app/views/exception_notifiable/#{file_name}.html" : "#{status_cd}.html"
       puts "[FOUND FILE:E] #{File.dirname(__FILE__)}/../../rails/app/views/exception_notifiable/#{file_name}.html" if verbose
       "#{File.dirname(__FILE__)}/../../rails/app/views/exception_notifiable/#{file_name}.html"
     else

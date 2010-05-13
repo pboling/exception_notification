@@ -5,7 +5,7 @@
 
 Gem::Specification.new do |s|
   s.name = %q{super_exception_notifier}
-  s.version = "3.0.2"
+  s.version = "3.0.3"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Peter Boling", "Scott Windsor", "Ismael Celis", "Jacques Crocker", "Jamis Buck"]
@@ -39,6 +39,19 @@ Gem::Specification.new do |s|
      "VERSION.yml",
      "init.rb",
      "lib/exception_notification.rb",
+     "lib/exception_notification/consider_local.rb",
+     "lib/exception_notification/custom_exception_classes.rb",
+     "lib/exception_notification/custom_exception_methods.rb",
+     "lib/exception_notification/deprecated_methods.rb",
+     "lib/exception_notification/exception_notifiable.rb",
+     "lib/exception_notification/git_blame.rb",
+     "lib/exception_notification/helpful_hashes.rb",
+     "lib/exception_notification/hooks_notifier.rb",
+     "lib/exception_notification/notifiable.rb",
+     "lib/exception_notification/notifiable_helper.rb",
+     "lib/exception_notification/notified_task.rb",
+     "lib/exception_notification/notifier.rb",
+     "lib/exception_notification/notifier_helper.rb",
      "rails/app/views/exception_notifiable/400.html",
      "rails/app/views/exception_notifiable/403.html",
      "rails/app/views/exception_notifiable/404.html",

@@ -31,6 +31,9 @@ module ExceptionNotification::ExceptionNotifiable
     # Since there is no concept of locality from a request here allow user to explicitly define which env's are noisy (send notifications)
     base.cattr_accessor :exception_notifiable_noisy_environments
     base.exception_notifiable_noisy_environments = [:production]
+
+    base.cattr_accessor :exception_notifiable_pass_through
+    base.exception_notifiable_pass_through = false
   end
 
   module ClassMethods
@@ -117,6 +120,7 @@ module ExceptionNotification::ExceptionNotifiable
         # Send Web Hook requests
         ExceptionNotification::HooksNotifier.deliver_exception_to_web_hooks(ExceptionNotification::Notifier.config, exception, self, request, data, the_blamed) if send_web_hooks
       end
+      pass_it_on(exception)
       to_return
     end
 
@@ -157,6 +161,23 @@ module ExceptionNotification::ExceptionNotifiable
       # deliver raises an exception, we don't call render twice.
       # Render the error page to the end user
       render_error_template(file_path, status)
+      pass_it_on(exception, request)
+    end
+
+    def pass_it_on(exception, request = nil)
+      begin
+        request ||= {:params => {}}
+        case self.class.exception_notifiable_pass_through
+          when :hoptoad then
+            HoptoadNotifier.notify(exception, {:request => request})
+            puts "[PASS-IT-ON] HOPTOAD NOTIFIED" if verbose
+          else
+            puts "[PASS-IT-ON] NO" if verbose
+            #nothing
+        end
+      rescue
+        #nothing
+      end
     end
 
     def is_local?
