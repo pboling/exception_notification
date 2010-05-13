@@ -1,6 +1,6 @@
-module Notifiable
-  include SuperExceptionNotifier::NotifiableHelper
-  
+module ExceptionNotification::Notifiable
+  include ExceptionNotification::NotifiableHelper
+
   def self.included(base)
     base.extend ClassMethods
 
@@ -51,6 +51,10 @@ module Notifiable
 
   private
 
+  def environment_is_noisy?
+    !self.notifiable_noisy_environments.include?(Rails.env)
+  end
+
   def notification_level_sends_email?
     self.class.notifiable_notification_level.include?(:email)
   end
@@ -58,7 +62,7 @@ module Notifiable
   def notification_level_sends_web_hooks?
     self.class.notifiable_notification_level.include?(:web_hooks)
   end
-  
+
   def rescue_with_hooks(exception)
     verbose = self.class.notifiable_verbose
     puts "[RESCUE STYLE] rescue_with_hooks" if verbose
@@ -75,18 +79,17 @@ module Notifiable
     send_email = should_email_on_exception?(exception, status_code, verbose)
     #We only send web hooks if they've been configured in environment
     send_web_hooks = should_web_hook_on_exception?(exception, status_code, verbose)
-    the_blamed = ExceptionNotifier.config[:git_repo_path].nil? ? nil : lay_blame(exception)
+    the_blamed = ExceptionNotification::Notifier.config[:git_repo_path].nil? ? nil : lay_blame(exception)
     rejected_sections = %w(request session)
     verbose_output(exception, status_code, "rescued by handler", send_email, send_web_hooks, nil, the_blamed, rejected_sections) if verbose
     # Send the exception notification email
     perform_exception_notify_mailing(exception, data, nil, the_blamed, verbose, rejected_sections) if send_email
     # Send Web Hook requests
-    HooksNotifier.deliver_exception_to_web_hooks(ExceptionNotifier.config, exception, self, request, data, the_blamed) if send_web_hooks
+    ExceptionNotification::HooksNotifier.deliver_exception_to_web_hooks(ExceptionNotification::Notifier.config, exception, self, request, data, the_blamed) if send_web_hooks
   end
 
   def is_local? #like asking is_silent?
-    eenv = defined?(Rails) ? Rails.env : RAILS_ENV
-    !self.notifiable_noisy_environments.include?(eenv)
+    self.notifiable_noisy_environments.include?(Rails.env)
   end
 
 end

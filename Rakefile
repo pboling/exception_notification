@@ -5,17 +5,17 @@ require 'rake/rdoctask'
 desc 'Default: run unit tests.'
 task :default => :test
 
-desc 'Test exception_notification gem.'
+desc 'Test exception_notifiable gem.'
 Rake::TestTask.new do |t|
   t.libs << "test"
   t.test_files = FileList['test/*_test.rb']
   t.verbose = true
 end
 
-desc 'Generate documentation for exception_notification gem.'
+desc 'Generate documentation for exception_notifiable gem.'
 Rake::RDocTask.new(:rdoc) do |rdoc|
   rdoc.rdoc_dir = 'rdoc'
-  rdoc.title    = 'exception_notification'
+  rdoc.title    = 'exception_notifiable'
   rdoc.options << '--line-numbers' << '--inline-source'
   rdoc.rdoc_files.include('README.rdoc')
   rdoc.rdoc_files.include('lib/**/*.rb')
@@ -46,25 +46,25 @@ begin
 * Can notify of errors occurring in any class/method using notifiable { method }
 * Can notify of errors in Rake tasks using NotifiedTask.new instead of task"
     gemspec.email = "peter.boling@gmail.com"
-    gemspec.homepage = "http://github.com/pboling/exception_notification"
+    gemspec.homepage = "http://github.com/pboling/exception_notifiable"
     gemspec.authors = ['Peter Boling', 'Scott Windsor', 'Ismael Celis', 'Jacques Crocker', 'Jamis Buck']
     gemspec.add_dependency 'action_mailer'
     gemspec.add_dependency 'rake'
     gemspec.files = ["MIT-LICENSE",
              "README.rdoc",
-             "exception_notification.gemspec",
+             "exception_notifiable.gemspec",
              "init.rb",
-             "lib/super_exception_notifier/custom_exception_classes.rb",
-             "lib/super_exception_notifier/custom_exception_methods.rb",
-             "lib/super_exception_notifier/deprecated_methods.rb",
-             "lib/super_exception_notifier/git_blame.rb",
-             "lib/super_exception_notifier/helpful_hashes.rb",
-             "lib/super_exception_notifier/hooks_notifier.rb",
-             "lib/super_exception_notifier/notifiable_helper.rb",
+             "lib/exception_notifiable/custom_exception_classes.rb",
+             "lib/exception_notifiable/custom_exception_methods.rb",
+             "lib/exception_notifiable/deprecated_methods.rb",
+             "lib/exception_notifiable/git_blame.rb",
+             "lib/exception_notifiable/helpful_hashes.rb",
+             "lib/exception_notifiable/hooks_notifier.rb",
+             "lib/exception_notifiable/notifiable_helper.rb",
              "lib/exception_notifiable.rb",
-             "lib/exception_notifier.rb",
+             "lib/exception_notifiable.rb",
              "lib/exception_notifier_helper.rb",
-             "lib/notifiable.rb",
+             "lib/exception_notifiable.rb",
              "rails/init.rb",
              "rails/app/views/exception_notifiable/400.html",
              "rails/app/views/exception_notifiable/403.html",
@@ -79,18 +79,18 @@ begin
              "rails/app/views/exception_notifiable/503.html",
              "rails/app/views/exception_notifiable/method_disabled.html.erb",
              "tasks/notified_task.rake",
-             "views/exception_notifier/_backtrace.html.erb",
-             "views/exception_notifier/_environment.html.erb",
-             "views/exception_notifier/_inspect_model.html.erb",
-             "views/exception_notifier/_request.html.erb",
-             "views/exception_notifier/_session.html.erb",
-             "views/exception_notifier/_title.html.erb",
-             "views/exception_notifier/background_exception_notification.text.plain.erb",
-             "views/exception_notifier/exception_notification.text.plain.erb",
-             "views/exception_notifier/rake_exception_notification.text.plain.erb",
+             "views/exception_notifiable/_backtrace.html.erb",
+             "views/exception_notifiable/_environment.html.erb",
+             "views/exception_notifiable/_inspect_model.html.erb",
+             "views/exception_notifiable/_request.html.erb",
+             "views/exception_notifiable/_session.html.erb",
+             "views/exception_notifiable/_title.html.erb",
+             "views/exception_notifiable/background_exception_notification.text.plain.erb",
+             "views/exception_notifiable/exception_notifiable.text.plain.erb",
+             "views/exception_notifiable/rake_exception_notification.text.plain.erb",
              "VERSION.yml"]
   end
   Jeweler::GemcutterTasks.new
 rescue LoadError
-  puts "Jeweler not available. Install it with: sudo gem install technicalpickles-jeweler -s http://gems.github.com"
+  puts "Jeweler not available. Install it with: sudo gem install jeweler"
 end

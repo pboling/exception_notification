@@ -1,6 +1,6 @@
 require 'pathname'
 
-class ExceptionNotifier < ActionMailer::Base
+class ExceptionNotification::Notifier < ActionMailer::Base
 
   #andrewroth reported that @@config gets clobbered because rails loads this class twice when installed as a plugin, and adding the ||= fixed it.
   @@config ||= {
@@ -44,11 +44,11 @@ class ExceptionNotifier < ActionMailer::Base
   def self.exception_to_filenames(exception)
     filenames = []
     e = exception.to_s
-    filenames << ExceptionNotifier.filenamify(e)
+    filenames << ExceptionNotification::Notifier.filenamify(e)
 
     last_colon = e.rindex(':')
     unless last_colon.nil?
-      filenames << ExceptionNotifier.filenamify(e[(last_colon + 1)..(e.length - 1)])
+      filenames << ExceptionNotification::Notifier.filenamify(e[(last_colon + 1)..(e.length - 1)])
     end
     filenames
   end
@@ -65,14 +65,14 @@ class ExceptionNotifier < ActionMailer::Base
 
   # What is the path of the file we will render to the user based on a given status code?
   def self.get_view_path_for_status_code(status_cd, verbose = false)
-    file_name = ExceptionNotifier.get_view_path(status_cd, verbose)
+    file_name = ExceptionNotification::Notifier.get_view_path(status_cd, verbose)
     #ExceptionNotifierHelper::COMPAT_MODE ? "#{File.dirname(__FILE__)}/../rails/app/views/exception_notifiable/500.html" : "500.html"
     file_name.nil? ? self.catch_all(verbose) : file_name
   end
 
 #  def self.get_view_path_for_files(filenames = [])
 #    filepaths = filenames.map do |file|
-#      ExceptionNotifier.get_view_path(file)
+#      ExceptionNotification::Notifier.get_view_path(file)
 #    end.compact
 #    filepaths.empty? ? "#{File.dirname(__FILE__)}/../rails/app/views/exception_notifiable/500.html" : filepaths.first
 #  end
@@ -81,15 +81,15 @@ class ExceptionNotifier < ActionMailer::Base
   def self.get_view_path_for_class(exception, verbose = false)
     return self.catch_all(verbose) if exception.nil?
     #return self.catch_all(verbose) unless exception.is_a?(StandardError) || exception.is_a?(Class) # For some reason exception.is_a?(Class) works in console, but not when running in mongrel (ALWAYS returns false)?!?!?
-    filepaths = ExceptionNotifier.exception_to_filenames(exception).map do |file|
-      ExceptionNotifier.get_view_path(file, verbose)
+    filepaths = ExceptionNotification::Notifier.exception_to_filenames(exception).map do |file|
+      ExceptionNotification::Notifier.get_view_path(file, verbose)
     end.compact
     filepaths.empty? ? self.catch_all(verbose) : filepaths.first
   end
 
   def self.catch_all(verbose = false)
-    puts "[CATCH ALL INVOKED] #{File.dirname(__FILE__)}/../rails/app/views/exception_notifiable/500.html" if verbose
-    "#{File.dirname(__FILE__)}/../rails/app/views/exception_notifiable/500.html"
+    puts "[CATCH ALL INVOKED] #{File.dirname(__FILE__)}/../../rails/app/views/exception_notifiable/500.html" if verbose
+    "#{File.dirname(__FILE__)}/../../rails/app/views/exception_notifiable/500.html"
   end
 
   # Check the usual suspects
@@ -103,13 +103,13 @@ class ExceptionNotifier < ActionMailer::Base
     elsif !config[:view_path].nil? && File.exist?("#{RAILS_ROOT}/#{config[:view_path]}/#{file_name}.html")
       puts "[FOUND FILE:C] #{RAILS_ROOT}/#{config[:view_path]}/#{file_name}.html" if verbose
       "#{RAILS_ROOT}/#{config[:view_path]}/#{file_name}.html"
-    elsif File.exist?("#{File.dirname(__FILE__)}/../rails/app/views/exception_notifiable/#{file_name}.html.erb")
-      puts "[FOUND FILE:D] #{File.dirname(__FILE__)}/../rails/app/views/exception_notifiable/#{file_name}.html.erb" if verbose
-      "#{File.dirname(__FILE__)}/../rails/app/views/exception_notifiable/#{file_name}.html.erb"
-    elsif File.exist?("#{File.dirname(__FILE__)}/../rails/app/views/exception_notifiable/#{file_name}.html")
+    elsif File.exist?("#{File.dirname(__FILE__)}/../../rails/app/views/exception_notifiable/#{file_name}.html.erb")
+      puts "[FOUND FILE:D] #{File.dirname(__FILE__)}/../../rails/app/views/exception_notifiable/#{file_name}.html.erb" if verbose
+      "#{File.dirname(__FILE__)}/../../rails/app/views/exception_notifiable/#{file_name}.html.erb"
+    elsif File.exist?("#{File.dirname(__FILE__)}/../../rails/app/views/exception_notifiable/#{file_name}.html")
       #ExceptionNotifierHelper::COMPAT_MODE ? "#{File.dirname(__FILE__)}/../rails/app/views/exception_notifiable/#{file_name}.html" : "#{status_cd}.html"
-      puts "[FOUND FILE:E] #{File.dirname(__FILE__)}/../rails/app/views/exception_notifiable/#{file_name}.html" if verbose
-      "#{File.dirname(__FILE__)}/../rails/app/views/exception_notifiable/#{file_name}.html"
+      puts "[FOUND FILE:E] #{File.dirname(__FILE__)}/../../rails/app/views/exception_notifiable/#{file_name}.html" if verbose
+      "#{File.dirname(__FILE__)}/../../rails/app/views/exception_notifiable/#{file_name}.html"
     else
       nil
     end
@@ -160,7 +160,7 @@ class ExceptionNotifier < ActionMailer::Base
         data.merge!({:request => request})
         data.merge!({:host => (request.env['HTTP_X_REAL_IP'] || request.env["HTTP_X_FORWARDED_HOST"] || request.env["HTTP_HOST"])})
       end
-      data.merge!({:sections => ExceptionNotifier.sections_for_email(rejected_sections, request)})
+      data.merge!({:sections => ExceptionNotification::Notifier.sections_for_email(rejected_sections, request)})
       return data
     end
 

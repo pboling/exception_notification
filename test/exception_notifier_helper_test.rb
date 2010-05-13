@@ -1,10 +1,10 @@
 require File.dirname(__FILE__) + '/test_helper'
-require 'exception_notifier_helper'
+#require 'exception_notification/notifier_helper'
 
 class ExceptionNotifierHelperTest < Test::Unit::TestCase
 
   class ExceptionNotifierHelperIncludeTarget
-    include ExceptionNotifierHelper
+    include ExceptionNotification::NotifierHelper
   end
 
   def setup

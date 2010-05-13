@@ -36,9 +36,9 @@ class ExceptionNotifyFunctionalTest < ActionController::TestCase
   def test_view_path_empty; assert_view_path_for_status_cd_is_string(""); end
   def test_view_path_nonsense; assert_view_path_for_status_cd_is_string("slartibartfarst"); end
   def test_view_path_class;
-    exception = SuperExceptionNotifier::CustomExceptionClasses::MethodDisabled
+    exception = ExceptionNotification::CustomExceptionClasses::MethodDisabled
     assert_view_path_for_class_is_string(exception);
-    assert ExceptionNotifier.get_view_path_for_class(exception).match("/rails/app/views/exception_notifiable/method_disabled.html.erb")
+    assert ExceptionNotification::Notifier.get_view_path_for_class(exception).match("/rails/app/views/exception_notifiable/method_disabled.html.erb")
   end
   def test_view_path_class_nil; assert_view_path_for_class_is_string(nil); end
   def test_view_path_class_empty; assert_view_path_for_class_is_string(""); end
@@ -46,7 +46,7 @@ class ExceptionNotifyFunctionalTest < ActionController::TestCase
   def test_view_path_class_integer; assert_view_path_for_class_is_string(Integer); end
 
   def test_exception_to_filenames
-    assert(["super_exception_notifier_custom_exception_classes_method_disabled", "method_disabled"] == ExceptionNotifier.exception_to_filenames(SuperExceptionNotifier::CustomExceptionClasses::MethodDisabled))
+    assert(["exception_notification_custom_exception_classes_method_disabled", "method_disabled"] == ExceptionNotification::Notifier.exception_to_filenames(ExceptionNotification::CustomExceptionClasses::MethodDisabled))
   end
 
   def test_old_style_where_requests_are_local
@@ -59,7 +59,7 @@ class ExceptionNotifyFunctionalTest < ActionController::TestCase
   def test_new_style_where_requests_are_local
     ActionController::Base.consider_all_requests_local = true
     @controller = NewStyle.new
-    ExceptionNotifier.config[:skip_local_notification] = true
+    ExceptionNotification::Notifier.config[:skip_local_notification] = true
     get "runtime_error"
     assert_nothing_mailed
   end
@@ -115,11 +115,11 @@ class ExceptionNotifyFunctionalTest < ActionController::TestCase
   private
 
   def assert_view_path_for_status_cd_is_string(status)
-    assert(ExceptionNotifier.get_view_path_for_status_code(status).is_a?(String), "View Path is not a string for status code '#{status}'")
+    assert(ExceptionNotification::Notifier.get_view_path_for_status_code(status).is_a?(String), "View Path is not a string for status code '#{status}'")
   end
 
   def assert_view_path_for_class_is_string(exception)
-    assert(ExceptionNotifier.get_view_path_for_class(exception).is_a?(String), "View Path is not a string for exception '#{exception}'")
+    assert(ExceptionNotification::Notifier.get_view_path_for_class(exception).is_a?(String), "View Path is not a string for exception '#{exception}'")
   end
 
   def assert_error_mail_contains(text)

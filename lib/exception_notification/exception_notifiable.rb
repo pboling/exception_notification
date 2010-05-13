@@ -1,7 +1,7 @@
 require 'ipaddr'
 
-module ExceptionNotifiable
-  include SuperExceptionNotifier::NotifiableHelper
+module ExceptionNotification::ExceptionNotifiable
+  include ExceptionNotification::NotifiableHelper
 
   def self.included(base)
     base.extend ClassMethods
@@ -28,10 +28,13 @@ module ExceptionNotifiable
     # Notification Level
     base.cattr_accessor :exception_notifiable_notification_level
     base.exception_notifiable_notification_level = [:render, :email, :web_hooks]
+    # Since there is no concept of locality from a request here allow user to explicitly define which env's are noisy (send notifications)
+    base.cattr_accessor :exception_notifiable_noisy_environments
+    base.exception_notifiable_noisy_environments = [:production]
   end
-  
+
   module ClassMethods
-    include SuperExceptionNotifier::DeprecatedMethods
+    include ExceptionNotification::DeprecatedMethods
 
     # specifies ip addresses that should be handled as though local
     def consider_local(*args)
@@ -69,6 +72,10 @@ module ExceptionNotifiable
 
   private
 
+    def environment_is_noisy?
+      self.class.exception_notifiable_noisy_environments.include?(Rails.env)
+    end
+  
     def notification_level_sends_email?
       self.class.exception_notifiable_notification_level.include?(:email)
     end
@@ -101,14 +108,14 @@ module ExceptionNotifiable
         send_email = should_email_on_exception?(exception, status_code, verbose)
         #We only send web hooks if they've been configured in environment
         send_web_hooks = should_web_hook_on_exception?(exception, status_code, verbose)
-        the_blamed = ExceptionNotifier.config[:git_repo_path].nil? ? nil : lay_blame(exception)
+        the_blamed = ExceptionNotification::Notifier.config[:git_repo_path].nil? ? nil : lay_blame(exception)
         rejected_sections = %w(request session)
         # Debugging output
         verbose_output(exception, status_code, "rescued by handler", send_email, send_web_hooks, nil, the_blamed, rejected_sections) if verbose
         # Send the exception notification email
         perform_exception_notify_mailing(exception, data, nil, the_blamed, verbose, rejected_sections) if send_email
         # Send Web Hook requests
-        HooksNotifier.deliver_exception_to_web_hooks(ExceptionNotifier.config, exception, self, request, data, the_blamed) if send_web_hooks
+        ExceptionNotification::HooksNotifier.deliver_exception_to_web_hooks(ExceptionNotification::Notifier.config, exception, self, request, data, the_blamed) if send_web_hooks
       end
       to_return
     end
@@ -122,9 +129,9 @@ module ExceptionNotifiable
       puts "[RESCUE STYLE] rescue_action_in_public" if verbose
       status_code = status_code_for_exception(exception)
       if status_code == '200'
-        notify_and_render_error_template(status_code, request, exception, ExceptionNotifier.get_view_path_for_class(exception, verbose), verbose)
+        notify_and_render_error_template(status_code, request, exception, ExceptionNotification::Notifier.get_view_path_for_class(exception, verbose), verbose)
       else
-        notify_and_render_error_template(status_code, request, exception, ExceptionNotifier.get_view_path_for_status_code(status_code, verbose), verbose)
+        notify_and_render_error_template(status_code, request, exception, ExceptionNotification::Notifier.get_view_path_for_status_code(status_code, verbose), verbose)
       end
     end
 
@@ -135,7 +142,7 @@ module ExceptionNotifiable
       send_email = should_email_on_exception?(exception, status_cd, verbose)
       #We only send web hooks if they've been configured in environment
       send_web_hooks = should_web_hook_on_exception?(exception, status_cd, verbose)
-      the_blamed = ExceptionNotifier.config[:git_repo_path].nil? ? nil : lay_blame(exception)
+      the_blamed = ExceptionNotification::Notifier.config[:git_repo_path].nil? ? nil : lay_blame(exception)
       rejected_sections = request.nil? ? %w(request session) : []
       # Debugging output
       verbose_output(exception, status_cd, file_path, send_email, send_web_hooks, request, the_blamed, rejected_sections) if verbose
@@ -144,7 +151,7 @@ module ExceptionNotifiable
       # Send the exception notification email
       perform_exception_notify_mailing(exception, data, request, the_blamed, verbose, rejected_sections) if send_email
       # Send Web Hook requests
-      HooksNotifier.deliver_exception_to_web_hooks(ExceptionNotifier.config, exception, self, request, data, the_blamed) if send_web_hooks
+      ExceptionNotification::HooksNotifier.deliver_exception_to_web_hooks(ExceptionNotification::Notifier.config, exception, self, request, data, the_blamed) if send_web_hooks
 
       # We put the render call after the deliver call to ensure that, if the
       # deliver raises an exception, we don't call render twice.
@@ -157,7 +164,7 @@ module ExceptionNotifiable
     end
 
     def status_code_for_exception(exception)
-      self.class.error_class_status_codes[exception.class].nil? ? 
+      self.class.error_class_status_codes[exception.class].nil? ?
               '500' :
               self.class.error_class_status_codes[exception.class].blank? ?
                       '200' :

@@ -41,7 +41,7 @@ Gem::Specification.new do |s|
      "lib/exception_notifiable.rb",
      "lib/exception_notifier.rb",
      "lib/exception_notifier_helper.rb",
-     "lib/notifiable.rb",
+     "lib/exception_notifiable.rb",
      "lib/super_exception_notifier/custom_exception_classes.rb",
      "lib/super_exception_notifier/custom_exception_methods.rb",
      "lib/super_exception_notifier/deprecated_methods.rb",
@@ -70,10 +70,10 @@ Gem::Specification.new do |s|
      "views/exception_notifier/_session.html.erb",
      "views/exception_notifier/_title.html.erb",
      "views/exception_notifier/background_exception_notification.text.plain.erb",
-     "views/exception_notifier/exception_notification.text.plain.erb",
+     "views/exception_notifier/exception_notifiable.text.plain.erb",
      "views/exception_notifier/rake_exception_notification.text.plain.erb"
   ]
-  s.homepage = %q{http://github.com/pboling/exception_notification}
+  s.homepage = %q{http://github.com/pboling/exception_notifiable}
   s.rdoc_options = ["--charset=UTF-8"]
   s.require_paths = ["lib"]
   s.rubygems_version = %q{1.3.5}

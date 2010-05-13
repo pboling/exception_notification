@@ -1,24 +1,17 @@
+puts "Begin Loading ExceptionNotification"
 require 'rake'
 require 'rake/tasklib'
 require "action_mailer"
 
-require "super_exception_notifier/custom_exception_classes"
-require "super_exception_notifier/custom_exception_methods"
-require "super_exception_notifier/helpful_hashes"
-require "super_exception_notifier/git_blame"
-require "super_exception_notifier/deprecated_methods"
-require "super_exception_notifier/hooks_notifier"
-require "super_exception_notifier/notifiable_helper"
-require "super_exception_notifier/notified_task" unless defined?(NotifiedTask)
+require "exception_notification/notified_task" unless defined?(NotifiedTask)
 
-require "exception_notifier_helper" unless defined?(ExceptionNotifierHelper)
-require "exception_notifier" unless defined?(ExceptionNotifier)
-require "exception_notifiable" unless defined?(ExceptionNotifiable)
-require "notifiable" unless defined?(Notifiable)
+require "exception_notification" unless defined?(ExceptionNotification)
 
 Object.class_eval do
-  include Notifiable
+  include ExceptionNotification::Notifiable
 end
+puts "Object test: #{Object.respond_to?(:notifiable_noisy_environments) ? 'Pass' : 'Fail'}"
+puts "Finished Loading ExceptionNotification"
 
 #It appears that the view path is auto-added by rails... hmmm.
 #if ActionController::Base.respond_to?(:append_view_path)

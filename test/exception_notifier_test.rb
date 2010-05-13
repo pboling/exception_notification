@@ -23,7 +23,7 @@ class ExceptionNotifierTest < Test::Unit::TestCase
       raise 'problem'
     rescue RuntimeError => e
       assert_nothing_raised do
-        ExceptionNotifier.deliver_exception_notification(e)
+        ExceptionNotification::Notifier.deliver_exception_notification(e)
       end
     end
   end
@@ -33,7 +33,7 @@ class ExceptionNotifierTest < Test::Unit::TestCase
       raise 'problem'
     rescue RuntimeError => e
       assert_nothing_raised do
-        ExceptionNotifier.deliver_exception_notification(e, @controller, @controller.request)
+        ExceptionNotification::Notifier.deliver_exception_notification(e, @controller, @controller.request)
       end
     end
   end

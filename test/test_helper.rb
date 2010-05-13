@@ -21,9 +21,10 @@ RAILS_ENV = 'test' unless defined?(RAILS_ENV)
 RAILS_DEFAULT_LOGGER = Logger.new(StringIO.new) unless defined?(RAILS_DEFAULT_LOGGER)
 #$:.unshift File.join(File.dirname(__FILE__), '../lib')
 
-require File.join(File.dirname(__FILE__), "..", "init")
+#require File.join(File.dirname(__FILE__), "..", "init")
+require "init"
 
-ExceptionNotifier.configure_exception_notifier do |config|
+ExceptionNotification::Notifier.configure_exception_notifier do |config|
   # If left empty web hooks will not be engaged
   config[:web_hooks]                = []
   config[:exception_recipients]     = ["test.errors@example.com"]

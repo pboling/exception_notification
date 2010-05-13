@@ -8,7 +8,7 @@ module Rails
   end
 end
 
-class Application < ActionController::Base
+class ApplicationController < ActionController::Base
 
   def runtime_error
     raise "This is a runtime error that we should be emailed about"
@@ -36,40 +36,47 @@ end
 class SpecialErrorThing < RuntimeError
 end
 
-class BasicController < Application
-  include ExceptionNotifiable
+class BasicController < ApplicationController
+  include ExceptionNotification::ExceptionNotifiable
+  self.exception_notifiable_noisy_environments = ['test']
 end
 
-class CustomSilentExceptions < Application
-  include ExceptionNotifiable
+class CustomSilentExceptions < ApplicationController
+  include ExceptionNotification::ExceptionNotifiable
+  self.exception_notifiable_noisy_environments = ['test']
   self.exception_notifiable_verbose = false
   self.exception_notifiable_silent_exceptions = [RuntimeError]
 end
 
-class EmptySilentExceptions < Application
-  include ExceptionNotifiable
+class EmptySilentExceptions < ApplicationController
+  include ExceptionNotification::ExceptionNotifiable
+  self.exception_notifiable_noisy_environments = ['test']
   self.exception_notifiable_verbose = false
   self.exception_notifiable_silent_exceptions = []
 end
 
-class NilSilentExceptions < Application
-  include ExceptionNotifiable
+class NilSilentExceptions < ApplicationController
+  include ExceptionNotification::ExceptionNotifiable
+  self.exception_notifiable_noisy_environments = ['test']
   self.exception_notifiable_verbose = false
   self.exception_notifiable_silent_exceptions = nil
 end
 
-class DefaultSilentExceptions < Application
-  include ExceptionNotifiable
+class DefaultSilentExceptions < ApplicationController
+  include ExceptionNotification::ExceptionNotifiable
+  self.exception_notifiable_noisy_environments = ['test']
   self.exception_notifiable_verbose = false
 end
 
-class OldStyle < Application
-  include ExceptionNotifiable
+class OldStyle < ApplicationController
+  include ExceptionNotification::ExceptionNotifiable
+  self.exception_notifiable_noisy_environments = ['test']
   self.exception_notifiable_verbose = false
 end
 
-class NewStyle < Application
-  include ExceptionNotifiable
+class NewStyle < ApplicationController
+  include ExceptionNotification::ExceptionNotifiable
+  self.exception_notifiable_noisy_environments = ['test']
   self.exception_notifiable_verbose = false
     
   rescue_from ActiveRecord::RecordNotFound do |exception|
