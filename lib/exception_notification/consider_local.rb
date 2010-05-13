@@ -1,3 +1,5 @@
+#From rails/exception_notifier 2-3-stable branch - Not yet integrated into SuperExceptionNotifier...
+
 #This didn't belong on ExceptionNotification::Notifier and made backtraces worse.  To keep original functionality in place
 #'ActionController::Base.send :include, ExceptionNotification::ConsiderLocal' or just include in your controller
 module ExceptionNotification::ConsiderLocal
