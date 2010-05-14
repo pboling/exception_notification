@@ -10,8 +10,8 @@ module ExceptionNotification::ExceptionNotifiable
 
     # Sets up an alias chain to catch exceptions when Rails does
     #This is what makes it all work with Hoptoad or other exception catchers.
-    base.send(:alias_method, :rescue_action_locally_without_sen_handler, :rescue_action_locally)
-    base.send(:alias_method, :rescue_action_locally, :rescue_action_locally_with_sen_handler)
+#    base.send(:alias_method, :rescue_action_locally_without_sen_handler, :rescue_action_locally)
+#    base.send(:alias_method, :rescue_action_locally, :rescue_action_locally_with_sen_handler)
 
 #Alias method chaining doesn't work here because it would trigger a double render error.
     # Sets up an alias chain to catch exceptions when Rails does
@@ -133,8 +133,8 @@ module ExceptionNotification::ExceptionNotifiable
       # Send Web Hook requests
       ExceptionNotification::HooksNotifier.deliver_exception_to_web_hooks(ExceptionNotification::Notifier.config, exception, self, request, data, the_blamed) if send_web_hooks
       #end
-      #pass_it_on(exception)
-      rescue_action_locally_without_sen_handler(exception)
+      pass_it_on(exception)
+      #rescue_action_locally_without_sen_handler(exception)
       #to_return
     end
 

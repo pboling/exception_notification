@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Peter Boling", "Scott Windsor", "Ismael Celis", "Jacques Crocker", "Jamis Buck"]
-  s.date = %q{2010-05-13}
+  s.date = %q{2010-05-14}
   s.description = %q{Allows customization of:
 * Specify which level of notification you would like with an array of optional styles of notification (email, webhooks)
 * the sender address of the email
