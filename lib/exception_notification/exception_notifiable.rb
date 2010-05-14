@@ -1,3 +1,5 @@
+# This module needs to be included in ApplicationController in order to work.
+
 require 'ipaddr'
 
 module ExceptionNotification::ExceptionNotifiable
@@ -5,6 +7,17 @@ module ExceptionNotification::ExceptionNotifiable
 
   def self.included(base)
     base.extend ClassMethods
+
+    # Sets up an alias chain to catch exceptions when Rails does
+    #This is what makes it all work with Hoptoad or other exception catchers.
+    base.send(:alias_method, :rescue_action_locally_without_sen_handler, :rescue_action_locally)
+    base.send(:alias_method, :rescue_action_locally, :rescue_action_locally_with_sen_handler)
+
+#Alias method chaining doesn't work here because it would trigger a double render error.
+    # Sets up an alias chain to catch exceptions when Rails does
+    #This is what makes it all work with Hoptoad or other exception catchers.
+#    base.send(:alias_method, :rescue_action_in_public_without_exception_notifiable, :rescue_action_in_public)
+#    base.send(:alias_method, :rescue_action_in_public, :rescue_action_in_public_with_exception_notifiable)
 
     # Adds the following class attributes to the classes that include ExceptionNotifiable
     #  HTTP status codes and what their 'English' status message is
@@ -72,7 +85,6 @@ module ExceptionNotification::ExceptionNotifiable
     self.class.be_silent_for_exception?(exception)
   end
 
-
   private
 
     def environment_is_noisy?
@@ -98,32 +110,36 @@ module ExceptionNotification::ExceptionNotifiable
       !self.class.local_addresses.detect { |addr| addr.include?(remote) }.nil?
     end
 
+    #No Request present
     # When the action being executed has its own local error handling (rescue)
     # Or when the error accurs somewhere without a subsequent render (eg. method calls in console)
-    def rescue_with_handler(exception)
-      to_return = super
-      if to_return
-        verbose = self.class.exception_notifiable_verbose
-        puts "[RESCUE STYLE] rescue_with_handler" if verbose
-        data = get_exception_data
-        status_code = status_code_for_exception(exception)
-        #We only send email if it has been configured in environment
-        send_email = should_email_on_exception?(exception, status_code, verbose)
-        #We only send web hooks if they've been configured in environment
-        send_web_hooks = should_web_hook_on_exception?(exception, status_code, verbose)
-        the_blamed = ExceptionNotification::Notifier.config[:git_repo_path].nil? ? nil : lay_blame(exception)
-        rejected_sections = %w(request session)
-        # Debugging output
-        verbose_output(exception, status_code, "rescued by handler", send_email, send_web_hooks, nil, the_blamed, rejected_sections) if verbose
-        # Send the exception notification email
-        perform_exception_notify_mailing(exception, data, nil, the_blamed, verbose, rejected_sections) if send_email
-        # Send Web Hook requests
-        ExceptionNotification::HooksNotifier.deliver_exception_to_web_hooks(ExceptionNotification::Notifier.config, exception, self, request, data, the_blamed) if send_web_hooks
-      end
-      pass_it_on(exception)
-      to_return
+    def rescue_action_locally_with_sen_handler(exception)
+      #to_return = super
+      #if to_return
+      verbose = self.class.exception_notifiable_verbose
+      puts "[RESCUE STYLE] rescue_with_handler" if verbose
+      data = get_exception_data
+      status_code = status_code_for_exception(exception)
+      #We only send email if it has been configured in environment
+      send_email = should_email_on_exception?(exception, status_code, verbose)
+      #We only send web hooks if they've been configured in environment
+      send_web_hooks = should_web_hook_on_exception?(exception, status_code, verbose)
+      the_blamed = ExceptionNotification::Notifier.config[:git_repo_path].nil? ? nil : lay_blame(exception)
+      rejected_sections = %w(request session)
+      # Debugging output
+      verbose_output(exception, status_code, "rescued by handler", send_email, send_web_hooks, nil, the_blamed, rejected_sections) if verbose
+      # Send the exception notification email
+      perform_exception_notify_mailing(exception, data, nil, the_blamed, verbose, rejected_sections) if send_email
+      # Send Web Hook requests
+      ExceptionNotification::HooksNotifier.deliver_exception_to_web_hooks(ExceptionNotification::Notifier.config, exception, self, request, data, the_blamed) if send_web_hooks
+      #end
+      #pass_it_on(exception)
+      rescue_action_locally_without_sen_handler(exception)
+      #to_return
     end
 
+    # Overrides the rescue_action method in ActionController::Base, but does not inhibit
+    # any custom processing that is defined with Rails 2's exception helpers.
     # When the action being executed is letting SEN handle the exception completely
     def rescue_action_in_public(exception)
       # If the error class is NOT listed in the rails_errror_class hash then we get a generic 500 error:
@@ -137,6 +153,7 @@ module ExceptionNotification::ExceptionNotifiable
       else
         notify_and_render_error_template(status_code, request, exception, ExceptionNotification::Notifier.get_view_path_for_status_code(status_code, verbose), verbose)
       end
+      pass_it_on(exception, request)
     end
 
     def notify_and_render_error_template(status_cd, request, exception, file_path, verbose = false)
@@ -161,15 +178,17 @@ module ExceptionNotification::ExceptionNotifiable
       # deliver raises an exception, we don't call render twice.
       # Render the error page to the end user
       render_error_template(file_path, status)
-      pass_it_on(exception, request)
     end
 
+    # some integration with hoptoad or other exception handler
+    # is done by tha alias method chain on:
+    #    rescue_action_locally
     def pass_it_on(exception, request = nil)
       begin
         request ||= {:params => {}}
         case self.class.exception_notifiable_pass_through
           when :hoptoad then
-            HoptoadNotifier.notify_or_ignore(exception, {:request => request})
+            HoptoadNotifier.notify(exception, {:request => request})
             puts "[PASS-IT-ON] HOPTOAD NOTIFIED" if verbose
           else
             puts "[PASS-IT-ON] NO" if verbose
