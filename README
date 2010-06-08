@@ -165,7 +165,7 @@ to generate error emails (typically ApplicationController):
 == Basic Controller Configuration
 
 In any controller you do this:
-    include ExceptionNotifiable
+    include ExceptionNotification::Notifiable
 
 Then that controller (or all of them if you put it in the application controller) will have its errors handled by SEN.
 You can customize how each controller handles exceptions on a per controller basis, or all together in the application controller.
@@ -271,7 +271,7 @@ SEN allows you to specify the layout for errors at several levels:
   * can use the same layout as the controller
   * no layout at all
 
-By default it will render the error with the layout the controller is using. You just need to set in application.rb (assuming you included ExceptionNotifiable in applicaiton.rb) (or per-controller):
+By default it will render the error with the layout the controller is using. You just need to set in application.rb (assuming you included ExceptionNotification::Notifiable in application.rb) (or per-controller):
 
   # All Same site-wide (in application.rb)
   self.error_layout = 'my_error_layout'
