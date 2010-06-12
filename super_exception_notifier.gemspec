@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{super_exception_notifier}
-  s.version = "3.0.5"
+  s.version = "3.0.6"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Peter Boling", "Scott Windsor", "Ismael Celis", "Jacques Crocker", "Jamis Buck"]
-  s.date = %q{2010-05-14}
+  s.date = %q{2010-06-12}
   s.description = %q{Allows customization of:
 * Specify which level of notification you would like with an array of optional styles of notification (email, webhooks)
 * the sender address of the email
@@ -34,7 +34,8 @@ Gem::Specification.new do |s|
     "README"
   ]
   s.files = [
-    "MIT-LICENSE",
+    "CHANGELOG.txt",
+     "MIT-LICENSE",
      "README",
      "VERSION.yml",
      "init.rb",
@@ -52,6 +53,14 @@ Gem::Specification.new do |s|
      "lib/exception_notification/notified_task.rb",
      "lib/exception_notification/notifier.rb",
      "lib/exception_notification/notifier_helper.rb",
+     "lib/views/exception_notification/notifier/_backtrace.html.erb",
+     "lib/views/exception_notification/notifier/_environment.html.erb",
+     "lib/views/exception_notification/notifier/_inspect_model.html.erb",
+     "lib/views/exception_notification/notifier/_request.html.erb",
+     "lib/views/exception_notification/notifier/_session.html.erb",
+     "lib/views/exception_notification/notifier/_title.html.erb",
+     "lib/views/exception_notification/notifier/background_exception_notification.text.plain.erb",
+     "lib/views/exception_notification/notifier/rake_exception_notification.text.plain.erb",
      "rails/app/views/exception_notifiable/400.html",
      "rails/app/views/exception_notifiable/403.html",
      "rails/app/views/exception_notifiable/404.html",
@@ -70,7 +79,7 @@ Gem::Specification.new do |s|
   s.homepage = %q{http://github.com/pboling/exception_notifiable}
   s.rdoc_options = ["--charset=UTF-8"]
   s.require_paths = ["lib"]
-  s.rubygems_version = %q{1.3.6}
+  s.rubygems_version = %q{1.3.5}
   s.summary = %q{Allows unhandled (and handled!) exceptions to be captured and sent via email}
   s.test_files = [
     "test/exception_notifiable_test.rb",
