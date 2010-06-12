@@ -16,7 +16,7 @@ module ExceptionNotification::Notifiable
 
     # Since there is no concept of locality from a request here allow user to explicitly define which env's are noisy (send notifications)
     base.cattr_accessor :notifiable_noisy_environments
-    base.notifiable_noisy_environments = [:production]
+    base.notifiable_noisy_environments = ["production"]
 
     base.cattr_accessor :notifiable_pass_through
     base.notifiable_pass_through = false

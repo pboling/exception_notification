@@ -43,7 +43,7 @@ module ExceptionNotification::ExceptionNotifiable
     base.exception_notifiable_notification_level = [:render, :email, :web_hooks]
     # Since there is no concept of locality from a request here allow user to explicitly define which env's are noisy (send notifications)
     base.cattr_accessor :exception_notifiable_noisy_environments
-    base.exception_notifiable_noisy_environments = [:production]
+    base.exception_notifiable_noisy_environments = ["production"]
 
     base.cattr_accessor :exception_notifiable_pass_through
     base.exception_notifiable_pass_through = false
