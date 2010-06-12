@@ -87,26 +87,26 @@ class ExceptionNotification::Notifier < ActionMailer::Base
   end
 
   def self.catch_all(verbose = false)
-    puts "[CATCH ALL INVOKED] #{File.dirname(__FILE__)}/../../rails/app/views/exception_notifiable/500.html" if verbose
+    logger.info("[CATCH ALL INVOKED] #{File.dirname(__FILE__)}/../../rails/app/views/exception_notifiable/500.html") if verbose
     "#{File.dirname(__FILE__)}/../../rails/app/views/exception_notifiable/500.html"
   end
 
   # Check the usual suspects
   def self.get_view_path(file_name, verbose = false)
     if File.exist?("#{RAILS_ROOT}/public/#{file_name}.html")
-      puts "[FOUND FILE:A] #{RAILS_ROOT}/public/#{file_name}.html" if verbose
+      logger.info("[FOUND FILE:A] #{RAILS_ROOT}/public/#{file_name}.html") if verbose
       "#{RAILS_ROOT}/public/#{file_name}.html"
     elsif !config[:view_path].nil? && File.exist?("#{RAILS_ROOT}/#{config[:view_path]}/#{file_name}.html.erb")
-      puts "[FOUND FILE:B] #{RAILS_ROOT}/#{config[:view_path]}/#{file_name}.html.erb" if verbose
+      logger.info("[FOUND FILE:B] #{RAILS_ROOT}/#{config[:view_path]}/#{file_name}.html.erb") if verbose
       "#{RAILS_ROOT}/#{config[:view_path]}/#{file_name}.html.erb"
     elsif !config[:view_path].nil? && File.exist?("#{RAILS_ROOT}/#{config[:view_path]}/#{file_name}.html")
-      puts "[FOUND FILE:C] #{RAILS_ROOT}/#{config[:view_path]}/#{file_name}.html" if verbose
+      logger.info("[FOUND FILE:C] #{RAILS_ROOT}/#{config[:view_path]}/#{file_name}.html") if verbose
       "#{RAILS_ROOT}/#{config[:view_path]}/#{file_name}.html"
     elsif File.exist?("#{File.dirname(__FILE__)}/../../rails/app/views/exception_notifiable/#{file_name}.html.erb")
-      puts "[FOUND FILE:D] #{File.dirname(__FILE__)}/../../rails/app/views/exception_notifiable/#{file_name}.html.erb" if verbose
+      logger.info("[FOUND FILE:D] #{File.dirname(__FILE__)}/../../rails/app/views/exception_notifiable/#{file_name}.html.erb") if verbose
       "#{File.dirname(__FILE__)}/../../rails/app/views/exception_notifiable/#{file_name}.html.erb"
     elsif File.exist?("#{File.dirname(__FILE__)}/../../rails/app/views/exception_notifiable/#{file_name}.html")
-      puts "[FOUND FILE:E] #{File.dirname(__FILE__)}/../../rails/app/views/exception_notifiable/#{file_name}.html" if verbose
+      logger.info("[FOUND FILE:E] #{File.dirname(__FILE__)}/../../rails/app/views/exception_notifiable/#{file_name}.html") if verbose
       "#{File.dirname(__FILE__)}/../../rails/app/views/exception_notifiable/#{file_name}.html"
     else
       nil

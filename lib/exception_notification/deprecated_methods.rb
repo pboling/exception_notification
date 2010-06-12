@@ -53,6 +53,6 @@ module ExceptionNotification::DeprecatedMethods
   end
 
   def deprecation_warning(old, new, reason = "")
-    puts "[DEPRECATION WARNING] ** Method '#{old}' has been replaced by '#{new}', please update your code.#{' Reason for change: ' + reason + '.' if reason}"
+    logger.info("[DEPRECATION WARNING] ** Method '#{old}' has been replaced by '#{new}', please update your code.#{' Reason for change: ' + reason + '.' if reason}")
   end
 end

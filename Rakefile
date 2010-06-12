@@ -52,6 +52,7 @@ begin
     gemspec.add_dependency 'rake'
     gemspec.files = ["MIT-LICENSE",
              "README",
+             "CHANGELOG.txt",
              "super_exception_notifier.gemspec",
              "init.rb",
              "lib/exception_notification/consider_local.rb",
@@ -81,15 +82,15 @@ begin
              "rails/app/views/exception_notifiable/501.html",
              "rails/app/views/exception_notifiable/503.html",
              "rails/app/views/exception_notifiable/method_disabled.html.erb",
-             "lib/views/exception_notifiable/_backtrace.html.erb",
-             "lib/views/exception_notifiable/_environment.html.erb",
-             "lib/views/exception_notifiable/_inspect_model.html.erb",
-             "lib/views/exception_notifiable/_request.html.erb",
-             "lib/views/exception_notifiable/_session.html.erb",
-             "lib/views/exception_notifiable/_title.html.erb",
-             "lib/views/exception_notifiable/background_exception_notification.text.plain.erb",
-             "lib/views/exception_notifiable/exception_notifiable.text.plain.erb",
-             "lib/views/exception_notifiable/rake_exception_notification.text.plain.erb",
+             "lib/views/exception_notification/notifier/_backtrace.html.erb",
+             "lib/views/exception_notification/notifier/_environment.html.erb",
+             "lib/views/exception_notification/notifier/_inspect_model.html.erb",
+             "lib/views/exception_notification/notifier/_request.html.erb",
+             "lib/views/exception_notification/notifier/_session.html.erb",
+             "lib/views/exception_notification/notifier/_title.html.erb",
+             "lib/views/exception_notification/notifier/background_exception_notification.text.plain.erb",
+             "lib/views/exception_notification/notifier/exception_notifiable.text.plain.erb",
+             "lib/views/exception_notification/notifier/rake_exception_notification.text.plain.erb",
              "VERSION.yml"]
   end
   Jeweler::GemcutterTasks.new

@@ -27,29 +27,29 @@ module ExceptionNotification::NotifiableHelper
   end
 
   def verbose_output(exception, status_cd, file_path, send_email, send_web_hooks, request = nil, the_blamed = nil, rejected_sections = nil)
-    puts "[EXCEPTION] #{exception}"
-    puts "[EXCEPTION CLASS] #{exception.class}"
-    puts "[EXCEPTION STATUS_CD] #{status_cd}"
-    puts "[ERROR LAYOUT] #{self.class.error_layout}" if self.class.respond_to?(:error_layout)
-    puts "[ERROR VIEW PATH] #{ExceptionNotification::Notifier.config[:view_path]}" if !ExceptionNotification::Notifier.nil? && !ExceptionNotification::Notifier.config[:view_path].nil?
-    puts "[ERROR FILE PATH] #{file_path.inspect}"
-    puts "[ERROR EMAIL] #{send_email ? "YES" : "NO"}"
-    puts "[ERROR WEB HOOKS] #{send_web_hooks ? "YES" : "NO"}"
-    puts "[THE BLAMED] #{the_blamed}"
-    puts "[SECTIONS] #{ExceptionNotification::Notifier.sections_for_email(rejected_sections, request)}"
-    req = request ? " for request_uri=#{request.request_uri} and env=#{request.env.inspect}" : ""
-    logger.error("render_error(#{status_cd}, #{self.class.http_status_codes[status_cd]}) invoked#{req}") if self.class.respond_to?(:http_status_codes) && !logger.nil?
+    logger.info("[EXCEPTION] #{exception}")
+    logger.info("[EXCEPTION CLASS] #{exception.class}")
+    logger.info("[EXCEPTION STATUS_CD] #{status_cd}")
+    logger.info("[ERROR LAYOUT] #{self.class.error_layout}") if self.class.respond_to?(:error_layout)
+    logger.info("[ERROR VIEW PATH] #{ExceptionNotification::Notifier.config[:view_path]}") if !ExceptionNotification::Notifier.nil? && !ExceptionNotification::Notifier.config[:view_path].nil?
+    logger.info("[ERROR FILE PATH] #{file_path.inspect}")
+    logger.info("[ERROR EMAIL] #{send_email ? "YES" : "NO"}")
+    logger.info("[ERROR WEB HOOKS] #{send_web_hooks ? "YES" : "NO"}")
+    logger.info("[THE BLAMED] #{the_blamed}") unless the_blamed.blank?
+    logger.info("[SECTIONS] #{ExceptionNotification::Notifier.sections_for_email(rejected_sections, request).inspect}")
+    req = request ? " for request_uri=#{request.request_uri}" : ""
+    logger.error("render_error(#{status_cd}, #{self.class.http_status_codes[status_cd]}) invoked#{req}") if self.class.respond_to?(:http_status_codes)
   end
 
   def perform_exception_notify_mailing(exception, data, request = nil, the_blamed = nil, verbose = false, rejected_sections = nil)
     if ExceptionNotification::Notifier.config[:exception_recipients].blank?
-      puts "[EMAIL NOTIFICATION] ExceptionNotification::Notifier.config[:exception_recipients] is blank, notification cancelled!" if verbose
+      logger.info("[EMAIL NOTIFICATION] ExceptionNotification::Notifier.config[:exception_recipients] is blank, notification cancelled!") if verbose
     else
       class_name = self.respond_to?(:controller_name) ? self.controller_name : self.to_s
       method_name = self.respond_to?(:action_name) ? self.action_name : get_method_name
       ExceptionNotification::Notifier.deliver_exception_notification(exception, class_name, method_name,
         request, data, the_blamed, rejected_sections)
-      puts "[EMAIL NOTIFICATION] Sent" if verbose
+      logger.info("[EMAIL NOTIFICATION] Sent") if verbose
     end
   end
 
@@ -65,8 +65,8 @@ module ExceptionNotification::NotifiableHelper
   def should_notify_on_exception?(exception, status_cd = nil, verbose = false)
     # don't notify (email or web hooks) on exceptions raised locally
     verbose && ExceptionNotification::Notifier.config[:skip_local_notification] && is_local? ?
-        "[NOTIFY LOCALLY] NO" :
-         nil
+      logger.info("[NOTIFY LOCALLY] NO") :
+      nil
     return false if ExceptionNotification::Notifier.config[:skip_local_notification] && is_local?
     # don't notify (email or web hooks) exceptions raised that match ExceptionNotifiable.notifiable_silent_exceptions
     return false if self.be_silent_for_exception?(exception)

@@ -67,8 +67,8 @@ module ExceptionNotification::Notifiable
   end
 
   def rescue_with_hooks(exception)
-    verbose = self.class.notifiable_verbose
-    puts "[RESCUE STYLE] rescue_with_hooks" if verbose
+    verbose = self.class.notifiable_verbose && respond_to?(:logger) && !logger.nil?
+    logger.info("[RESCUE STYLE] rescue_with_hooks") if verbose
     data = get_exception_data
     # With ExceptionNotifiable you have an inherent request, and using a status code makes sense.
     # With Notifiable class to wrap around everything that doesn't have a request,
@@ -98,13 +98,14 @@ module ExceptionNotification::Notifiable
       case self.class.notifiable_pass_through
         when :hoptoad then
           HoptoadNotifier.notify(exception, {:request => request})
-          puts "[PASS-IT-ON] HOPTOAD NOTIFIED" if verbose
+          logger.info("[PASS-IT-ON] HOPTOAD NOTIFIED") if verbose
         else
-          puts "[PASS-IT-ON] NO" if verbose
-          #nothing
+          logger.info("[PASS-IT-ON] NO") if verbose
+          #Do Nothing
       end
     rescue
-      #nothing
+      #Do Nothing
+      logger.info("[PASS-IT-ON] FAILED") if verbose
     end
   end
 
