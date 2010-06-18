@@ -89,7 +89,7 @@ begin
              "lib/views/exception_notification/notifier/_session.html.erb",
              "lib/views/exception_notification/notifier/_title.html.erb",
              "lib/views/exception_notification/notifier/background_exception_notification.text.plain.erb",
-             "lib/views/exception_notification/notifier/exception_notifiable.text.plain.erb",
+             "lib/views/exception_notification/notifier/exception_notification.text.plain.erb",
              "lib/views/exception_notification/notifier/rake_exception_notification.text.plain.erb",
              "VERSION.yml"]
   end
