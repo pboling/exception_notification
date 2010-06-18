@@ -5,7 +5,7 @@
 
 Gem::Specification.new do |s|
   s.name = %q{super_exception_notifier}
-  s.version = "3.0.10"
+  s.version = "3.0.11"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Peter Boling", "Scott Windsor", "Ismael Celis", "Jacques Crocker", "Jamis Buck"]
@@ -60,6 +60,7 @@ Gem::Specification.new do |s|
      "lib/views/exception_notification/notifier/_session.html.erb",
      "lib/views/exception_notification/notifier/_title.html.erb",
      "lib/views/exception_notification/notifier/background_exception_notification.text.plain.erb",
+     "lib/views/exception_notification/notifier/exception_notification.text.plain.erb",
      "lib/views/exception_notification/notifier/rake_exception_notification.text.plain.erb",
      "rails/app/views/exception_notifiable/400.html",
      "rails/app/views/exception_notifiable/403.html",
