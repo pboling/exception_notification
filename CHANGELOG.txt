@@ -1,3 +1,6 @@
+2010-06-18 v3.0.10
+- Added view to gemspec to include with build. (Not sure why Jeweler missed it)
+
 2010-06-18 v3.0.9
 - Fixed bad view path for mailer.
 
