@@ -1,10 +1,9 @@
 = Super Exception Notifier
 
-The Super Exception Notifier (SEN) gem provides a mailer object and a default set of
-templates for sending email notifications when errors occur in a Rails
-application, as well as a default set of error page templates to render 
-based on the status code assigned to an error. The gem is configurable,
-allowing programmers to customize (settings are per environment or per class):
+The Super Exception Notifier (SEN) gem provides a mailer object and a default set of templates 
+for sending email notifications when errors occur in a Rails application, as well as a default 
+set of error page templates to render based on the status code assigned to an error.  The gem 
+is configurable, allowing programmers to customize (settings are per environment or per class):
 
 * the sender address of the email
 * the recipient addresses
@@ -26,24 +25,25 @@ allowing programmers to customize (settings are per environment or per class):
  notifiable { method }
 * Can notify of errors in Rake tasks using 'NotifiedTask.new' instead of 'task' when writing tasks
 * Works with Hoptoad Notifier, so you can notify via SEN and/or Hoptoad for any particular errors.
+* Tested with Rails 2.3.x, should work with rails 2.2.x, and might work with rails 3.
+
 The email includes information about the current request, session, and
 environment, and also gives a backtrace of the exception.
 
-This gem is based on the wonderful exception_notification plugin
-created by Jamis Buck. I have modified it extensively and merged many of the improvements from
-a dozen or so other forks.  It remains a (mostly) drop in replacement with greatly extended
-functionality and customization options.  I keep it up to date with the work on the core team's
+This gem is based on the wonderful exception_notification plugin created by Jamis Buck. I have 
+modified it extensively and merged many of the improvements from a dozen or so other forks.  
+It remains a (mostly) drop in replacement with greatly extended functionality and customization 
+options.  I keep it up to date with the work on the core team's
 branch.
 
 The venerable original is here:
  
   http://github.com/rails/exception_notification
 
-The current version of this gem is a git fork of the original and
-has been updated to include the latest improvements from the original, 
-including compatibility with Rails 2.1, 2.2, 2.3, and perhaps 3.0, as well as many improvements from
-the other forks on github.  I merge them in when I have time, and when the 
-changes fit nicely with the enhancements I have already made.
+The current version of this gem is a git fork of the original and has been updated to include 
+the latest improvements from the original, and many improvements from the other forks on github.  
+I merge them in when I have time, and when the changes fit nicely with the enhancements I have 
+already made.
 
 This fork of Exception Notifier is in production use on several large websites (top 5000).
 
