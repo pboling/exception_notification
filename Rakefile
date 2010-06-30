@@ -44,9 +44,11 @@ begin
 * Hooks into `git blame` output so you can get an idea of who (may) have introduced the bug
 * Hooks into other website services (e.g. you can send exceptions to to Switchub.com)
 * Can notify of errors occurring in any class/method using notifiable { method }
-* Can notify of errors in Rake tasks using NotifiedTask.new instead of task"
+* Can notify of errors in Rake tasks using NotifiedTask.new instead of task
+* Works with Hoptoad Notifier, so you can notify via SEN and/or Hoptoad for any particular errors.
+* Tested with Rails 2.3.x, should work with rails 2.2.x, and is apparently not yet compatible with rails 3."
     gemspec.email = "peter.boling@gmail.com"
-    gemspec.homepage = "http://github.com/pboling/exception_notifiable"
+    gemspec.homepage = "http://github.com/pboling/exception_notification"
     gemspec.authors = ['Peter Boling', 'Scott Windsor', 'Ismael Celis', 'Jacques Crocker', 'Jamis Buck']
     gemspec.add_dependency 'actionmailer'
     gemspec.add_dependency 'rake'

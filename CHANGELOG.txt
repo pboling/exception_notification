@@ -1,3 +1,6 @@
+2010-06-30 v3.0.13
+- Fixed homepage in Rakefile, noted Rails 3 incompatibility in README.
+
 2010-06-25 v3.0.12
 - Improved clarity of readme.
 

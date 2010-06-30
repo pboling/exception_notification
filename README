@@ -25,7 +25,7 @@ is configurable, allowing programmers to customize (settings are per environment
  notifiable { method }
 * Can notify of errors in Rake tasks using 'NotifiedTask.new' instead of 'task' when writing tasks
 * Works with Hoptoad Notifier, so you can notify via SEN and/or Hoptoad for any particular errors.
-* Tested with Rails 2.3.x, should work with rails 2.2.x, and might work with rails 3.
+* Tested with Rails 2.3.x, should work with Rails 2.2.x, and is apparently not yet compatible with Rails 3.
 
 The email includes information about the current request, session, and
 environment, and also gives a backtrace of the exception.
