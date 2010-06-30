@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{super_exception_notifier}
-  s.version = "3.0.12"
+  s.version = "3.0.13"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Peter Boling", "Scott Windsor", "Ismael Celis", "Jacques Crocker", "Jamis Buck"]
-  s.date = %q{2010-06-25}
+  s.date = %q{2010-06-30}
   s.description = %q{Allows customization of:
 * Specify which level of notification you would like with an array of optional styles of notification (email, webhooks)
 * the sender address of the email
@@ -28,7 +28,9 @@ Gem::Specification.new do |s|
 * Hooks into `git blame` output so you can get an idea of who (may) have introduced the bug
 * Hooks into other website services (e.g. you can send exceptions to to Switchub.com)
 * Can notify of errors occurring in any class/method using notifiable { method }
-* Can notify of errors in Rake tasks using NotifiedTask.new instead of task}
+* Can notify of errors in Rake tasks using NotifiedTask.new instead of task
+* Works with Hoptoad Notifier, so you can notify via SEN and/or Hoptoad for any particular errors.
+* Tested with Rails 2.3.x, should work with rails 2.2.x, and is apparently not yet compatible with rails 3.}
   s.email = %q{peter.boling@gmail.com}
   s.extra_rdoc_files = [
     "README"
@@ -77,7 +79,7 @@ Gem::Specification.new do |s|
      "rails/init.rb",
      "super_exception_notifier.gemspec"
   ]
-  s.homepage = %q{http://github.com/pboling/exception_notifiable}
+  s.homepage = %q{http://github.com/pboling/exception_notification}
   s.rdoc_options = ["--charset=UTF-8"]
   s.require_paths = ["lib"]
   s.rubygems_version = %q{1.3.7}
