@@ -55,11 +55,15 @@ More Installation Options are here: http://wiki.github.com/pboling/exception_not
 
 == Configuration as RubyGem
 
+  (UPGRADE NOTE: The name of the lib changed from version 2.x to 3.x)
+
   config.gem 'super_exception_notifier', :lib => "exception_notification"
 
 More Configuration Options are here: http://wiki.github.com/pboling/exception_notification/configuration
 
 == Configuration In Environment (Initializer)
+
+  (UPGRADE NOTE: The class invoked here changed from version 2.x to 3.x)
 
   ExceptionNotification::Notifier.configure_exception_notifier do |config|
     config[:app_name]                 = "[MYAPP]"
