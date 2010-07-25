@@ -73,10 +73,10 @@ module ExceptionNotification::Notifiable
     # With ExceptionNotifiable you have an inherent request, and using a status code makes sense.
     # With Notifiable class to wrap around everything that doesn't have a request,
     #   the errors you want to be notified of need to be specified either positively or negatively
-    # 1. positive eg. set ExceptionNotifier.config[:notify_error_classes] to an array of classes
-    #               set ExceptionNotifier.config[:notify_other_errors] to false
+    # 1. positive eg. set ExceptionNotification::Notifier.config[:notify_error_classes] to an array of classes
+    #               set ExceptionNotification::Notifier.config[:notify_other_errors] to false
     # 1. negative eg. set Klass.silent_exceptions to the ones to keep quiet
-    #               set ExceptionNotifier.config[:notify_other_errors] to true
+    #               set ExceptionNotification::Notifier.config[:notify_other_errors] to true
     status_code = nil
     #We only send email if it has been configured in environment
     send_email = should_email_on_exception?(exception, status_code, verbose)
