@@ -55,7 +55,7 @@ module ExceptionNotification::Notifiable
   private
 
   def environment_is_noisy?
-    !self.notifiable_noisy_environments.include?(Rails.env)
+    self.notifiable_noisy_environments.include?(Rails.env)
   end
 
   def notification_level_sends_email?
@@ -110,7 +110,7 @@ module ExceptionNotification::Notifiable
   end
 
   def is_local? #like asking is_silent?
-    self.notifiable_noisy_environments.include?(Rails.env)
+    !self.notifiable_noisy_environments.include?(Rails.env)
   end
 
 end
