@@ -132,7 +132,7 @@ module ExceptionNotification::ExceptionNotifiable
         perform_exception_notify_mailing(exception, data, nil, the_blamed, verbose, rejected_sections) if send_email
         # Send Web Hook requests
         ExceptionNotification::HooksNotifier.deliver_exception_to_web_hooks(ExceptionNotification::Notifier.config, exception, self, request, data, the_blamed) if send_web_hooks
-        pass_it_on(exception, ENV)
+        pass_it_on(exception, ENV, verbose)
       end
       to_return
     end
@@ -152,7 +152,7 @@ module ExceptionNotification::ExceptionNotifiable
       else
         notify_and_render_error_template(status_code, request, exception, ExceptionNotification::Notifier.get_view_path_for_status_code(status_code, verbose), verbose)
       end
-      pass_it_on(exception, ENV, request, params, session)
+      pass_it_on(exception, ENV, request, params, session, verbose)
     end
 
     def notify_and_render_error_template(status_cd, request, exception, file_path, verbose = false)
@@ -182,7 +182,7 @@ module ExceptionNotification::ExceptionNotifiable
     # some integration with hoptoad or other exception handler
     # is done by tha alias method chain on:
     #    rescue_action_locally
-    def pass_it_on(exception, env, request = {:params => {}}, params = {}, session = {})
+    def pass_it_on(exception, env, request = {:params => {}}, params = {}, session = {}, verbose = false)
       begin
         case self.class.exception_notifiable_pass_through
           when :hoptoad then
