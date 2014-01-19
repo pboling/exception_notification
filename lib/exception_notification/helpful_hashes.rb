@@ -2,7 +2,7 @@
 #Released under the MIT license
 
 module ExceptionNotification::HelpfulHashes
-  unless defined?(SILENT_EXCEPTIONS)
+  SILENT_EXCEPTIONS = begin
     noiseless = []
     noiseless << ActiveRecord::RecordNotFound if defined?(ActiveRecord)
     if defined?(ActionController)
@@ -11,7 +11,7 @@ module ExceptionNotification::HelpfulHashes
       noiseless << ActionController::RoutingError
       noiseless << ActionController::MethodNotAllowed
     end
-    SILENT_EXCEPTIONS = noiseless
+    noiseless
   end
 
   # TODO: use ActionController::StatusCodes
@@ -27,7 +27,7 @@ module ExceptionNotification::HelpfulHashes
     "500" => "Internal Server Error",
     "501" => "Not Implemented",
     "503" => "Service Unavailable"
-  } unless defined?(HTTP_STATUS_CODES)
+  }
 
   def codes_for_error_classes
     #TODO: Format whitespace

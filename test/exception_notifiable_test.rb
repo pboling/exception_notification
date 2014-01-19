@@ -1,4 +1,5 @@
 require 'test_helper'
+require_relative 'mocks/controllers'
 
 class ExceptionNotifiableTest < Test::Unit::TestCase
 
@@ -24,7 +25,7 @@ class ExceptionNotifiableTest < Test::Unit::TestCase
   end
 
   def test_default_exception_notifiable_silent_exceptions
-    assert(BasicController.exception_notifiable_silent_exceptions == SILENT_EXCEPTIONS, "Default exception_notifiable_silent_exceptions is incorrect")
+    assert(BasicController.exception_notifiable_silent_exceptions == SILENT_EXCEPTIONS, "Default exception_notifiable_silent_exceptions is incorrect:\ngot: #{BasicController.exception_notifiable_silent_exceptions.inspect}\nexpected:#{SILENT_EXCEPTIONS.inspect}")
   end
 
   def test_default_exception_notifiable_notification_level

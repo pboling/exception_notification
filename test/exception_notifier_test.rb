@@ -10,10 +10,8 @@ class ExceptionNotifierTest < Test::Unit::TestCase
     @controller.params = {}
     @controller.send(:initialize_current_url)
     ActionController::Base.consider_all_requests_local = false
-    @@delivered_mail = []
     ActionMailer::Base.class_eval do
       def deliver!(mail = @mail)
-        @@delivered_mail << mail
       end
     end
   end

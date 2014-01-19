@@ -2,7 +2,6 @@
 require "bundler/gem_tasks"
 require 'rake'
 require 'rake/testtask'
-require 'rake/rdoctask'
 
 desc 'Default: run unit tests.'
 task :default => :test
@@ -12,6 +11,16 @@ Rake::TestTask.new do |t|
   t.libs << "test"
   t.test_files = FileList['test/*_test.rb']
   t.verbose = true
+end
+
+namespace :test do
+  desc 'Test against all supported Rails versions'
+  task :all do
+    %w(2.0.x 2.1.x 2.2.x 2.3.x).each do |version|
+      sh "BUNDLE_GEMFILE='gemfiles/Gemfile.rails-#{version}' bundle --quiet"
+      sh "BUNDLE_GEMFILE='gemfiles/Gemfile.rails-#{version}' bundle exec rake test"
+    end
+  end
 end
 
 require 'reek/rake/task'
@@ -27,9 +36,12 @@ RoodiTask.new do |t|
   t.verbose = false
 end
 
+
 desc 'Generate documentation for exception_notifiable gem.'
 require File.expand_path('../lib/super_exception_notifier/version', __FILE__)
-Rake::RDocTask.new do |rdoc|
+require 'rdoc'
+require 'rdoc/task'
+RDoc::Task.new do |rdoc|
   rdoc.rdoc_dir = 'rdoc'
   rdoc.title    = "exception_notifiable #{SuperExceptionNotifier::VERSION}"
   rdoc.options << '--line-numbers' << '--inline-source'

@@ -26,6 +26,13 @@ RAILS_DEFAULT_LOGGER = Logger.new(StringIO.new) unless defined?(RAILS_DEFAULT_LO
 
 #require File.join(File.dirname(__FILE__), "..", "init")
 require 'require_relative'
+
+# For code coverage, must be required before all application / gem / library code.
+if RUBY_VERSION >= "1.9.2"
+  require 'coveralls'
+  Coveralls.wear!
+end
+
 require_relative '../init'
 
 ExceptionNotification::Notifier.configure_exception_notifier do |config|

@@ -13,13 +13,18 @@ end
 
 class NotifiableTest < Test::Unit::TestCase
 
+  @@delivered_mail = []
+  cattr_accessor :delivered_mail
   def setup
-    @@delivered_mail = []
     ActionMailer::Base.class_eval do
       def deliver!(mail = @mail)
-        @@delivered_mail << mail
+        NotifiableTest.delivered_mail << mail
       end
     end
+  end
+
+  def teardown
+    NotifiableTest.delivered_mail = []
   end
 
   def test_notifiable_in_noisy_environment

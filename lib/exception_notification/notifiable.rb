@@ -55,7 +55,7 @@ module ExceptionNotification::Notifiable
   private
 
   def environment_is_noisy?
-    self.notifiable_noisy_environments.include?(Rails.env)
+    self.class.notifiable_noisy_environments.include?(Rails.env) if defined?(Rails)
   end
 
   def notification_level_sends_email?

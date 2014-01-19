@@ -1,3 +1,5 @@
+require 'mocks/sen_test_helpers'
+
 module Rails
   def self.public_path
     File.dirname(__FILE__)
@@ -30,7 +32,19 @@ class ApplicationController < ActionController::Base
   def local_request?
     false
   end
-  
+
+  rescue_from ActionController::UnknownController do |exception|
+    render :text => "400", :status => 400
+  end
+
+  rescue_from ActiveRecord::RecordNotFound do |exception|
+    render :text => "404", :status => 404
+  end
+
+  rescue_from RuntimeError do |exception|
+    render :text => "500", :status => 500
+  end
+
 end
 
 class SpecialErrorThing < RuntimeError
@@ -46,6 +60,9 @@ class CustomSilentExceptions < ApplicationController
   self.exception_notifiable_noisy_environments = ['test']
   self.exception_notifiable_verbose = false
   self.exception_notifiable_silent_exceptions = [RuntimeError]
+  rescue_from RuntimeError do |exception|
+    render :text => "500", :status => 500
+  end
 end
 
 class EmptySilentExceptions < ApplicationController
@@ -65,6 +82,7 @@ end
 class DefaultSilentExceptions < ApplicationController
   include ExceptionNotification::ExceptionNotifiable
   self.exception_notifiable_noisy_environments = ['test']
+  self.exception_notifiable_silent_exceptions = SILENT_EXCEPTIONS
   self.exception_notifiable_verbose = false
 end
 
@@ -77,13 +95,4 @@ end
 class NewStyle < ApplicationController
   include ExceptionNotification::ExceptionNotifiable
   self.exception_notifiable_noisy_environments = ['test']
-  self.exception_notifiable_verbose = false
-    
-  rescue_from ActiveRecord::RecordNotFound do |exception|
-    render :text => "404", :status => 404
-  end
-
-  rescue_from RuntimeError do |exception|
-    render :text => "500", :status => 500
-  end
 end

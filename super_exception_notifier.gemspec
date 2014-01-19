@@ -48,9 +48,9 @@ Gem::Specification.new do |s|
 
   s.add_runtime_dependency(%q<actionmailer>, [">= 0","< 3"])
   s.add_development_dependency(%q<rbx-require-relative>, ["~> 0.0.9"])
-  s.add_development_dependency(%q<rails>, [">= 2.3","< 3"])
+  s.add_development_dependency(%q<rails>, [">= 2.0","< 3"])
   s.add_development_dependency(%q<rdoc>, [">= 3.12"])
-  s.add_development_dependency(%q<rake>, [">= 0.8","< 0.9"])
+  s.add_development_dependency(%q<rake>, [">= 10.1.1"])
   s.add_development_dependency(%q<reek>, [">= 1.2.13"])
   s.add_development_dependency(%q<roodi>, [">= 2.2.0"])
 

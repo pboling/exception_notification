@@ -171,7 +171,8 @@ For example:
 ## References
 
 * [Source Code](http://github.com/pboling/exception_notification)
-* [A fork from the my original source on Google Code](https://github.com/vitaliel/super_exception_notifier)
+* [A popular fork/rewrite of this fork](https://github.com/bmpercy/wrangler)
+* [An old fork of my original source on Google Code](https://github.com/vitaliel/super_exception_notifier)
 * [The Original Source on Google Code](http://super-exception-notifier.googlecode.com/svn/trunk/super_exception_notifier/)
 * [Getting it to work on Stack Overflow & my response](http://stackoverflow.com/questions/1738017/getting-super-exception-notifier-to-work)
 * [Getting it to work on PasteBin](http://pastebin.com/pyHQjN84)

@@ -10,14 +10,14 @@ module ExceptionNotification::ExceptionNotifiable
 
     # Sets up an alias chain to catch exceptions when Rails does
     #This is what makes it all work with Hoptoad or other exception catchers.
-#    base.send(:alias_method, :rescue_action_locally_without_sen_handler, :rescue_action_locally)
-#    base.send(:alias_method, :rescue_action_locally, :rescue_action_locally_with_sen_handler)
+    #base.send(:alias_method, :rescue_action_locally_without_sen_handler, :rescue_action_locally)
+    #base.send(:alias_method, :rescue_action_locally, :rescue_action_locally_with_sen_handler)
 
 #Alias method chaining doesn't work here because it would trigger a double render error.
     # Sets up an alias chain to catch exceptions when Rails does
     #This is what makes it all work with Hoptoad or other exception catchers.
-#    base.send(:alias_method, :rescue_action_in_public_without_exception_notifiable, :rescue_action_in_public)
-#    base.send(:alias_method, :rescue_action_in_public, :rescue_action_in_public_with_exception_notifiable)
+    #base.send(:alias_method, :rescue_action_in_public_without_exception_notifiable, :rescue_action_in_public)
+    #base.send(:alias_method, :rescue_action_in_public, :rescue_action_in_public_with_exception_notifiable)
 
     # Adds the following class attributes to the classes that include ExceptionNotifiable
     #  HTTP status codes and what their 'English' status message is
@@ -90,7 +90,7 @@ module ExceptionNotification::ExceptionNotifiable
     def environment_is_noisy?
       self.class.exception_notifiable_noisy_environments.include?(Rails.env)
     end
-  
+
     def notification_level_sends_email?
       self.class.exception_notifiable_notification_level.include?(:email)
     end
@@ -115,7 +115,8 @@ module ExceptionNotification::ExceptionNotifiable
     # Or when the error occurs somewhere without a subsequent render (eg. method calls in console)
     def rescue_with_handler(exception)
       to_return = super
-      if to_return
+      # Not sure how to do this. We aren't supposed to rely on the return value of the super handler.
+      #if to_return
         verbose = self.class.exception_notifiable_verbose && respond_to?(:logger) && !logger.nil?
         logger.info("[RESCUE STYLE] rescue_with_handler") if verbose
         data = get_exception_data
@@ -133,7 +134,7 @@ module ExceptionNotification::ExceptionNotifiable
         # Send Web Hook requests
         ExceptionNotification::HooksNotifier.deliver_exception_to_web_hooks(ExceptionNotification::Notifier.config, exception, self, request, data, the_blamed) if send_web_hooks
         pass_it_on(exception, ENV, verbose)
-      end
+      #end
       to_return
     end
 
@@ -141,6 +142,7 @@ module ExceptionNotification::ExceptionNotifiable
     # any custom processing that is defined with Rails 2's exception helpers.
     # When the action being executed is letting SEN handle the exception completely
     def rescue_action_in_public(exception)
+      logger.info "rescue_action_in_public"
       # If the error class is NOT listed in the rails_error_class hash then we get a generic 500 error:
       # OTW if the error class is listed, but has a blank code or the code is == '200' then we get a custom error layout rendered
       # OTW the error class is listed!
@@ -156,6 +158,7 @@ module ExceptionNotification::ExceptionNotifiable
     end
 
     def notify_and_render_error_template(status_cd, request, exception, file_path, verbose = false)
+      logger.info "notify_and_render_error_template"
       status = self.class.http_status_codes[status_cd] ? status_cd + " " + self.class.http_status_codes[status_cd] : status_cd
       data = get_exception_data
       #We only send email if it has been configured in environment
