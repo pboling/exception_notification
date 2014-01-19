@@ -1,9 +1,9 @@
 # -*- encoding: utf-8 -*-
-require File.expand_path('../lib/exception_notification/version', __FILE__)
+require File.expand_path('../lib/super_exception_notifier/version', __FILE__)
 
 Gem::Specification.new do |s|
   s.name = %q{super_exception_notifier}
-  s.version = ExceptionNotification::VERSION
+  s.version = SuperExceptionNotifier::VERSION
 
   s.authors = ["Peter Boling", "Scott Windsor", "Ismael Celis", "Jacques Crocker", "Jamis Buck"]
   s.email = %w{peter.boling@gmail.com}

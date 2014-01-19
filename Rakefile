@@ -28,10 +28,10 @@ RoodiTask.new do |t|
 end
 
 desc 'Generate documentation for exception_notifiable gem.'
-require File.expand_path('../lib/exception_notification/version', __FILE__)
+require File.expand_path('../lib/super_exception_notifier/version', __FILE__)
 Rake::RDocTask.new do |rdoc|
   rdoc.rdoc_dir = 'rdoc'
-  rdoc.title    = "exception_notifiable #{ExceptionNotification::VERSION}"
+  rdoc.title    = "exception_notifiable #{SuperExceptionNotifier::VERSION}"
   rdoc.options << '--line-numbers' << '--inline-source'
   rdoc.rdoc_files.include('README.md')
   rdoc.rdoc_files.include('lib/**/*.rb')
