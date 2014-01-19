@@ -1,3 +1,11 @@
+2010-06-30 v3.0.14
+- Fixed Notifiable class by Peter Boling
+- Fixed ExceptionNotifiable class by Bradford Folkens
+- Modernized lots of bits and pieces by Peter Boling
+- All tests now pass in Rails 2.3.18 and Ruby 1.8.7-p374 by Peter Boling
+- Fixes typos
+- Switched to Bundler; Removed Jeweler
+
 2010-06-30 v3.0.13
 - Fixed homepage in Rakefile, noted Rails 3 incompatibility in README.
 
