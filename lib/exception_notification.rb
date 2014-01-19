@@ -1,5 +1,8 @@
 require "action_mailer"
+
 module ExceptionNotification
+  require 'exception_notification/version'
+
   autoload :ExceptionNotifiable, 'exception_notification/exception_notifiable'
   autoload :Notifiable, 'exception_notification/notifiable'
   autoload :Notifier, 'exception_notification/notifier'
