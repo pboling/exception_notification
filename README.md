@@ -143,6 +143,23 @@ There is a lot more you can configure, and do:
 
 See the [Network View](https://github.com/pboling/exception_notification/network) and the [CHANGELOG](https://github.com/pboling/exception_notification/blob/master/CHANGELOG.txt)
 
+
+## How you can help!
+
+Take a look at the `reek` list which is the file called `REEK` and stat fixing things.  Once you complete a change, run the tests:
+
+```
+bundle exec rake test:all
+```
+
+If the tests pass refresh the `reek` list:
+
+```
+bundle exec rake reek > REEK
+```
+
+Follow the instructions for "Contributing" below.
+
 ## Contributing
 
 1. Fork it
