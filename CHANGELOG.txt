@@ -1,3 +1,8 @@
+2014-01-18 v3.1
+- Lots of refactoring, mostly in the test suite by Peter Boling
+- Now tested against Rails 2.3 and 2.2 by Peter Boling
+- Still 2 failing tests on Rails 2.1 and 2.0
+
 2014-01-18 v3.0.16
 - Fixed all the URLs in the Readme.
 
