@@ -1,8 +1,8 @@
-require File.dirname(__FILE__) + '/test_helper'
+require 'test_helper'
 require 'action_controller/test_process'
 
 class ExceptionNotifierTest < Test::Unit::TestCase
-  
+
   def setup
     @controller = ActionController::Base.new
     @controller.request = ActionController::TestRequest.new

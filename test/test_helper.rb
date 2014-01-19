@@ -1,5 +1,8 @@
 require 'test/unit'
-require 'rubygems'
+require 'bundler'
+require 'bundler/setup'
+
+Bundler.require(:default, :test)
 
 require 'rake'
 require 'rake/tasklib'
@@ -22,7 +25,8 @@ RAILS_DEFAULT_LOGGER = Logger.new(StringIO.new) unless defined?(RAILS_DEFAULT_LO
 #$:.unshift File.join(File.dirname(__FILE__), '../lib')
 
 #require File.join(File.dirname(__FILE__), "..", "init")
-require "init"
+require 'require_relative'
+require_relative '../init'
 
 ExceptionNotification::Notifier.configure_exception_notifier do |config|
   # If left empty web hooks will not be engaged

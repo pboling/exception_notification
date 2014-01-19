@@ -1,5 +1,5 @@
 # This is to test the ability to handle exceptions raised outside of the request response cycle
-require File.expand_path(File.dirname(__FILE__) + '/test_helper')
+require 'test_helper'
 require 'test/unit'
 
 class Spaceship
@@ -25,6 +25,7 @@ class NotifiableTest < Test::Unit::TestCase
   def test_notifiable_in_noisy_environment
     @class = Spaceship.new
     Spaceship.notifiable_noisy_environments = ['test']
+    Spaceship.notifiable_verbose = false
     ExceptionNotification::Notifier.config[:skip_local_notification] = true
     assert_raises( AccessDenied ) {
       notifiable { @class.access_denied }
@@ -35,6 +36,7 @@ class NotifiableTest < Test::Unit::TestCase
   def test_notifiable_in_quiet_environment_not_skipping_local
     @class = Spaceship.new
     Spaceship.notifiable_noisy_environments = []
+    Spaceship.notifiable_verbose = false
     ExceptionNotification::Notifier.config[:skip_local_notification] = false
     assert_raises( AccessDenied ) {
       notifiable { @class.access_denied }
@@ -45,6 +47,7 @@ class NotifiableTest < Test::Unit::TestCase
   def test_notifiable_in_quiet_environment_skipping_local
     @class = Spaceship.new
     Spaceship.notifiable_noisy_environments = []
+    Spaceship.notifiable_verbose = false
     ExceptionNotification::Notifier.config[:skip_local_notification] = true
     assert_raises( AccessDenied ) {
       notifiable { @class.access_denied }
@@ -68,11 +71,11 @@ class NotifiableTest < Test::Unit::TestCase
   end
 
   def assert_nothing_mailed
-    assert @@delivered_mail.empty?, "Expected to have NOT mailed out a notification about an error occuring, but mailed: \n#{@@delivered_mail}"
+    assert @@delivered_mail.empty?, "Expected to have NOT mailed out a notification about an error occurring, but mailed: \n#{@@delivered_mail}"
   end
 
   def mailed_error
-    assert @@delivered_mail.last, "Expected to have mailed out a notification about an error occuring, but none mailed"
+    assert @@delivered_mail.last, "Expected to have mailed out a notification about an error occurring, but none mailed"
     @@delivered_mail.last.encoded
   end
 

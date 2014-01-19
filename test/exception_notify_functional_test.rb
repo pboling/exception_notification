@@ -1,23 +1,23 @@
-require File.expand_path(File.dirname(__FILE__) + '/test_helper')
+require 'test_helper'
 require 'test/unit'
 
-require File.join(File.dirname(__FILE__), 'mocks/controllers')
+require_relative 'mocks/controllers'
 
 ActionController::Routing::Routes.clear!
 ActionController::Routing::Routes.draw {|m| m.connect ':controller/:action/:id' }
 
 class ExceptionNotifyFunctionalTest < ActionController::TestCase
-  
+
   def setup
     @request    = ActionController::TestRequest.new
-    @response   = ActionController::TestResponse.new    
+    @response   = ActionController::TestResponse.new
     ActionController::Base.consider_all_requests_local = false
     @@delivered_mail = []
     ActionMailer::Base.class_eval do
       def deliver!(mail = @mail)
         @@delivered_mail << mail
       end
-    end    
+    end
   end
 
   def test_view_path_200; assert_view_path_for_status_cd_is_string("200"); end
@@ -52,7 +52,7 @@ class ExceptionNotifyFunctionalTest < ActionController::TestCase
   def test_old_style_where_requests_are_local
     ActionController::Base.consider_all_requests_local = true
     @controller = OldStyle.new
-    get "runtime_error"    
+    get "runtime_error"
     assert_nothing_mailed
   end
 
@@ -63,28 +63,28 @@ class ExceptionNotifyFunctionalTest < ActionController::TestCase
     get "runtime_error"
     assert_nothing_mailed
   end
-  
+
   def test_old_style_runtime_error_sends_mail
     @controller = OldStyle.new
     get "runtime_error"
     assert_error_mail_contains("This is a runtime error that we should be emailed about")
   end
-  
+
   def test_old_style_record_not_found_does_not_send_mail
     @controller = OldStyle.new
     get "ar_record_not_found"
     assert_nothing_mailed
   end
-  
+
   def test_new_style_runtime_error_sends_mail
     @controller = NewStyle.new
     get "runtime_error"
-    assert_error_mail_contains("This is a runtime error that we should be emailed about")    
+    assert_error_mail_contains("This is a runtime error that we should be emailed about")
   end
-  
+
   def test_new_style_record_not_found_does_not_send_mail
     @controller = NewStyle.new
-    get "ar_record_not_found"    
+    get "ar_record_not_found"
     assert_nothing_mailed
   end
 
@@ -123,17 +123,17 @@ class ExceptionNotifyFunctionalTest < ActionController::TestCase
   end
 
   def assert_error_mail_contains(text)
-    assert(mailed_error.index(text), 
+    assert(mailed_error.index(text),
           "Expected mailed error body to contain '#{text}', but not found. \n actual contents: \n#{mailed_error}")
   end
-  
+
   def assert_nothing_mailed
     assert @@delivered_mail.empty?, "Expected to have NOT mailed out a notification about an error occuring, but mailed: \n#{@@delivered_mail}"
   end
-  
+
   def mailed_error
     assert @@delivered_mail.last, "Expected to have mailed out a notification about an error occuring, but none mailed"
     @@delivered_mail.last.encoded
   end
-  
+
 end

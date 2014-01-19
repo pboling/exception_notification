@@ -2,9 +2,12 @@ require 'rake'
 require 'rake/tasklib'
 require "action_mailer"
 
-require "exception_notification/notified_task" unless defined?(NotifiedTask)
+require "exception_notification/notified_task"
 
-require "exception_notification" unless defined?(ExceptionNotification)
+require "exception_notification"
+
+# To load the autoloads.
+ExceptionNotification
 
 Object.class_eval do
   include ExceptionNotification::Notifiable

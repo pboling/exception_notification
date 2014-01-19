@@ -1,4 +1,4 @@
-require File.dirname(__FILE__) + '/test_helper'
+require 'test_helper'
 #require 'exception_notification/notifier_helper'
 
 class ExceptionNotifierHelperTest < Test::Unit::TestCase

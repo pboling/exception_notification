@@ -72,6 +72,7 @@ module ExceptionNotification::Notifiable
     data = get_exception_data
     # With ExceptionNotifiable you have an inherent request, and using a status code makes sense.
     # With Notifiable class to wrap around everything that doesn't have a request,
+    request = nil
     #   the errors you want to be notified of need to be specified either positively or negatively
     # 1. positive eg. set ExceptionNotification::Notifier.config[:notify_error_classes] to an array of classes
     #               set ExceptionNotification::Notifier.config[:notify_other_errors] to false
@@ -89,10 +90,10 @@ module ExceptionNotification::Notifiable
     perform_exception_notify_mailing(exception, data, nil, the_blamed, verbose, rejected_sections) if send_email
     # Send Web Hook requests
     ExceptionNotification::HooksNotifier.deliver_exception_to_web_hooks(ExceptionNotification::Notifier.config, exception, self, request, data, the_blamed) if send_web_hooks
-    pass_it_on(exception)
+    pass_it_on(exception, request, verbose)
   end
 
-  def pass_it_on(exception, request = nil)
+  def pass_it_on(exception, request = nil, verbose = false)
     begin
       request ||= {:params => {}}
       case self.class.notifiable_pass_through
