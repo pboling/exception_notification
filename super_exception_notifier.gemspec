@@ -46,7 +46,7 @@ Gem::Specification.new do |s|
   s.platform = Gem::Platform::RUBY
   s.licenses = ["MIT"]
 
-  s.add_runtime_dependency(%q<actionmailer>, [">= 0","< 4"])
+  s.add_runtime_dependency(%q<actionmailer>, [">= 0","< 3"])
   s.add_development_dependency(%q<rbx-require-relative>, ["~> 0.0.9"])
   s.add_development_dependency(%q<rails>, [">= 2.3","< 3"])
   s.add_development_dependency(%q<rdoc>, [">= 3.12"])
