@@ -1,5 +1,5 @@
 module SuperExceptionNotifier
 
-  VERSION = '3.0.16'
+  VERSION = '3.1.0'
 
 end
