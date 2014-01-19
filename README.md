@@ -152,7 +152,7 @@ Take a look at the `reek` list which is the file called `REEK` and stat fixing t
 bundle exec rake test:all
 ```
 
-If the tests pass refresh the `reek` list:
+If the tests pass refresh the `reek` list (need to run in Ruby 1.9.2 or 1.9.3):
 
 ```
 bundle exec rake reek > REEK
