@@ -1,9 +1,27 @@
 # Super Exception Notifier
 
-The Super Exception Notifier (SEN) gem provides a mailer object and a default set of templates
-for sending email notifications when errors occur in a Rails application, as well as a default
-set of error page templates to render based on the status code assigned to an error.  The gem
-is configurable, allowing programmers to customize (settings are per environment or per class):
+**NOTE: This is a legacy gem, for rails 2.x**
+
+The Super Exception Notifier (SEN) gem provides a mailer object and a default set of templates for sending email notifications when errors occur in a Rails application, as well as a default set of error page templates to render based on the status code assigned to an error.
+
+| Project                 |  Super Exception Notifier   |
+|------------------------ | ----------------- |
+| gem name                |  super_exception_notifier   |
+| license                 |  MIT              |
+| moldiness               |  [![Maintainer Status](http://stillmaintained.com/pboling/super_exception_notifier.png)](http://stillmaintained.com/pboling/super_exception_notifier) |
+| version                 |  [![Gem Version](https://badge.fury.io/rb/super_exception_notifier.png)](http://badge.fury.io/rb/super_exception_notifier) |
+| dependencies            |  [![Dependency Status](https://gemnasium.com/pboling/super_exception_notifier.png)](https://gemnasium.com/pboling/super_exception_notifier) |
+| code quality            |  [![Code Climate](https://codeclimate.com/github/pboling/super_exception_notifier.png)](https://codeclimate.com/github/pboling/super_exception_notifier) |
+| continuous integration  |  [![Build Status](https://secure.travis-ci.org/pboling/super_exception_notifier.png?branch=master)](https://travis-ci.org/pboling/super_exception_notifier) |
+| test coverage           |  [![Coverage Status](https://coveralls.io/repos/pboling/super_exception_notifier/badge.png)](https://coveralls.io/r/pboling/super_exception_notifier) |
+| homepage                |  [https://github.com/pboling/super_exception_notifier][homepage] |
+| documentation           |  [http://rdoc.info/github/pboling/super_exception_notifier/frames][documentation] |
+| author                  |  [Peter Boling](https://coderbits.com/pboling) |
+| Spread ~♡ⓛⓞⓥⓔ♡~      |  [![Endorse Me](https://api.coderwall.com/pboling/endorsecount.png)](http://coderwall.com/pboling) |
+
+## Summary
+
+The gem is configurable, allowing programmers to customize (settings are per environment or per class):
 
 * the sender address of the email
 * the recipient addresses
@@ -25,25 +43,18 @@ is configurable, allowing programmers to customize (settings are per environment
  notifiable { method }
 * Can notify of errors in Rake tasks using 'NotifiedTask.new' instead of 'task' when writing tasks
 * Works with Hoptoad Notifier, so you can notify via SEN and/or Hoptoad for any particular errors.
-* Tested with Rails 2.3.x, should work with Rails 2.2.x, and is apparently not yet compatible with Rails 3.
+* Tested with Rails 2.3.x, should work with Rails 2.2.x, and is apparently **not compatible with Rails 3 or 4**.
 
-The email includes information about the current request, session, and
-environment, and also gives a backtrace of the exception.
+The email includes information about the current request, session, and environment, and also gives a backtrace of the exception.
 
-This gem is based on the wonderful exception_notification plugin created by Jamis Buck. I have
-modified it extensively and merged many of the improvements from a dozen or so other forks.
-It remains a (mostly) drop in replacement with greatly extended functionality and customization
-options.  I keep it up to date with the work on the core team's
+This gem is based on the wonderful exception_notification plugin created by Jamis Buck. I have modified it extensively and merged many of the improvements from a dozen or so other forks.  It remains a (mostly) drop in replacement with greatly extended functionality and customization options.  I keep it up to date with the work on the core team's
 branch.
 
 The venerable [original is here](http://github.com/rails/exception_notification)
 
-The current version of this gem is a git fork of the original and has been updated to include
-the latest improvements from the original, and many improvements from the other forks on github.
-I merge them in when I have time, and when the changes fit nicely with the enhancements I have
-already made.
+The current version of this gem is a git fork of the original and has been updated to include the latest improvements from the original, and many improvements from the other forks on github.  I merge them in when I have time, and when the changes fit nicely with the enhancements I have already made.
 
-This fork of Exception Notifier is in production use on several large websites (top 5000).
+This fork of Exception Notifier is (or was at some point) in production use on several large websites (top 5000).
 
 ## Installation as RubyGem
 
@@ -51,9 +62,9 @@ This fork of Exception Notifier is in production use on several large websites (
 
 More Installation Options are here: http://wiki.github.com/pboling/exception_notification/installation
 
-## Configuration as RubyGem
+## Configuration as RubyGem in Rails 2.x
 
-(UPGRADE NOTE: The name of the lib changed from version 2.x to 3.x)
+(UPGRADE NOTE: The name of the lib changed from SEN version 2.x to 3.x)
 
     config.gem 'super_exception_notifier', :lib => "exception_notification"
 
@@ -61,7 +72,7 @@ More Configuration Options are here: http://wiki.github.com/pboling/exception_no
 
 ## Configuration In Environment (Initializer)
 
-(UPGRADE NOTE: The class invoked here changed from version 2.x to 3.x)
+(UPGRADE NOTE: The class invoked here changed from SEN version 2.x to 3.x)
 
     ExceptionNotification::Notifier.configure_exception_notifier do |config|
       config[:app_name]                 = "[MYAPP]"
@@ -122,3 +133,57 @@ Code:
 There is a lot more you can configure, and do:
 
 [http://wiki.github.com/pboling/exception_notification/](http://wiki.github.com/pboling/exception_notification/)
+
+
+## Authors
+
+[Peter Boling][peterboling] is the original author of the code, and current maintainer.
+
+## Contributors
+
+See the [Network View](https://github.com/pboling/super_exception_notifier/network) and the [CHANGELOG](https://github.com/pboling/super_exception_notifier/blob/master/CHANGELOG.txt)
+
+## Contributing
+
+1. Fork it
+2. Create your feature branch (`git checkout -b my-new-feature`)
+3. Commit your changes (`git commit -am 'Added some feature'`)
+4. Push to the branch (`git push origin my-new-feature`)
+5. Make sure to add tests for it. This is important so I don't break it in a future version unintentionally.
+6. Create new Pull Request
+
+## Versioning
+
+This library aims to adhere to [Semantic Versioning 2.0.0][semver].
+Violations of this scheme should be reported as bugs. Specifically,
+if a minor or patch version is released that breaks backward
+compatibility, a new version should be immediately released that
+restores compatibility. Breaking changes to the public API will
+only be introduced with new major versions.
+
+As a result of this policy, you can (and should) specify a
+dependency on this gem using the [Pessimistic Version Constraint][pvc] with two digits of precision.
+
+For example:
+
+    spec.add_dependency 'super_exception_notifier', '~> 3.0.14'
+
+## References
+
+* [Source Code](http://github.com/pboling/super_exception_notifier)
+* [A fork from the my original source on Google Code](https://github.com/vitaliel/super_exception_notifier)
+* [The Original Source on Google Code](http://super-exception-notifier.googlecode.com/svn/trunk/super_exception_notifier/)
+* [Getting it to work on Stack Overflow & my response](http://stackoverflow.com/questions/1738017/getting-super-exception-notifier-to-work)
+* [Getting it to work on PasteBin](http://pastebin.com/pyHQjN84)
+
+## Legal
+
+* MIT License - See LICENSE file in this project
+* Copyright (c) 2008-2014 [Peter H. Boling][peterboling] of [Rails Bling][railsbling]
+
+[semver]: http://semver.org/
+[pvc]: http://docs.rubygems.org/read/chapter/16#page74
+[railsbling]: http://www.railsbling.com
+[peterboling]: http://www.peterboling.com
+[documentation]: http://rdoc.info/github/pboling/super_exception_notifier/frames
+[homepage]: https://github.com/pboling/super_exception_notifier
