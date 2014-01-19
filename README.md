@@ -205,3 +205,7 @@ For example:
 [peterboling]: http://www.peterboling.com
 [documentation]: http://rdoc.info/github/pboling/exception_notification/frames
 [homepage]: https://github.com/pboling/exception_notification
+
+
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/pboling/exception_notification/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+
