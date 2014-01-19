@@ -8,14 +8,14 @@ The Super Exception Notifier (SEN) gem provides a mailer object and a default se
 |------------------------ | ----------------- |
 | gem name                |  super_exception_notifier   |
 | license                 |  MIT              |
-| moldiness               |  [![Maintainer Status](http://stillmaintained.com/pboling/super_exception_notifier.png)](http://stillmaintained.com/pboling/super_exception_notifier) |
+| moldiness               |  [![Maintainer Status](http://stillmaintained.com/pboling/exception_notification.png)](http://stillmaintained.com/pboling/exception_notification) |
 | version                 |  [![Gem Version](https://badge.fury.io/rb/super_exception_notifier.png)](http://badge.fury.io/rb/super_exception_notifier) |
-| dependencies            |  [![Dependency Status](https://gemnasium.com/pboling/super_exception_notifier.png)](https://gemnasium.com/pboling/super_exception_notifier) |
-| code quality            |  [![Code Climate](https://codeclimate.com/github/pboling/super_exception_notifier.png)](https://codeclimate.com/github/pboling/super_exception_notifier) |
-| continuous integration  |  [![Build Status](https://secure.travis-ci.org/pboling/super_exception_notifier.png?branch=master)](https://travis-ci.org/pboling/super_exception_notifier) |
-| test coverage           |  [![Coverage Status](https://coveralls.io/repos/pboling/super_exception_notifier/badge.png)](https://coveralls.io/r/pboling/super_exception_notifier) |
-| homepage                |  [https://github.com/pboling/super_exception_notifier][homepage] |
-| documentation           |  [http://rdoc.info/github/pboling/super_exception_notifier/frames][documentation] |
+| dependencies            |  [![Dependency Status](https://gemnasium.com/pboling/exception_notification.png)](https://gemnasium.com/pboling/exception_notification) |
+| code quality            |  [![Code Climate](https://codeclimate.com/github/pboling/exception_notification.png)](https://codeclimate.com/github/pboling/exception_notification) |
+| continuous integration  |  [![Build Status](https://secure.travis-ci.org/pboling/exception_notification.png?branch=master)](https://travis-ci.org/pboling/exception_notification) |
+| test coverage           |  [![Coverage Status](https://coveralls.io/repos/pboling/exception_notification/badge.png)](https://coveralls.io/r/pboling/exception_notification) |
+| homepage                |  [https://github.com/pboling/exception_notification][homepage] |
+| documentation           |  [http://rdoc.info/github/pboling/exception_notification/frames][documentation] |
 | author                  |  [Peter Boling](https://coderbits.com/pboling) |
 | Spread ~♡ⓛⓞⓥⓔ♡~      |  [![Endorse Me](https://api.coderwall.com/pboling/endorsecount.png)](http://coderwall.com/pboling) |
 
@@ -141,7 +141,7 @@ There is a lot more you can configure, and do:
 
 ## Contributors
 
-See the [Network View](https://github.com/pboling/super_exception_notifier/network) and the [CHANGELOG](https://github.com/pboling/super_exception_notifier/blob/master/CHANGELOG.txt)
+See the [Network View](https://github.com/pboling/exception_notification/network) and the [CHANGELOG](https://github.com/pboling/exception_notification/blob/master/CHANGELOG.txt)
 
 ## Contributing
 
@@ -170,7 +170,7 @@ For example:
 
 ## References
 
-* [Source Code](http://github.com/pboling/super_exception_notifier)
+* [Source Code](http://github.com/pboling/exception_notification)
 * [A fork from the my original source on Google Code](https://github.com/vitaliel/super_exception_notifier)
 * [The Original Source on Google Code](http://super-exception-notifier.googlecode.com/svn/trunk/super_exception_notifier/)
 * [Getting it to work on Stack Overflow & my response](http://stackoverflow.com/questions/1738017/getting-super-exception-notifier-to-work)
@@ -185,5 +185,5 @@ For example:
 [pvc]: http://docs.rubygems.org/read/chapter/16#page74
 [railsbling]: http://www.railsbling.com
 [peterboling]: http://www.peterboling.com
-[documentation]: http://rdoc.info/github/pboling/super_exception_notifier/frames
-[homepage]: https://github.com/pboling/super_exception_notifier
+[documentation]: http://rdoc.info/github/pboling/exception_notification/frames
+[homepage]: https://github.com/pboling/exception_notification
