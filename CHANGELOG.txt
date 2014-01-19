@@ -1,3 +1,6 @@
+2014-01-18 v3.0.15
+- Conform to gem-release standard VERSION namespace (SuperExceptionNotifier::VERSION)
+
 2014-01-18 v3.0.14
 - Fixed Notifiable class by Peter Boling
 - Fixed ExceptionNotifiable class by Bradford Folkens
